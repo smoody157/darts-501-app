@@ -251,7 +251,7 @@ function enterScore(){
   $("hit").value="";
   $("hit").blur();
 }
-const OUTS = {
+  const OUTS = {
   "2":{"shoot":"D1","left":0},
   "3":{"shoot":"S1","left":2},
   "4":{"shoot":"D2","left":0},
@@ -315,10 +315,10 @@ const OUTS = {
   "62":{"shoot":"T10","left":32},
   "63":{"shoot":"T13","left":24},
   "64":{"shoot":"D16","left":32},
-  "65":{"shoot":"SB","left":40},
-  "66":{"shoot":"T14","left":24},
+  "65":{"shoot":"T19","left":8},
+  "66":{"shoot":"T10","left":36},
   "67":{"shoot":"T17","left":16},
-  "68":{"shoot":"T16","left":20},
+  "68":{"shoot":"T20","left":8},
   "69":{"shoot":"T15","left":24},
   "70":{"shoot":"T10","left":40},
   "71":{"shoot":"T13","left":32},
@@ -751,7 +751,7 @@ const OUTS = {
   "498":{"shoot":"T20","left":438},
   "499":{"shoot":"T20","left":439},
   "500":{"shoot":"T20","left":440},
-  "501":{"shoot":"T20","left":441}
+  "501":{"shoot":"T20","left":441},
   "502":{"shoot":"T20","left":442},
   "503":{"shoot":"T20","left":443},
   "504":{"shoot":"T20","left":444},
@@ -759,7 +759,7 @@ const OUTS = {
   "506":{"shoot":"T20","left":446},
   "507":{"shoot":"T20","left":447},
   "508":{"shoot":"T20","left":448},
-  "509":{"shoot":"T20","left":449},    
+  "509":{"shoot":"T20","left":449},
   "510":{"shoot":"T20","left":450},
   "511":{"shoot":"T20","left":451},
   "512":{"shoot":"T20","left":452},
@@ -771,7 +771,7 @@ const OUTS = {
   "518":{"shoot":"T20","left":458},
   "519":{"shoot":"T20","left":459},
   "520":{"shoot":"T20","left":460},
-  "521":{"shoot":"T20","left":461},    
+  "521":{"shoot":"T20","left":461},
   "522":{"shoot":"T20","left":462},
   "523":{"shoot":"T20","left":463},
   "524":{"shoot":"T20","left":464},
@@ -952,7 +952,8 @@ const OUTS = {
   "699":{"shoot":"T20","left":639},
   "700":{"shoot":"T20","left":640},
   "701":{"shoot":"T20","left":641}
-  };
+};
+
 
 function getOut(rem){
   // 502–701 (training): always T20 first, leaves rem-60
