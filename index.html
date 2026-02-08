@@ -1,252 +1,274 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dart Room</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>THE DART ROOM</title>
+  <style>
+    :root{
+      --bg:#05070c;
+      --panel:#0e1118;
+      --panel2:#141925;
+      --blue:#0b5cff;
+      --blueGlow:#1e7bff;
+      --text:#f5f8ff;
+      --muted:#9aa3b5;
+      --border:rgba(30,123,255,.35);
+      --shadow:0 18px 40px rgba(0,0,0,.6);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+      background: radial-gradient(900px 520px at 50% -10%, rgba(30,123,255,.18), transparent 60%), var(--bg);
+      color:var(--text);
+      font-weight:900;
+    }
+    .header{
+      padding:18px 16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg,#0b0f18,#05070c);
+    }
+    .title{
+      font-size:32px;
+      letter-spacing:1px;
+      text-shadow:0 0 18px rgba(30,123,255,.35);
+    }
+    .wrap{max-width:920px;margin:0 auto;padding:16px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media(max-width:880px){ .grid{grid-template-columns:1fr;} }
 
-<style>
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:1px;
+      margin-bottom:8px;
+      text-transform:uppercase;
+    }
 
-:root{
-  --blue:#0b5cff;
-  --blueGlow:#1e7bff;
-  --panel:#0e1118;
-  --panelSoft:#141925;
-  --text:#f5f8ff;
-  --muted:#9aa3b5;
-  --border:rgba(30,123,255,.35);
-  --shadow:0 18px 40px rgba(0,0,0,.6);
-}
+    input{
+      width:100%;
+      font-size:54px;
+      text-align:center;
+      border:none;
+      background:none;
+      color:var(--blueGlow);
+      outline:none;
+      font-weight:1000;
+      text-shadow:0 0 18px rgba(30,123,255,.22);
+    }
+    .big{
+      font-size:54px;
+      text-align:center;
+      color:var(--blueGlow);
+      text-shadow:0 0 18px rgba(30,123,255,.22);
+    }
 
-*{
-  box-sizing:border-box;
-}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    button{
+      padding:12px 16px;
+      border:none;
+      border-radius:10px;
+      background:var(--blue);
+      color:white;
+      font-size:16px;
+      font-weight:900;
+    }
+    button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
 
-body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:#05070c;
-  color:var(--text);
-  font-weight:bold;
-}
+    .flights{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media(max-width:920px){ .flights{grid-template-columns:1fr;} }
 
-/* ===== HEADER ===== */
+    /* No clipping = numbers will never be cut off */
+    .flight{
+      background:var(--panel2);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px 14px;
+      box-shadow:var(--shadow);
+      text-align:center;
+    }
+    .dartLabel{font-size:26px;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+    .shot{
+      background:#f3f3f3;
+      color:#111;
+      border-radius:12px;
+      padding:12px;
+      font-size:50px;
+      margin-bottom:12px;
+      font-weight:1000;
+    }
+    .subLabel{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:1px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    .leave{
+      font-size:40px;
+      color:var(--blueGlow);
+      font-weight:1000;
+    }
 
-.header{
-  padding:18px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:linear-gradient(180deg,#0b0f18,#05070c);
-}
-
-.title{
-  font-size:32px;
-  letter-spacing:1px;
-  text-shadow:0 0 18px rgba(30,123,255,.35);
-}
-
-/* ===== LAYOUT ===== */
-
-.wrap{
-  max-width:900px;
-  margin:auto;
-  padding:16px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-
-@media(max-width:850px){
-  .grid{grid-template-columns:1fr;}
-}
-
-/* ===== PANELS ===== */
-
-.panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:16px;
-  box-shadow:var(--shadow);
-}
-
-.label{
-  font-size:12px;
-  color:var(--muted);
-  margin-bottom:6px;
-  letter-spacing:1px;
-}
-
-.big{
-  font-size:54px;
-  text-align:center;
-  color:var(--blueGlow);
-  text-shadow:0 0 20px rgba(30,123,255,.3);
-}
-
-input{
-  width:100%;
-  font-size:54px;
-  text-align:center;
-  border:none;
-  background:none;
-  color:var(--blueGlow);
-  outline:none;
-}
-
-button{
-  margin-top:12px;
-  padding:12px 18px;
-  border:none;
-  border-radius:10px;
-  background:var(--blue);
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-
-/* ===== FLIGHTS ===== */
-
-.flights{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-.flight{
-  background:var(--panelSoft);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:18px 12px;
-  text-align:center;
-}
-
-.dartLabel{
-  font-size:24px;
-  margin-bottom:10px;
-}
-
-.shot{
-  background:white;
-  color:black;
-  border-radius:12px;
-  padding:12px;
-  font-size:48px;
-  margin-bottom:12px;
-}
-
-.leave{
-  font-size:36px;
-  color:var(--blueGlow);
-}
-
-</style>
+    .status{margin-top:10px;text-align:center;color:var(--muted);min-height:18px}
+    .status.error{color:#ffb3b3}
+  </style>
 </head>
 
 <body>
+  <div class="header">
+    <div class="title">THE DART ROOM</div>
+  </div>
 
-<div class="header">
-  <div class="title">THE DART ROOM</div>
-</div>
+  <div class="wrap">
 
-<div class="wrap">
+    <div class="grid">
+      <div class="panel">
+        <div class="label">Starting Score</div>
+        <input id="startScore" type="number" inputmode="numeric" value="501" />
+        <div class="btnRow">
+          <button type="button" class="secondary" id="set501">Set 501</button>
+          <button type="button" class="secondary" id="set701">Set 701</button>
+        </div>
+      </div>
 
-  <div class="grid">
+      <div class="panel">
+        <div class="label">Score you just hit</div>
+        <form id="scoreForm" autocomplete="off">
+          <input id="hit" type="number" inputmode="numeric" />
+          <div class="btnRow">
+            <button type="submit" id="enterBtn">Enter ✓</button>
+            <button type="button" class="secondary" id="clearBtn">Clear</button>
+          </div>
+        </form>
+      </div>
 
-    <div class="panel">
-      <div class="label">STARTING SCORE</div>
-      <input id="startScore" value="501" type="number">
-      <button onclick="set501()">SET 501</button>
-      <button onclick="set701()">SET 701</button>
+      <div class="panel">
+        <div class="label">What you have left</div>
+        <div class="big" id="left">—</div>
+        <div class="status" id="status"></div>
+      </div>
     </div>
 
-    <div class="panel">
-      <div class="label">ENTER SCORE</div>
-      <input id="scoreInput" type="number">
-      <button onclick="enterScore()">ENTER ✓</button>
-    </div>
+    <div class="flights">
+      <div class="flight">
+        <div class="dartLabel">Dart 1</div>
+        <div class="shot" id="d1">—</div>
+        <div class="subLabel">Left after Dart 1</div>
+        <div class="leave" id="l1">—</div>
+      </div>
 
-    <div class="panel">
-      <div class="label">WHAT YOU HAVE LEFT</div>
-      <div class="big" id="remaining">—</div>
+      <div class="flight">
+        <div class="dartLabel">Dart 2</div>
+        <div class="shot" id="d2">—</div>
+        <div class="subLabel">Left after Dart 2</div>
+        <div class="leave" id="l2">—</div>
+      </div>
+
+      <div class="flight">
+        <div class="dartLabel">Dart 3</div>
+        <div class="shot" id="d3">—</div>
+        <div class="subLabel">Left after Dart 3</div>
+        <div class="leave" id="l3">—</div>
+      </div>
     </div>
 
   </div>
 
-  <div style="height:20px"></div>
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const set = (id,v)=>$(id).textContent = v;
 
-  <div class="flights">
+    function clearFlights(){
+      set("d1","—"); set("l1","—");
+      set("d2","—"); set("l2","—");
+      set("d3","—"); set("l3","—");
+    }
 
-    <div class="flight">
-      <div class="dartLabel">DART 1</div>
-      <div class="shot" id="d1">—</div>
-      <div class="leave" id="l1">—</div>
-    </div>
+    function clearAll(){
+      $("hit").value = "";
+      set("left","—");
+      clearFlights();
+      $("status").textContent = "";
+      $("status").classList.remove("error");
+    }
 
-    <div class="flight">
-      <div class="dartLabel">DART 2</div>
-      <div class="shot" id="d2">—</div>
-      <div class="leave" id="l2">—</div>
-    </div>
+    function calculate(){
+      const start = Number($("startScore").value);
+      const raw = String($("hit").value ?? "").trim();
+      const hit = Number(raw);
 
-    <div class="flight">
-      <div class="dartLabel">DART 3</div>
-      <div class="shot" id="d3">—</div>
-      <div class="leave" id="l3">—</div>
-    </div>
+      if(!Number.isFinite(start) || start < 2){
+        $("status").textContent = "Starting score must be 2 or higher.";
+        $("status").classList.add("error");
+        return;
+      }
+      if(raw === "" || !Number.isFinite(hit)) return;
 
-  </div>
+      if(hit < 0 || hit > start){
+        $("status").textContent = "Score must be between 0 and the starting score.";
+        $("status").classList.add("error");
+        return;
+      }
 
-</div>
+      const left = start - hit;
+      set("left", String(left));
 
-<script>
+      // simple score-down suggestions (always works)
+      const d1="T20", d2="T20", d3="T20";
+      const l1=Math.max(left-60,0);
+      const l2=Math.max(l1-60,0);
+      const l3=Math.max(l2-60,0);
 
-function set501(){
-  document.getElementById("startScore").value=501;
-}
+      set("d1", d1); set("l1", String(l1));
+      set("d2", d2); set("l2", String(l2));
+      set("d3", d3); set("l3", String(l3));
 
-function set701(){
-  document.getElementById("startScore").value=701;
-}
+      $("hit").value = "";
+      $("hit").blur();
+      $("status").textContent = "";
+      $("status").classList.remove("error");
+    }
 
-function enterScore(){
+    $("scoreForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      calculate();
+    });
 
-  let start=parseInt(document.getElementById("startScore").value);
-  let hit=parseInt(document.getElementById("scoreInput").value);
+    $("clearBtn").addEventListener("click", clearAll);
 
-  if(isNaN(start)||isNaN(hit)) return;
+    $("set501").addEventListener("click", ()=>{
+      $("startScore").value = 501;
+      clearAll();
+    });
 
-  let left=start-hit;
+    $("set701").addEventListener("click", ()=>{
+      $("startScore").value = 701;
+      clearAll();
+    });
 
-  if(left<0) return;
-
-  document.getElementById("remaining").innerText=left;
-
-  document.getElementById("scoreInput").value="";
-
-  // Simple dart suggestions
-  let d1="T20";
-  let l1=Math.max(left-60,0);
-
-  let d2="T20";
-  let l2=Math.max(l1-60,0);
-
-  let d3="T20";
-  let l3=Math.max(l2-60,0);
-
-  document.getElementById("d1").innerText=d1;
-  document.getElementById("l1").innerText=l1;
-
-  document.getElementById("d2").innerText=d2;
-  document.getElementById("l2").innerText=l2;
-
-  document.getElementById("d3").innerText=d3;
-  document.getElementById("l3").innerText=l3;
-}
-
-</script>
-
+    window.addEventListener("error", (e)=>{
+      $("status").textContent = "ERROR: " + (e.message || "Unknown");
+      $("status").classList.add("error");
+    });
+  </script>
 </body>
 </html>
