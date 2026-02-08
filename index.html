@@ -1,274 +1,898 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>THE DART ROOM</title>
-  <style>
-    :root{
-      --bg:#05070c;
-      --panel:#0e1118;
-      --panel2:#141925;
-      --blue:#0b5cff;
-      --blueGlow:#1e7bff;
-      --text:#f5f8ff;
-      --muted:#9aa3b5;
-      --border:rgba(30,123,255,.35);
-      --shadow:0 18px 40px rgba(0,0,0,.6);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
-      background: radial-gradient(900px 520px at 50% -10%, rgba(30,123,255,.18), transparent 60%), var(--bg);
-      color:var(--text);
-      font-weight:900;
-    }
-    .header{
-      padding:18px 16px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: linear-gradient(180deg,#0b0f18,#05070c);
-    }
-    .title{
-      font-size:32px;
-      letter-spacing:1px;
-      text-shadow:0 0 18px rgba(30,123,255,.35);
-    }
-    .wrap{max-width:920px;margin:0 auto;padding:16px}
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:16px;
-      align-items:start;
-    }
-    @media(max-width:880px){ .grid{grid-template-columns:1fr;} }
-
-    .panel{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:16px;
-      box-shadow:var(--shadow);
-    }
-    .label{
-      font-size:12px;
-      color:var(--muted);
-      letter-spacing:1px;
-      margin-bottom:8px;
-      text-transform:uppercase;
-    }
-
-    input{
-      width:100%;
-      font-size:54px;
-      text-align:center;
-      border:none;
-      background:none;
-      color:var(--blueGlow);
-      outline:none;
-      font-weight:1000;
-      text-shadow:0 0 18px rgba(30,123,255,.22);
-    }
-    .big{
-      font-size:54px;
-      text-align:center;
-      color:var(--blueGlow);
-      text-shadow:0 0 18px rgba(30,123,255,.22);
-    }
-
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-    button{
-      padding:12px 16px;
-      border:none;
-      border-radius:10px;
-      background:var(--blue);
-      color:white;
-      font-size:16px;
-      font-weight:900;
-    }
-    button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10)}
-
-    .flights{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:14px;
-    }
-    @media(max-width:920px){ .flights{grid-template-columns:1fr;} }
-
-    /* No clipping = numbers will never be cut off */
-    .flight{
-      background:var(--panel2);
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:16px 14px;
-      box-shadow:var(--shadow);
-      text-align:center;
-    }
-    .dartLabel{font-size:26px;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
-    .shot{
-      background:#f3f3f3;
-      color:#111;
-      border-radius:12px;
-      padding:12px;
-      font-size:50px;
-      margin-bottom:12px;
-      font-weight:1000;
-    }
-    .subLabel{
-      font-size:12px;
-      color:var(--muted);
-      letter-spacing:1px;
-      text-transform:uppercase;
-      margin-bottom:8px;
-    }
-    .leave{
-      font-size:40px;
-      color:var(--blueGlow);
-      font-weight:1000;
-    }
-
-    .status{margin-top:10px;text-align:center;color:var(--muted);min-height:18px}
-    .status.error{color:#ffb3b3}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#0b5cff"/>
+<title>THE DART ROOM</title>
+<style>
+:root{
+  --bg:#05070c; --panel:rgba(14,17,24,.86); --panel2:rgba(18,22,33,.82);
+  --text:#f5f8ff; --muted:rgba(245,248,255,.62);
+  --blue:#0b5cff; --blue2:#1e7bff; --blue3:#00b7ff;
+  --border:rgba(30,123,255,.38); --borderSoft:rgba(255,255,255,.10);
+  --shadow:0 18px 46px rgba(0,0,0,.62); --shadow2:0 10px 24px rgba(0,0,0,.45);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+  font-weight:900;
+  color:var(--text);
+  background:var(--bg);
+  overflow-x:hidden;
+}
+.bg{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(900px 520px at 50% -12%, rgba(30,123,255,.20), transparent 60%),
+    radial-gradient(520px 520px at 18% 40%, rgba(0,183,255,.10), transparent 60%),
+    radial-gradient(520px 520px at 82% 55%, rgba(11,92,255,.12), transparent 60%),
+    linear-gradient(180deg, #070a12 0%, #05070c 100%);
+}
+.haze{
+  position:fixed; inset:-120px; z-index:1; pointer-events:none;
+  background:
+    conic-gradient(from 210deg at 28% 22%, rgba(30,123,255,.16), transparent 28%, rgba(0,183,255,.12), transparent 62%),
+    conic-gradient(from 30deg at 74% 58%, rgba(0,183,255,.14), transparent 30%, rgba(30,123,255,.10), transparent 64%);
+  filter: blur(18px);
+  opacity:.85;
+  animation: drift 10s ease-in-out infinite;
+}
+@keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,-14px,0) scale(1.02)}}
+.wrap{position:relative; z-index:2; max-width:980px; margin:0 auto; padding:16px 14px 44px;}
+.header{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px;
+  border-radius: var(--radius);
+  border:1px solid var(--borderSoft);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  box-shadow: var(--shadow);
+}
+.brand{display:flex; align-items:center; gap:12px; min-width:0;}
+.logo{
+  width:46px;height:46px;border-radius:14px;
+  border:1px solid rgba(30,123,255,.45);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(30,123,255,.42), transparent 58%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.14), transparent 62%),
+    linear-gradient(180deg, rgba(0,183,255,.18), rgba(0,0,0,0));
+  box-shadow: 0 10px 24px rgba(0,0,0,.55), inset 0 -2px 0 rgba(0,0,0,.35);
+}
+.title{margin:0;font-size:30px;letter-spacing:1px;line-height:1.05;text-shadow:0 0 18px rgba(30,123,255,.28);}
+.subtitle{margin-top:4px;font-size:12px;color:var(--muted);letter-spacing:1px;}
+.chip{
+  padding:10px 12px;border-radius:999px;
+  border:1px solid rgba(30,123,255,.38);
+  background: rgba(30,123,255,.12);
+  font-size:14px; white-space:nowrap;
+}
+.grid{margin-top:16px; display:grid; grid-template-columns:330px 1fr; gap:16px; align-items:start;}
+@media(max-width:980px){.grid{grid-template-columns:1fr;}}
+.card{
+  border-radius: var(--radius);
+  background: rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow: var(--shadow);
+  padding:14px;
+}
+.stack{display:flex;flex-direction:column;gap:14px;}
+.box{
+  text-align:center;
+  border-radius:16px;
+  padding:12px 12px 14px;
+  border:1px solid var(--border);
+  background: var(--panel);
+  box-shadow: var(--shadow2), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.label{font-size:12px;letter-spacing:1.1px;text-transform:uppercase;color:rgba(245,248,255,.72);margin-bottom:10px;}
+.bigNumber{font-size:58px;line-height:1;color:var(--blue3);text-shadow:0 0 18px rgba(0,183,255,.18);}
+input.score{
+  width:100%;
+  font-size:58px;
+  text-align:center;
+  border:none;
+  background:transparent;
+  color:var(--blue3);
+  outline:none;
+  font-weight:1000;
+  text-shadow:0 0 18px rgba(0,183,255,.16);
+}
+input.score::-webkit-outer-spin-button,
+input.score::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.btnRow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+button.btn{
+  padding:12px 16px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+  color: var(--text);
+  font-size:16px;
+  font-weight:900;
+}
+button.btn.primary{border:1px solid rgba(30,123,255,.45); background: rgba(30,123,255,.14);}
+button.btn:active{transform:translateY(1px);}
+.hint{margin-top:8px;font-size:13px;color:var(--muted);text-align:center;line-height:1.35;}
+.status{margin-top:10px;min-height:18px;font-size:14px;color:rgba(245,248,255,.72);text-align:center;}
+.status.error{color:#ffb3b3;}
+.flights{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:920px){.flights{grid-template-columns:1fr;}}
+.flight{
+  position:relative;
+  border-radius:20px;
+  padding:16px 14px 18px;
+  min-height:240px;
+  border:1px solid rgba(30,123,255,.32);
+  background: var(--panel2);
+  box-shadow: var(--shadow);
+  text-align:center;
+  overflow:visible;
+}
+.flight::before{
+  content:"";
+  position:absolute; inset:0;
+  background: rgba(30,123,255,.10);
+  clip-path: polygon(50% 0%,96% 16%,88% 34%,100% 56%,76% 62%,70% 100%,50% 80%,30% 100%,24% 62%,0% 56%,12% 34%,4% 16%);
+  pointer-events:none;
+  opacity:.9;
+}
+.flight > *{position:relative; z-index:1;}
+.dartLabel{font-size:28px;letter-spacing:1px;text-transform:uppercase;margin:6px 0 12px;color:rgba(245,248,255,.95);}
+.shot{
+  width:100%;
+  max-width:260px;
+  margin:0 auto 12px;
+  border-radius:16px;
+  background:#f3f3f3;
+  color:#111;
+  padding:14px 12px;
+  font-size:56px;
+  font-weight:1000;
+  box-shadow: 0 14px 30px rgba(0,0,0,.35), inset 0 -3px 0 rgba(0,0,0,.12), inset 0 2px 0 rgba(255,255,255,.7);
+}
+.subLabel{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,248,255,.70);margin:0 0 8px;}
+.leave{
+  width:100%;
+  max-width:260px;
+  margin:0 auto;
+  border-radius:16px;
+  padding:12px 12px;
+  border:1px solid rgba(0,183,255,.38);
+  background: rgba(0,183,255,.10);
+  font-size:46px;
+  color: var(--blue3);
+  font-weight:1000;
+}
+.footerNote{margin-top:12px;font-size:11px;color:rgba(245,248,255,.45);text-align:center;}
+.credit{margin-top:10px;text-align:center;font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.5px;}
+</style>
 </head>
-
 <body>
+<div class="bg"></div>
+<div class="haze"></div>
+
+<div class="wrap">
   <div class="header">
-    <div class="title">THE DART ROOM</div>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1 class="title">THE DART ROOM</h1>
+        <div class="subtitle">501 / 701 • Smart Checkout</div>
+      </div>
+    </div>
+    <div class="chip">v5.07</div>
   </div>
 
-  <div class="wrap">
+  <div class="grid">
 
-    <div class="grid">
-      <div class="panel">
-        <div class="label">Starting Score</div>
-        <input id="startScore" type="number" inputmode="numeric" value="501" />
-        <div class="btnRow">
-          <button type="button" class="secondary" id="set501">Set 501</button>
-          <button type="button" class="secondary" id="set701">Set 701</button>
-        </div>
-      </div>
+    <div class="card">
+      <div class="stack">
 
-      <div class="panel">
-        <div class="label">Score you just hit</div>
-        <form id="scoreForm" autocomplete="off">
-          <input id="hit" type="number" inputmode="numeric" />
+        <div class="box">
+          <div class="label">Starting Score (auto-updates)</div>
+          <input id="startScore" class="score" type="number" inputmode="numeric" value="501" />
+          <div class="hint">Top number mirrors what you have left so each new entry subtracts correctly.</div>
           <div class="btnRow">
-            <button type="submit" id="enterBtn">Enter ✓</button>
-            <button type="button" class="secondary" id="clearBtn">Clear</button>
+            <button class="btn" id="set501" type="button">Set 501</button>
+            <button class="btn" id="set701" type="button">Set 701</button>
+            <button class="btn primary" id="resetBtn" type="button">Reset Game</button>
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div class="panel">
-        <div class="label">What you have left</div>
-        <div class="big" id="left">—</div>
-        <div class="status" id="status"></div>
+        <div class="box">
+          <div class="label">Score you just hit</div>
+          <form id="scoreForm" autocomplete="off">
+            <input id="hit" class="score" type="number" inputmode="numeric" />
+            <div class="btnRow">
+              <button class="btn primary" type="submit">Enter ✓</button>
+              <button class="btn" id="clearBtn" type="button">Clear</button>
+            </div>
+          </form>
+          <div class="hint">Enter subtracts and refreshes Dart 1/2/3 suggestions.</div>
+        </div>
+
+        <div class="box">
+          <div class="label">What you have left</div>
+          <div class="bigNumber" id="left">—</div>
+          <div class="status" id="status"></div>
+        </div>
+
       </div>
     </div>
 
-    <div class="flights">
-      <div class="flight">
-        <div class="dartLabel">Dart 1</div>
-        <div class="shot" id="d1">—</div>
-        <div class="subLabel">Left after Dart 1</div>
-        <div class="leave" id="l1">—</div>
+    <div class="card">
+      <div class="flights">
+
+        <div class="flight">
+          <div class="dartLabel">Dart 1</div>
+          <div class="shot" id="d1">—</div>
+          <div class="subLabel">Left after Dart 1</div>
+          <div class="leave" id="l1">—</div>
+        </div>
+
+        <div class="flight">
+          <div class="dartLabel">Dart 2</div>
+          <div class="shot" id="d2">—</div>
+          <div class="subLabel">Left after Dart 2</div>
+          <div class="leave" id="l2">—</div>
+        </div>
+
+        <div class="flight">
+          <div class="dartLabel">Dart 3</div>
+          <div class="shot" id="d3">—</div>
+          <div class="subLabel">Left after Dart 3</div>
+          <div class="leave" id="l3">—</div>
+        </div>
+
       </div>
 
-      <div class="flight">
-        <div class="dartLabel">Dart 2</div>
-        <div class="shot" id="d2">—</div>
-        <div class="subLabel">Left after Dart 2</div>
-        <div class="leave" id="l2">—</div>
+      <div class="footerNote">
+        Finish must end on a double • Suggestions mirror your Excel checkout logic
       </div>
 
-      <div class="flight">
-        <div class="dartLabel">Dart 3</div>
-        <div class="shot" id="d3">—</div>
-        <div class="subLabel">Left after Dart 3</div>
-        <div class="leave" id="l3">—</div>
+      <div class="credit">
+        Developed by Steve’s Graphic Designs
       </div>
+
     </div>
 
   </div>
+</div>
+<script>
+/* Checkout table embedded from your spreadsheet (2–501) */
+const OUTS = {
+  "2":{"shoot":"D1","left":0},
+  "3":{"shoot":"S1","left":2},
+  "4":{"shoot":"D2","left":0},
+  "5":{"shoot":"S1","left":4},
+  "6":{"shoot":"D3","left":0},
+  "7":{"shoot":"S3","left":4},
+  "8":{"shoot":"D4","left":0},
+  "9":{"shoot":"S1","left":8},
+  "10":{"shoot":"D5","left":0},
+  "11":{"shoot":"S3","left":8},
+  "12":{"shoot":"D6","left":0},
+  "13":{"shoot":"S5","left":8},
+  "14":{"shoot":"D7","left":0},
+  "15":{"shoot":"S7","left":8},
+  "16":{"shoot":"D8","left":0},
+  "17":{"shoot":"S9","left":8},
+  "18":{"shoot":"D9","left":0},
+  "19":{"shoot":"S11","left":8},
+  "20":{"shoot":"D10","left":0},
+  "21":{"shoot":"S13","left":8},
+  "22":{"shoot":"D11","left":0},
+  "23":{"shoot":"S15","left":8},
+  "24":{"shoot":"D12","left":0},
+  "25":{"shoot":"S17","left":8},
+  "26":{"shoot":"D13","left":0},
+  "27":{"shoot":"S19","left":8},
+  "28":{"shoot":"D14","left":0},
+  "29":{"shoot":"S21","left":8},
+  "30":{"shoot":"D15","left":0},
+  "31":{"shoot":"S23","left":8},
+  "32":{"shoot":"D16","left":0},
+  "33":{"shoot":"S25","left":8},
+  "34":{"shoot":"D17","left":0},
+  "35":{"shoot":"S27","left":8},
+  "36":{"shoot":"D18","left":0},
+  "37":{"shoot":"S29","left":8},
+  "38":{"shoot":"D19","left":0},
+  "39":{"shoot":"S31","left":8},
+  "40":{"shoot":"D20","left":0},
+  "41":{"shoot":"S9","left":32},
+  "42":{"shoot":"D16","left":10},
+  "43":{"shoot":"S11","left":32},
+  "44":{"shoot":"D12","left":20},
+  "45":{"shoot":"S13","left":32},
+  "46":{"shoot":"D15","left":16},
+  "47":{"shoot":"S15","left":32},
+  "48":{"shoot":"D8","left":32},
+  "49":{"shoot":"S17","left":32},
+  "50":{"shoot":"S18","left":32},
+  "51":{"shoot":"S19","left":32},
+  "52":{"shoot":"S20","left":32},
+  "53":{"shoot":"S13","left":40},
+  "54":{"shoot":"D20","left":14},
+  "55":{"shoot":"S15","left":40},
+  "56":{"shoot":"D8","left":40},
+  "57":{"shoot":"S17","left":40},
+  "58":{"shoot":"D17","left":24},
+  "59":{"shoot":"S19","left":40},
+  "60":{"shoot":"S20","left":40},
+  "61":{"shoot":"S21","left":40},
+  "62":{"shoot":"T10","left":32},
+  "63":{"shoot":"T9","left":36},
+  "64":{"shoot":"D16","left":32},
+  "65":{"shoot":"T11","left":32},
+  "66":{"shoot":"T10","left":36},
+  "67":{"shoot":"T17","left":16},
+  "68":{"shoot":"T12","left":32},
+  "69":{"shoot":"T15","left":24},
+  "70":{"shoot":"T10","left":40},
+  "71":{"shoot":"T13","left":32},
+    "72":{"shoot":"D16","left":40},
+  "73":{"shoot":"T19","left":16},
+  "74":{"shoot":"T14","left":32},
+  "75":{"shoot":"T17","left":24},
+  "76":{"shoot":"T20","left":16},
+  "77":{"shoot":"T19","left":20},
+  "78":{"shoot":"T18","left":24},
+  "79":{"shoot":"T19","left":22},
+  "80":{"shoot":"T20","left":20},
+  "81":{"shoot":"T19","left":24},
+  "82":{"shoot":"T14","left":40},
+  "83":{"shoot":"T17","left":32},
+  "84":{"shoot":"T20","left":24},
+  "85":{"shoot":"T15","left":40},
+  "86":{"shoot":"T18","left":32},
+  "87":{"shoot":"T17","left":36},
+  "88":{"shoot":"T16","left":40},
+  "89":{"shoot":"T19","left":32},
+  "90":{"shoot":"T20","left":30},
+  "91":{"shoot":"T17","left":40},
+  "92":{"shoot":"T20","left":32},
+  "93":{"shoot":"T19","left":36},
+  "94":{"shoot":"T18","left":40},
+  "95":{"shoot":"T19","left":38},
+  "96":{"shoot":"T20","left":36},
+  "97":{"shoot":"T19","left":40},
+  "98":{"shoot":"T20","left":38},
+  "99":{"shoot":"T19","left":42},
+  "100":{"shoot":"T20","left":40},
+  "101":{"shoot":"T17","left":50},
+  "102":{"shoot":"T20","left":42},
+  "103":{"shoot":"T19","left":46},
+  "104":{"shoot":"T18","left":50},
+  "105":{"shoot":"T20","left":45},
+  "106":{"shoot":"T20","left":46},
+  "107":{"shoot":"T19","left":50},
+  "108":{"shoot":"T20","left":48},
+  "109":{"shoot":"T19","left":52},
+  "110":{"shoot":"T20","left":50},
+  "111":{"shoot":"T19","left":54},
+  "112":{"shoot":"T20","left":52},
+  "113":{"shoot":"T19","left":56},
+  "114":{"shoot":"T20","left":54},
+  "115":{"shoot":"T19","left":58},
+  "116":{"shoot":"T20","left":56},
+  "117":{"shoot":"T20","left":57},
+  "118":{"shoot":"T20","left":58},
+  "119":{"shoot":"T19","left":62},
+  "120":{"shoot":"T20","left":60},
+  "121":{"shoot":"T20","left":61},
+  "122":{"shoot":"T18","left":68},
+  "123":{"shoot":"T19","left":66},
+  "124":{"shoot":"T20","left":64},
+  "125":{"shoot":"T20","left":65},
+  "126":{"shoot":"T19","left":69},
+  "127":{"shoot":"T20","left":67},
+  "128":{"shoot":"T18","left":74},
+  "129":{"shoot":"T19","left":72},
+  "130":{"shoot":"T20","left":70},
+  "131":{"shoot":"T19","left":74},
+  "132":{"shoot":"T20","left":72},
+  "133":{"shoot":"T19","left":76},
+  "134":{"shoot":"T20","left":74},
+  "135":{"shoot":"T19","left":78},
+  "136":{"shoot":"T20","left":76},
+  "137":{"shoot":"T19","left":80},
+  "138":{"shoot":"T20","left":78},
+  "139":{"shoot":"T19","left":82},
+  "140":{"shoot":"T20","left":80},
+  "141":{"shoot":"T19","left":84},
+  "142":{"shoot":"T20","left":82},
+  "143":{"shoot":"T19","left":86},
+  "144":{"shoot":"T20","left":84},
+  "145":{"shoot":"T19","left":88},
+  "146":{"shoot":"T20","left":86},
+  "147":{"shoot":"T19","left":90},
+  "148":{"shoot":"T20","left":88},
+  "149":{"shoot":"T19","left":92},
+  "150":{"shoot":"T20","left":90},
+  "151":{"shoot":"T19","left":94},
+  "152":{"shoot":"T20","left":92},
+  "153":{"shoot":"T19","left":96},
+  "154":{"shoot":"T20","left":94},
+  "155":{"shoot":"T19","left":98},
+  "156":{"shoot":"T20","left":96},
+  "157":{"shoot":"T19","left":100},
+  "158":{"shoot":"T20","left":98},
+  "159":{"shoot":"T19","left":102},
+  "160":{"shoot":"T20","left":100},
+    "161":{"shoot":"T19","left":104},
+  "162":{"shoot":"T20","left":102},
+  "163":{"shoot":"T19","left":106},
+  "164":{"shoot":"T20","left":104},
+  "165":{"shoot":"T19","left":108},
+  "166":{"shoot":"T20","left":106},
+  "167":{"shoot":"T19","left":110},
+  "168":{"shoot":"T20","left":108},
+  "169":{"shoot":"T19","left":112},
+  "170":{"shoot":"T20","left":110},
+  "171":{"shoot":"T19","left":114},
+  "172":{"shoot":"T20","left":112},
+  "173":{"shoot":"T19","left":116},
+  "174":{"shoot":"T20","left":114},
+  "175":{"shoot":"T19","left":118},
+  "176":{"shoot":"T20","left":116},
+  "177":{"shoot":"T19","left":120},
+  "178":{"shoot":"T20","left":118},
+  "179":{"shoot":"T19","left":122},
+  "180":{"shoot":"T20","left":120},
+  "181":{"shoot":"T19","left":124},
+  "182":{"shoot":"T20","left":122},
+  "183":{"shoot":"T19","left":126},
+  "184":{"shoot":"T20","left":124},
+  "185":{"shoot":"T19","left":128},
+  "186":{"shoot":"T20","left":126},
+  "187":{"shoot":"T19","left":130},
+  "188":{"shoot":"T20","left":128},
+  "189":{"shoot":"T19","left":132},
+  "190":{"shoot":"T20","left":130},
+  "191":{"shoot":"T19","left":134},
+  "192":{"shoot":"T20","left":132},
+  "193":{"shoot":"T19","left":136},
+  "194":{"shoot":"T20","left":134},
+  "195":{"shoot":"T19","left":138},
+  "196":{"shoot":"T20","left":136},
+  "197":{"shoot":"T19","left":140},
+  "198":{"shoot":"T20","left":138},
+  "199":{"shoot":"T19","left":142},
+  "200":{"shoot":"T20","left":140},
+  "201":{"shoot":"T19","left":144},
+  "202":{"shoot":"T20","left":142},
+  "203":{"shoot":"T19","left":146},
+  "204":{"shoot":"T20","left":144},
+  "205":{"shoot":"T19","left":148},
+  "206":{"shoot":"T20","left":146},
+  "207":{"shoot":"T19","left":150},
+  "208":{"shoot":"T20","left":148},
+  "209":{"shoot":"T19","left":152},
+  "210":{"shoot":"T20","left":150},
+  "211":{"shoot":"T19","left":154},
+  "212":{"shoot":"T20","left":152},
+  "213":{"shoot":"T19","left":156},
+  "214":{"shoot":"T20","left":154},
+  "215":{"shoot":"T19","left":158},
+  "216":{"shoot":"T20","left":156},
+  "217":{"shoot":"T19","left":160},
+  "218":{"shoot":"T20","left":158},
+  "219":{"shoot":"T19","left":162},
+  "220":{"shoot":"T20","left":160},
+  "221":{"shoot":"T19","left":164},
+  "222":{"shoot":"T20","left":162},
+  "223":{"shoot":"T19","left":166},
+  "224":{"shoot":"T20","left":164},
+  "225":{"shoot":"T19","left":168},
+  "226":{"shoot":"T20","left":166},
+  "227":{"shoot":"T19","left":170},
+  "228":{"shoot":"T20","left":168},
+  "229":{"shoot":"T19","left":172},
+  "230":{"shoot":"T20","left":170},
+  "231":{"shoot":"T19","left":174},
+  "232":{"shoot":"T20","left":172},
+  "233":{"shoot":"T19","left":176},
+  "234":{"shoot":"T20","left":174},
+  "235":{"shoot":"T19","left":178},
+  "236":{"shoot":"T20","left":176},
+  "237":{"shoot":"T19","left":180},
+  "238":{"shoot":"T20","left":178},
+  "239":{"shoot":"T19","left":182},
+  "240":{"shoot":"T20","left":180},
+  "241":{"shoot":"T19","left":184},
+  "242":{"shoot":"T20","left":182},
+  "243":{"shoot":"T19","left":186},
+  "244":{"shoot":"T20","left":184},
+  "245":{"shoot":"T19","left":188},
+  "246":{"shoot":"T20","left":186},
+  "247":{"shoot":"T19","left":190},
+  "248":{"shoot":"T20","left":188},
+  "249":{"shoot":"T19","left":192},
+  "250":{"shoot":"T20","left":190},
+    "251":{"shoot":"T19","left":194},
+  "252":{"shoot":"T20","left":192},
+  "253":{"shoot":"T19","left":196},
+  "254":{"shoot":"T20","left":194},
+  "255":{"shoot":"T19","left":198},
+  "256":{"shoot":"T20","left":196},
+  "257":{"shoot":"T19","left":200},
+  "258":{"shoot":"T20","left":198},
+  "259":{"shoot":"T19","left":202},
+  "260":{"shoot":"T20","left":200},
+  "261":{"shoot":"T19","left":204},
+  "262":{"shoot":"T20","left":202},
+  "263":{"shoot":"T19","left":206},
+  "264":{"shoot":"T20","left":204},
+  "265":{"shoot":"T19","left":208},
+  "266":{"shoot":"T20","left":206},
+  "267":{"shoot":"T19","left":210},
+  "268":{"shoot":"T20","left":208},
+  "269":{"shoot":"T19","left":212},
+  "270":{"shoot":"T20","left":210},
+  "271":{"shoot":"T19","left":214},
+  "272":{"shoot":"T20","left":212},
+  "273":{"shoot":"T19","left":216},
+  "274":{"shoot":"T20","left":214},
+  "275":{"shoot":"T19","left":218},
+  "276":{"shoot":"T20","left":216},
+  "277":{"shoot":"T19","left":220},
+  "278":{"shoot":"T20","left":218},
+  "279":{"shoot":"T19","left":222},
+  "280":{"shoot":"T20","left":220},
+  "281":{"shoot":"T19","left":224},
+  "282":{"shoot":"T20","left":222},
+  "283":{"shoot":"T19","left":226},
+  "284":{"shoot":"T20","left":224},
+  "285":{"shoot":"T19","left":228},
+  "286":{"shoot":"T20","left":226},
+  "287":{"shoot":"T19","left":230},
+  "288":{"shoot":"T20","left":228},
+  "289":{"shoot":"T19","left":232},
+  "290":{"shoot":"T20","left":230},
+  "291":{"shoot":"T19","left":234},
+  "292":{"shoot":"T20","left":232},
+  "293":{"shoot":"T19","left":236},
+  "294":{"shoot":"T20","left":234},
+  "295":{"shoot":"T19","left":238},
+  "296":{"shoot":"T20","left":236},
+  "297":{"shoot":"T19","left":240},
+  "298":{"shoot":"T20","left":238},
+  "299":{"shoot":"T19","left":242},
+  "300":{"shoot":"T20","left":240},
+  "301":{"shoot":"T19","left":244},
+  "302":{"shoot":"T20","left":242},
+  "303":{"shoot":"T19","left":246},
+  "304":{"shoot":"T20","left":244},
+  "305":{"shoot":"T19","left":248},
+  "306":{"shoot":"T20","left":246},
+  "307":{"shoot":"T19","left":250},
+  "308":{"shoot":"T20","left":248},
+  "309":{"shoot":"T19","left":252},
+  "310":{"shoot":"T20","left":250},
+  "311":{"shoot":"T19","left":254},
+  "312":{"shoot":"T20","left":252},
+  "313":{"shoot":"T19","left":256},
+  "314":{"shoot":"T20","left":254},
+  "315":{"shoot":"T19","left":258},
+  "316":{"shoot":"T20","left":256},
+  "317":{"shoot":"T19","left":260},
+  "318":{"shoot":"T20","left":258},
+  "319":{"shoot":"T19","left":262},
+  "320":{"shoot":"T20","left":260},
+  "321":{"shoot":"T19","left":264},
+  "322":{"shoot":"T20","left":262},
+  "323":{"shoot":"T19","left":266},
+  "324":{"shoot":"T20","left":264},
+  "325":{"shoot":"T19","left":268},
+  "326":{"shoot":"T20","left":266},
+  "327":{"shoot":"T19","left":270},
+  "328":{"shoot":"T20","left":268},
+  "329":{"shoot":"T19","left":272},
+  "330":{"shoot":"T20","left":270},
+    "331":{"shoot":"T19","left":274},
+  "332":{"shoot":"T20","left":272},
+  "333":{"shoot":"T19","left":276},
+  "334":{"shoot":"T20","left":274},
+  "335":{"shoot":"T19","left":278},
+  "336":{"shoot":"T20","left":276},
+  "337":{"shoot":"T19","left":280},
+  "338":{"shoot":"T20","left":278},
+  "339":{"shoot":"T19","left":282},
+  "340":{"shoot":"T20","left":280},
+  "341":{"shoot":"T19","left":284},
+  "342":{"shoot":"T20","left":282},
+  "343":{"shoot":"T19","left":286},
+  "344":{"shoot":"T20","left":284},
+  "345":{"shoot":"T19","left":288},
+  "346":{"shoot":"T20","left":286},
+  "347":{"shoot":"T19","left":290},
+  "348":{"shoot":"T20","left":288},
+  "349":{"shoot":"T19","left":292},
+  "350":{"shoot":"T20","left":290},
+  "351":{"shoot":"T19","left":294},
+  "352":{"shoot":"T20","left":292},
+  "353":{"shoot":"T19","left":296},
+  "354":{"shoot":"T20","left":294},
+  "355":{"shoot":"T19","left":298},
+  "356":{"shoot":"T20","left":296},
+  "357":{"shoot":"T19","left":300},
+  "358":{"shoot":"T20","left":298},
+  "359":{"shoot":"T19","left":302},
+  "360":{"shoot":"T20","left":300},
+  "361":{"shoot":"T19","left":304},
+  "362":{"shoot":"T20","left":302},
+  "363":{"shoot":"T19","left":306},
+  "364":{"shoot":"T20","left":304},
+  "365":{"shoot":"T19","left":308},
+  "366":{"shoot":"T20","left":306},
+  "367":{"shoot":"T19","left":310},
+  "368":{"shoot":"T20","left":308},
+  "369":{"shoot":"T19","left":312},
+  "370":{"shoot":"T20","left":310},
+  "371":{"shoot":"T19","left":314},
+  "372":{"shoot":"T20","left":312},
+  "373":{"shoot":"T19","left":316},
+  "374":{"shoot":"T20","left":314},
+  "375":{"shoot":"T19","left":318},
+  "376":{"shoot":"T20","left":316},
+  "377":{"shoot":"T19","left":320},
+  "378":{"shoot":"T20","left":318},
+  "379":{"shoot":"T19","left":322},
+  "380":{"shoot":"T20","left":320},
+  "381":{"shoot":"T19","left":324},
+  "382":{"shoot":"T20","left":322},
+  "383":{"shoot":"T19","left":326},
+  "384":{"shoot":"T20","left":324},
+  "385":{"shoot":"T19","left":328},
+  "386":{"shoot":"T20","left":326},
+  "387":{"shoot":"T19","left":330},
+  "388":{"shoot":"T20","left":328},
+  "389":{"shoot":"T19","left":332},
+  "390":{"shoot":"T20","left":330},
+  "391":{"shoot":"T19","left":334},
+  "392":{"shoot":"T20","left":332},
+  "393":{"shoot":"T19","left":336},
+  "394":{"shoot":"T20","left":334},
+  "395":{"shoot":"T19","left":338},
+  "396":{"shoot":"T20","left":336},
+  "397":{"shoot":"T19","left":340},
+  "398":{"shoot":"T20","left":338},
+  "399":{"shoot":"T19","left":342},
+  "400":{"shoot":"T20","left":340},
+    "401":{"shoot":"T19","left":344},
+  "402":{"shoot":"T20","left":342},
+  "403":{"shoot":"T19","left":346},
+  "404":{"shoot":"T20","left":344},
+  "405":{"shoot":"T19","left":348},
+  "406":{"shoot":"T20","left":346},
+  "407":{"shoot":"T19","left":350},
+  "408":{"shoot":"T20","left":348},
+  "409":{"shoot":"T19","left":352},
+  "410":{"shoot":"T20","left":350},
+  "411":{"shoot":"T19","left":354},
+  "412":{"shoot":"T20","left":352},
+  "413":{"shoot":"T19","left":356},
+  "414":{"shoot":"T20","left":354},
+  "415":{"shoot":"T19","left":358},
+  "416":{"shoot":"T20","left":356},
+  "417":{"shoot":"T19","left":360},
+  "418":{"shoot":"T20","left":358},
+  "419":{"shoot":"T19","left":362},
+  "420":{"shoot":"T20","left":360},
+  "421":{"shoot":"T19","left":364},
+  "422":{"shoot":"T20","left":362},
+  "423":{"shoot":"T19","left":366},
+  "424":{"shoot":"T20","left":364},
+  "425":{"shoot":"T19","left":368},
+  "426":{"shoot":"T20","left":366},
+  "427":{"shoot":"T19","left":370},
+  "428":{"shoot":"T20","left":368},
+  "429":{"shoot":"T19","left":372},
+  "430":{"shoot":"T20","left":370},
+  "431":{"shoot":"T19","left":374},
+  "432":{"shoot":"T20","left":372},
+  "433":{"shoot":"T19","left":376},
+  "434":{"shoot":"T20","left":374},
+  "435":{"shoot":"T19","left":378},
+  "436":{"shoot":"T20","left":376},
+  "437":{"shoot":"T19","left":380},
+  "438":{"shoot":"T20","left":378},
+  "439":{"shoot":"T19","left":382},
+  "440":{"shoot":"T20","left":380},
+  "441":{"shoot":"T19","left":384},
+  "442":{"shoot":"T20","left":382},
+  "443":{"shoot":"T19","left":386},
+  "444":{"shoot":"T20","left":384},
+  "445":{"shoot":"T19","left":388},
+  "446":{"shoot":"T20","left":386},
+  "447":{"shoot":"T19","left":390},
+  "448":{"shoot":"T20","left":388},
+  "449":{"shoot":"T19","left":392},
+  "450":{"shoot":"T20","left":390},
+  "451":{"shoot":"T19","left":394},
+  "452":{"shoot":"T20","left":392},
+  "453":{"shoot":"T19","left":396},
+  "454":{"shoot":"T20","left":394},
+  "455":{"shoot":"T19","left":398},
+  "456":{"shoot":"T20","left":396},
+  "457":{"shoot":"T19","left":400},
+  "458":{"shoot":"T20","left":398},
+  "459":{"shoot":"T19","left":402},
+  "460":{"shoot":"T20","left":400},
+  "461":{"shoot":"T19","left":404},
+  "462":{"shoot":"T20","left":402},
+  "463":{"shoot":"T19","left":406},
+  "464":{"shoot":"T20","left":404},
+  "465":{"shoot":"T19","left":408},
+  "466":{"shoot":"T20","left":406},
+  "467":{"shoot":"T19","left":410},
+  "468":{"shoot":"T20","left":408},
+  "469":{"shoot":"T19","left":412},
+  "470":{"shoot":"T20","left":410},
+  "471":{"shoot":"T19","left":414},
+  "472":{"shoot":"T20","left":412},
+  "473":{"shoot":"T19","left":416},
+  "474":{"shoot":"T20","left":414},
+  "475":{"shoot":"T19","left":418},
+  "476":{"shoot":"T20","left":416},
+  "477":{"shoot":"T19","left":420},
+  "478":{"shoot":"T20","left":418},
+  "479":{"shoot":"T19","left":422},
+  "480":{"shoot":"T20","left":420},
+  "481":{"shoot":"T19","left":424},
+  "482":{"shoot":"T20","left":422},
+  "483":{"shoot":"T19","left":426},
+  "484":{"shoot":"T20","left":424},
+  "485":{"shoot":"T19","left":428},
+  "486":{"shoot":"T20","left":426},
+  "487":{"shoot":"T19","left":430},
+  "488":{"shoot":"T20","left":428},
+  "489":{"shoot":"T19","left":432},
+  "490":{"shoot":"T20","left":430},
+  "491":{"shoot":"T19","left":434},
+  "492":{"shoot":"T20","left":432},
+  "493":{"shoot":"T19","left":436},
+  "494":{"shoot":"T20","left":434},
+  "495":{"shoot":"T19","left":438},
+  "496":{"shoot":"T20","left":436},
+  "497":{"shoot":"T19","left":440},
+  "498":{"shoot":"T20","left":438},
+  "499":{"shoot":"T19","left":442},
+  "500":{"shoot":"T20","left":440},
+  "501":{"shoot":"T19","left":444}
+};
+  let remaining = null;
 
-  <script>
-    const $ = (id)=>document.getElementById(id);
-    const set = (id,v)=>$(id).textContent = v;
+const $ = (id)=>document.getElementById(id);
+const set = (id,v)=>$(id).textContent = v;
 
-    function clearFlights(){
-      set("d1","—"); set("l1","—");
-      set("d2","—"); set("l2","—");
-      set("d3","—"); set("l3","—");
-    }
+function setStatus(msg, isErr=false){
+  const s = $("status");
+  s.textContent = msg || "";
+  s.classList.toggle("error", !!isErr);
+}
 
-    function clearAll(){
-      $("hit").value = "";
-      set("left","—");
-      clearFlights();
-      $("status").textContent = "";
-      $("status").classList.remove("error");
-    }
+function clearFlights(){
+  set("d1","—"); set("l1","—");
+  set("d2","—"); set("l2","—");
+  set("d3","—"); set("l3","—");
+}
 
-    function calculate(){
-      const start = Number($("startScore").value);
-      const raw = String($("hit").value ?? "").trim();
-      const hit = Number(raw);
+function applySuggestedOuts(rem){
+  clearFlights();
 
-      if(!Number.isFinite(start) || start < 2){
-        $("status").textContent = "Starting score must be 2 or higher.";
-        $("status").classList.add("error");
-        return;
-      }
-      if(raw === "" || !Number.isFinite(hit)) return;
+  if(!Number.isFinite(rem) || rem < 2) return;
 
-      if(hit < 0 || hit > start){
-        $("status").textContent = "Score must be between 0 and the starting score.";
-        $("status").classList.add("error");
-        return;
-      }
+  if(rem > 501){
+    setStatus("Suggestions appear once you reach 501 or below.", false);
+    return;
+  }
 
-      const left = start - hit;
-      set("left", String(left));
+  let cur = rem;
 
-      // simple score-down suggestions (always works)
-      const d1="T20", d2="T20", d3="T20";
-      const l1=Math.max(left-60,0);
-      const l2=Math.max(l1-60,0);
-      const l3=Math.max(l2-60,0);
+  for(let i=1;i<=3;i++){
+    const entry = OUTS[String(cur)];
+    if(!entry) break;
 
-      set("d1", d1); set("l1", String(l1));
-      set("d2", d2); set("l2", String(l2));
-      set("d3", d3); set("l3", String(l3));
+    set("d"+i, entry.shoot);
+    set("l"+i, String(entry.left));
 
-      $("hit").value = "";
-      $("hit").blur();
-      $("status").textContent = "";
-      $("status").classList.remove("error");
-    }
+    cur = entry.left;
 
-    $("scoreForm").addEventListener("submit", (e)=>{
-      e.preventDefault();
-      calculate();
-    });
+    if(cur === 0) break;
+  }
+}
+  function resetGame(){
+  const start = Number($("startScore").value);
 
-    $("clearBtn").addEventListener("click", clearAll);
+  if(!Number.isFinite(start) || start < 2){
+    remaining = null;
+    set("left","—");
+    clearFlights();
+    setStatus("Starting score must be 2 or higher.", true);
+    return;
+  }
 
-    $("set501").addEventListener("click", ()=>{
-      $("startScore").value = 501;
-      clearAll();
-    });
+  remaining = start;
 
-    $("set701").addEventListener("click", ()=>{
-      $("startScore").value = 701;
-      clearAll();
-    });
+  $("startScore").value = String(remaining);
+  set("left", String(remaining));
+  setStatus("");
 
-    window.addEventListener("error", (e)=>{
-      $("status").textContent = "ERROR: " + (e.message || "Unknown");
-      $("status").classList.add("error");
-    });
-  </script>
+  applySuggestedOuts(remaining);
+
+  $("hit").value = "";
+}
+
+function enterScore(){
+  if(remaining === null) resetGame();
+  if(remaining === null) return;
+
+  const raw = String($("hit").value ?? "").trim();
+  const hit = Number(raw);
+
+  if(raw === "" || !Number.isFinite(hit)) return;
+
+  if(hit < 0 || hit > remaining){
+    setStatus("Score must be between 0 and what you have left.", true);
+    return;
+  }
+
+  const newRemaining = remaining - hit;
+
+  // bust safety: cannot go below 0 and cannot leave 1
+  if(newRemaining < 0 || newRemaining === 1){
+    setStatus("BUST — score does not count.", true);
+    $("hit").value = "";
+    $("hit").blur();
+    return;
+  }
+
+  remaining = newRemaining;
+
+  // mirror remaining at the top so next throw subtracts correctly
+  $("startScore").value = String(remaining);
+
+  set("left", String(remaining));
+  setStatus("");
+
+  applySuggestedOuts(remaining);
+
+  $("hit").value = "";
+  $("hit").blur();
+}
+  $("scoreForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  enterScore();
+});
+
+$("clearBtn").addEventListener("click", ()=>{
+  $("hit").value = "";
+  setStatus("");
+});
+
+$("resetBtn").addEventListener("click", resetGame);
+
+$("set501").addEventListener("click", ()=>{
+  $("startScore").value = 501;
+  resetGame();
+});
+
+$("set701").addEventListener("click", ()=>{
+  $("startScore").value = 701;
+  resetGame();
+});
+
+$("startScore").addEventListener("change", resetGame);
+
+window.addEventListener("error", (e)=>{
+  setStatus("ERROR: " + (e.message || "Unknown"), true);
+});
+  // initialize app
+resetGame();
+</script>
 </body>
 </html>
