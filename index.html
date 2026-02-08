@@ -1,23 +1,183 @@
-Checkout Assistant
-Build 2026-02-08 02:26:48
-STARTING SCORE
-Type 701 / 501 / any starting number.
-SCORE YOU JUST HIT
-Enter ✓
-Clear
-After Enter ✓, this box clears automatically.
-WHAT YOU HAVE LEFT
-—
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Darts Checkout</title>
 
-DART 1
-—
-LEFT AFTER DART 1
-—
-DART 2
-—
-LEFT AFTER DART 2
-—
-DART 3
-—
-LEFT AFTER DART 3
-—
+  <style>
+    body {
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#0b0b0b;
+      color:white;
+      text-align:center;
+    }
+
+    .container {
+      padding:20px;
+      max-width:900px;
+      margin:auto;
+    }
+
+    h1 { margin-bottom:10px; }
+
+    .box {
+      background:#111;
+      border:1px solid #2aff2a;
+      border-radius:12px;
+      padding:15px;
+      margin-bottom:15px;
+    }
+
+    .label {
+      font-size:12px;
+      letter-spacing:1px;
+      color:#aaa;
+      margin-bottom:6px;
+    }
+
+    .big-number {
+      font-size:48px;
+      font-weight:bold;
+      color:#57ff3f;
+    }
+
+    input {
+      font-size:48px;
+      text-align:center;
+      width:100%;
+      background:none;
+      border:none;
+      color:#57ff3f;
+      outline:none;
+    }
+
+    button {
+      margin-top:10px;
+      padding:10px 16px;
+      font-size:18px;
+      border-radius:10px;
+      border:none;
+      background:#2aff2a;
+      color:black;
+      font-weight:bold;
+    }
+
+    .flights {
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:15px;
+      margin-top:20px;
+    }
+
+    .flight {
+      background:#111;
+      border:1px solid #2aff2a;
+      border-radius:20px;
+      padding:15px;
+    }
+
+    .dartLabel {
+      font-size:22px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .shot {
+      font-size:42px;
+      background:#fff;
+      color:black;
+      border-radius:10px;
+      padding:8px;
+      margin-bottom:6px;
+    }
+
+    .leave {
+      font-size:36px;
+      color:#57ff3f;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Darts Checkout</h1>
+
+  <div class="box">
+    <div class="label">Starting Score</div>
+    <input id="startScore" value="501" type="number"/>
+  </div>
+
+  <div class="box">
+    <div class="label">Score You Just Hit</div>
+    <input id="scored" type="number"/>
+    <button onclick="calculate()">Enter ✓</button>
+  </div>
+
+  <div class="box">
+    <div class="label">What You Have Left</div>
+    <div class="big-number" id="left">—</div>
+  </div>
+
+  <div class="flights">
+
+    <div class="flight">
+      <div class="dartLabel">Dart 1</div>
+      <div class="shot" id="d1">—</div>
+      <div class="leave" id="l1">—</div>
+    </div>
+
+    <div class="flight">
+      <div class="dartLabel">Dart 2</div>
+      <div class="shot" id="d2">—</div>
+      <div class="leave" id="l2">—</div>
+    </div>
+
+    <div class="flight">
+      <div class="dartLabel">Dart 3</div>
+      <div class="shot" id="d3">—</div>
+      <div class="leave" id="l3">—</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function calculate() {
+
+  let start = Number(document.getElementById("startScore").value);
+  let scored = Number(document.getElementById("scored").value);
+
+  if (!start || scored === "") return;
+
+  let left = start - scored;
+
+  document.getElementById("left").innerText = left;
+  document.getElementById("startScore").value = left;
+  document.getElementById("scored").value = "";
+
+  // basic scoring logic (we will plug Excel logic next)
+  let d1="T20", d2="T20", d3="T20";
+  let l1=Math.max(left-60,0);
+  let l2=Math.max(l1-60,0);
+  let l3=Math.max(l2-60,0);
+
+  document.getElementById("d1").innerText=d1;
+  document.getElementById("l1").innerText=l1;
+
+  document.getElementById("d2").innerText=d2;
+  document.getElementById("l2").innerText=l2;
+
+  document.getElementById("d3").innerText=d3;
+  document.getElementById("l3").innerText=l3;
+}
+
+</script>
+
+</body>
+</html>
