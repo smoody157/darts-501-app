@@ -3,181 +3,555 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Darts Checkout</title>
+  <title>The Dart Room</title>
 
   <style>
-    body {
+    :root{
+      --bg0:#050505;
+      --bg1:#0a0a0a;
+      --panelA: rgba(255,255,255,.06);
+      --panelB: rgba(0,0,0,.55);
+      --glass: rgba(255,255,255,.08);
+      --border: rgba(87,255,63,.32);
+      --border2: rgba(255,255,255,.10);
+      --green:#57ff3f;
+      --green2:#2ad80f;
+      --text:#f3f3f3;
+      --muted: rgba(243,243,243,.62);
+      --shadow: 0 22px 60px rgba(0,0,0,.55);
+      --shadow2: 0 10px 26px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
       margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:#0b0b0b;
-      color:white;
-      text-align:center;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, Helvetica, sans-serif;
+      font-weight: 900; /* bold everything */
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 50% -10%, rgba(87,255,63,.16), transparent 64%),
+        radial-gradient(520px 520px at 50% 18%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(420px 420px at 50% 18%, rgba(0,0,0,.65), transparent 62%),
+        radial-gradient(260px 260px at 50% 18%, rgba(87,255,63,.10), transparent 65%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
+      overflow-x:hidden;
     }
 
-    .container {
-      padding:20px;
-      max-width:900px;
-      margin:auto;
+    /* subtle animated “neon haze” */
+    .haze{
+      position:fixed;
+      inset:-120px;
+      pointer-events:none;
+      background:
+        radial-gradient(closest-side at 30% 30%, rgba(87,255,63,.10), transparent 60%),
+        radial-gradient(closest-side at 70% 60%, rgba(87,255,63,.06), transparent 60%),
+        radial-gradient(closest-side at 55% 85%, rgba(255,255,255,.04), transparent 60%);
+      filter: blur(28px);
+      opacity:.9;
+      animation: drift 9s ease-in-out infinite;
+    }
+    @keyframes drift{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(14px,-10px,0) scale(1.03); }
     }
 
-    h1 { margin-bottom:10px; }
-
-    .box {
-      background:#111;
-      border:1px solid #2aff2a;
-      border-radius:12px;
-      padding:15px;
-      margin-bottom:15px;
+    .wrap{
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 18px 14px 42px;
+      position:relative;
+      z-index:1;
     }
 
-    .label {
-      font-size:12px;
-      letter-spacing:1px;
-      color:#aaa;
-      margin-bottom:6px;
+    /* ===== Header ===== */
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 14px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .header:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(500px 120px at 30% 10%, rgba(87,255,63,.14), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      position:relative;
+    }
+    .logo{
+      width:46px;height:46px;
+      border-radius: 14px;
+      border: 1px solid rgba(87,255,63,.45);
+      background:
+        radial-gradient(circle at 30% 30%, rgba(87,255,63,.40), transparent 58%),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,.14), transparent 62%),
+        linear-gradient(180deg, rgba(87,255,63,.12), rgba(0,0,0,0));
+      box-shadow: 0 10px 24px rgba(0,0,0,.55), inset 0 -2px 0 rgba(0,0,0,.35);
+    }
+    .titleBlock{ min-width:0; }
+    .title{
+      margin:0;
+      font-size: 30px;
+      letter-spacing: .8px;
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .subtitle{
+      margin-top:4px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      font-weight: 900;
+    }
+    .chip{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(87,255,63,.38);
+      background: rgba(87,255,63,.10);
+      color: var(--text);
+      font-size: 14px;
+      white-space:nowrap;
+      position:relative;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,.25);
     }
 
-    .big-number {
-      font-size:48px;
-      font-weight:bold;
-      color:#57ff3f;
-    }
-
-    input {
-      font-size:48px;
-      text-align:center;
-      width:100%;
-      background:none;
-      border:none;
-      color:#57ff3f;
-      outline:none;
-    }
-
-    button {
-      margin-top:10px;
-      padding:10px 16px;
-      font-size:18px;
-      border-radius:10px;
-      border:none;
-      background:#2aff2a;
-      color:black;
-      font-weight:bold;
-    }
-
-    .flights {
+    /* ===== Layout ===== */
+    .board{
+      margin-top: 16px;
       display:grid;
-      grid-template-columns: repeat(3,1fr);
-      gap:15px;
-      margin-top:20px;
+      grid-template-columns: 330px 1fr;
+      gap: 16px;
+      align-items:start;
     }
 
-    .flight {
-      background:#111;
-      border:1px solid #2aff2a;
-      border-radius:20px;
-      padding:15px;
+    .card{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.045) 0%, rgba(255,255,255,.015) 100%);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(900px 180px at 50% -20%, rgba(255,255,255,.08), transparent 55%);
+      pointer-events:none;
+      opacity:.55;
+    }
+    .stack{ display:flex; flex-direction:column; gap:14px; position:relative; z-index:1; }
+
+    .box{
+      text-align:center;
+      border-radius: 16px;
+      padding: 12px 12px 14px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.64), rgba(0,0,0,.36));
+      box-shadow: var(--shadow2), inset 0 1px 0 rgba(255,255,255,.05);
+      position:relative;
+      overflow:hidden;
+    }
+    .box:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(420px 120px at 50% 0%, rgba(87,255,63,.12), transparent 70%);
+      opacity:.9;
+      pointer-events:none;
     }
 
-    .dartLabel {
-      font-size:22px;
-      font-weight:900;
-      margin-bottom:8px;
+    .label{
+      position:relative;
+      font-size: 12px;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      color: rgba(243,243,243,.70);
+      margin-bottom: 10px;
+      z-index:1;
+    }
+    .bigNumber{
+      position:relative;
+      font-size: 58px;
+      line-height:1;
+      color: var(--green);
+      text-align:center;
+      text-shadow: 0 0 22px rgba(87,255,63,.16);
+      z-index:1;
     }
 
-    .shot {
-      font-size:42px;
-      background:#fff;
-      color:black;
-      border-radius:10px;
-      padding:8px;
-      margin-bottom:6px;
+    input.score{
+      position:relative;
+      width:100%;
+      font-size:58px;
+      font-weight: 1000;
+      text-align:center; /* center starting number */
+      color: var(--green);
+      background: transparent;
+      border: 0;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      appearance: textfield;
+      z-index:1;
+      text-shadow: 0 0 22px rgba(87,255,63,.14);
+    }
+    input.score::-webkit-outer-spin-button,
+    input.score::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+    input.score::placeholder{ color: rgba(243,243,243,.14); opacity:1; }
+
+    .btnRow{
+      position:relative;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+      z-index:1;
+    }
+    .btn{
+      padding: 12px 16px;
+      font-size: 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,.22);
+      transform: translateZ(0);
+    }
+    .btn.primary{
+      border: 1px solid rgba(87,255,63,.46);
+      background: rgba(87,255,63,.16);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .hint{
+      position:relative;
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align:center;
+      line-height:1.35;
+      z-index:1;
     }
 
-    .leave {
-      font-size:36px;
-      color:#57ff3f;
+    .status{
+      position:relative;
+      margin-top: 10px;
+      min-height: 18px;
+      font-size: 14px;
+      color: rgba(243,243,243,.72);
+      text-align:center;
+      z-index:1;
+    }
+    .status.error{ color:#ffb3b3; }
+
+    /* ===== Flights ===== */
+    .flights{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .flight{
+      background: linear-gradient(180deg, rgba(87,255,63,.10), rgba(255,255,255,.01));
+      border: 1px solid rgba(87,255,63,.30);
+      border-radius: 20px;
+      padding: 16px 14px 18px;
+      min-height: 250px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.05);
+      clip-path: polygon(
+        50% 0%,
+        96% 16%,
+        88% 34%,
+        100% 56%,
+        76% 62%,
+        70% 100%,
+        50% 80%,
+        30% 100%,
+        24% 62%,
+        0% 56%,
+        12% 34%,
+        4% 16%
+      );
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .flight:before{
+      content:"";
+      position:absolute;
+      inset:-20px;
+      background:
+        radial-gradient(420px 160px at 50% 8%, rgba(255,255,255,.10), transparent 60%),
+        radial-gradient(280px 120px at 50% 32%, rgba(87,255,63,.10), transparent 65%);
+      opacity:.75;
+      pointer-events:none;
+    }
+
+    /* only these labels are bigger */
+    .dartLabel{
+      position:relative;
+      font-size: 28px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 6px 0 12px;
+      color: rgba(243,243,243,.94);
+      text-shadow: 0 10px 30px rgba(0,0,0,.35);
+      z-index:1;
+    }
+
+    .shot{
+      position:relative;
+      width:100%;
+      max-width: 250px;
+      font-size: 58px;
+      border-radius: 16px;
+      background: #f3f3f3;
+      color: #111;
+      padding: 14px 12px;
+      margin-bottom: 12px;
+      box-shadow:
+        0 14px 30px rgba(0,0,0,.35),
+        inset 0 -3px 0 rgba(0,0,0,.12),
+        inset 0 2px 0 rgba(255,255,255,.7);
+      z-index:1;
+    }
+
+    .subLabel{
+      position:relative;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(243,243,243,.72);
+      margin: 0 0 8px;
+      z-index:1;
+    }
+
+    .leave{
+      position:relative;
+      width:100%;
+      max-width: 250px;
+      font-size: 46px;
+      color: var(--green);
+      border-radius: 16px;
+      padding: 12px 12px;
+      border: 1px solid rgba(87,255,63,.38);
+      background: rgba(87,255,63,.12);
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,.22);
+      z-index:1;
+    }
+
+    @media (max-width: 980px){
+      .board{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 920px){
+      .flights{ grid-template-columns: 1fr; }
+      .flight{ min-height: 220px; }
+      .shot{ font-size: 56px; }
     }
   </style>
 </head>
 
 <body>
+  <div class="haze" aria-hidden="true"></div>
 
-<div class="container">
+  <div class="wrap">
 
-  <h1>Darts Checkout</h1>
-
-  <div class="box">
-    <div class="label">Starting Score</div>
-    <input id="startScore" value="501" type="number"/>
-  </div>
-
-  <div class="box">
-    <div class="label">Score You Just Hit</div>
-    <input id="scored" type="number"/>
-    <button onclick="calculate()">Enter ✓</button>
-  </div>
-
-  <div class="box">
-    <div class="label">What You Have Left</div>
-    <div class="big-number" id="left">—</div>
-  </div>
-
-  <div class="flights">
-
-    <div class="flight">
-      <div class="dartLabel">Dart 1</div>
-      <div class="shot" id="d1">—</div>
-      <div class="leave" id="l1">—</div>
+    <div class="header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="titleBlock">
+          <h1 class="title">The Dart Room</h1>
+          <div class="subtitle">Checkout helper • fast & clean</div>
+        </div>
+      </div>
+      <div class="chip">501 / 701 ready</div>
     </div>
 
-    <div class="flight">
-      <div class="dartLabel">Dart 2</div>
-      <div class="shot" id="d2">—</div>
-      <div class="leave" id="l2">—</div>
-    </div>
+    <div class="board">
 
-    <div class="flight">
-      <div class="dartLabel">Dart 3</div>
-      <div class="shot" id="d3">—</div>
-      <div class="leave" id="l3">—</div>
-    </div>
+      <!-- LEFT -->
+      <div class="card">
+        <div class="stack">
 
+          <div class="box">
+            <div class="label">Starting Score</div>
+            <input id="startScore" class="score" value="501" type="number" inputmode="numeric" />
+            <div class="hint">Default is 501. Change to 701 anytime.</div>
+            <div class="btnRow">
+              <button class="btn" id="set501" type="button">Set 501</button>
+              <button class="btn" id="set701" type="button">Set 701</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="label">Score you just hit</div>
+
+            <!-- form makes iPhone/keyboard submit reliable -->
+            <form id="scoreForm" autocomplete="off">
+              <input id="scored" class="score" type="number" inputmode="numeric" placeholder="" />
+              <div class="btnRow">
+                <button class="btn primary" id="enterBtn" type="submit">Enter ✓</button>
+                <button class="btn" id="clearBtn" type="button">Clear</button>
+              </div>
+            </form>
+
+            <div class="hint">Enter updates everything, then clears this box.</div>
+          </div>
+
+          <div class="box">
+            <div class="label">What you have left</div>
+            <div class="bigNumber" id="left">—</div>
+          </div>
+
+          <div class="status" id="status"></div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card">
+        <div class="flights">
+          <div class="flight">
+            <div class="dartLabel">Dart 1</div>
+            <div class="shot" id="d1">—</div>
+            <div class="subLabel">Left after Dart 1</div>
+            <div class="leave" id="l1">—</div>
+          </div>
+
+          <div class="flight">
+            <div class="dartLabel">Dart 2</div>
+            <div class="shot" id="d2">—</div>
+            <div class="subLabel">Left after Dart 2</div>
+            <div class="leave" id="l2">—</div>
+          </div>
+
+          <div class="flight">
+            <div class="dartLabel">Dart 3</div>
+            <div class="shot" id="d3">—</div>
+            <div class="subLabel">Left after Dart 3</div>
+            <div class="leave" id="l3">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-</div>
+  <script>
+    function $(id){ return document.getElementById(id); }
+    function setText(id, v){ $(id).textContent = v; }
 
-<script>
+    function clearFlights(){
+      setText("d1","—"); setText("l1","—");
+      setText("d2","—"); setText("l2","—");
+      setText("d3","—"); setText("l3","—");
+    }
 
-function calculate() {
+    function clearAll(){
+      $("scored").value = "";
+      setText("left","—");
+      clearFlights();
+      $("status").textContent = "";
+      $("status").classList.remove("error");
+    }
 
-  let start = Number(document.getElementById("startScore").value);
-  let scored = Number(document.getElementById("scored").value);
+    // This is the SAME functional behavior you said works:
+    // left = starting - scoreHit
+    // flights = simple score-down suggestions (T20)
+    function calculate(){
+      const start = Number($("startScore").value);
+      const scoredRaw = String($("scored").value ?? "").trim();
+      const scored = Number(scoredRaw);
 
-  if (!start || scored === "") return;
+      if(!Number.isFinite(start) || start < 2){
+        $("status").textContent = "Starting score must be 2 or higher.";
+        $("status").classList.add("error");
+        return;
+      }
 
-  let left = start - scored;
+      if(scoredRaw === "" || !Number.isFinite(scored)){
+        // no input: do nothing
+        return;
+      }
 
-  document.getElementById("left").innerText = left;
-  document.getElementById("startScore").value = left;
-  document.getElementById("scored").value = "";
+      if(scored < 0 || scored > start){
+        $("status").textContent = "Score must be between 0 and the starting score.";
+        $("status").classList.add("error");
+        return;
+      }
 
-  // basic scoring logic (we will plug Excel logic next)
-  let d1="T20", d2="T20", d3="T20";
-  let l1=Math.max(left-60,0);
-  let l2=Math.max(l1-60,0);
-  let l3=Math.max(l2-60,0);
+      const left = start - scored;
 
-  document.getElementById("d1").innerText=d1;
-  document.getElementById("l1").innerText=l1;
+      setText("left", left);
+      $("startScore").value = left;   // your requested behavior
+      $("scored").value = "";
+      $("scored").blur();
 
-  document.getElementById("d2").innerText=d2;
-  document.getElementById("l2").innerText=l2;
+      // simple scoring-down (fast + always works)
+      const d1="T20", d2="T20", d3="T20";
+      const l1=Math.max(left-60,0);
+      const l2=Math.max(l1-60,0);
+      const l3=Math.max(l2-60,0);
 
-  document.getElementById("d3").innerText=d3;
-  document.getElementById("l3").innerText=l3;
-}
+      setText("d1", d1); setText("l1", l1);
+      setText("d2", d2); setText("l2", l2);
+      setText("d3", d3); setText("l3", l3);
 
-</script>
+      $("status").textContent = "";
+      $("status").classList.remove("error");
+    }
 
+    // Reliable iPhone behavior: submit fires every time
+    $("scoreForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      calculate();
+    });
+
+    $("clearBtn").addEventListener("click", clearAll);
+
+    $("set501").addEventListener("click", ()=>{
+      $("startScore").value = 501;
+      clearAll();
+    });
+    $("set701").addEventListener("click", ()=>{
+      $("startScore").value = 701;
+      clearAll();
+    });
+
+    // Safety: show JS errors on screen
+    window.addEventListener("error", (e)=>{
+      const st = $("status");
+      st.textContent = "ERROR: " + (e.message || "Unknown");
+      st.classList.add("error");
+    });
+  </script>
 </body>
 </html>
