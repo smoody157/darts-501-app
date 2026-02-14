@@ -2,121 +2,336 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-<title>01 OUT TRAINER - STEVE'S ELITE EDITION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<title>01 OUT TRAINER - STEVE'S MASTER BUILD</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
 
 :root {
-  --bg: #010206;
-  --cobalt: #0a63ff;
-  --cyan: #00f2ff;
-  --hot-pink: #ff007a;
-  --glass-stroke: rgba(255,255,255,0.2);
-  --glass-fill: rgba(255,255,255,0.03);
+  /* Core Colors */
+  --bg-base: #030408;
+  --bg-surface: #0a0d14;
+  --cobalt-primary: #0a63ff;
+  --cobalt-glow: rgba(10, 99, 255, 0.8);
+  --cyan-bright: #00f2ff;
+  --pink-alert: #ff007a;
+  
+  /* Glass & Light Variables */
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.8);
+  --panel-bg: rgba(15, 20, 30, 0.6);
+  
+  /* Depths */
+  --shadow-outer: 15px 15px 35px var(--glass-shadow), -10px -10px 25px rgba(255, 255, 255, 0.03);
+  --shadow-inner: inset 10px 10px 20px var(--glass-shadow), inset -5px -5px 15px rgba(255, 255, 255, 0.05);
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  -webkit-tap-highlight-color: transparent; 
+}
 
 body { 
-  margin: 0; padding: 0; background: var(--bg); color: #fff;
-  font-family: 'Orbitron', sans-serif; height: 100vh; width: 100vw; overflow: hidden;
+  background-color: var(--bg-base); 
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif; 
+  height: 100vh; 
+  width: 100vw; 
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(10, 99, 255, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(255, 0, 122, 0.1) 0px, transparent 50%);
+    radial-gradient(circle at 15% 20%, rgba(10, 99, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%),
+    linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
 }
 
-#landscape-lock {
-  display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
-  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+/* App Container - Responsive without locking rotation */
+.app-container { 
+  display: flex; 
+  flex-direction: column; 
+  height: 96vh; 
+  width: 96vw;
+  max-width: 1400px;
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 2vh 2vw;
 }
-@media (orientation: portrait) { #landscape-lock { display: flex; } .app-container { display: none; } }
 
-.app-container { display: flex; flex-direction: column; height: 100vh; padding: 2vh; }
-
-/* Header with Heavy Neon Glow */
+/* High Fidelity Header */
 .header-ui {
-  height: 12vh; display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--glass-stroke); border-radius: 20px;
+  flex: 0 0 10vh;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-  box-shadow: 0 0 30px rgba(0,0,0,0.5), 0 0 15px rgba(10,99,255,0.3);
-  margin-bottom: 2vh;
-}
-.header-ui h1 { 
-  margin: 0; font-size: 5vh; letter-spacing: 15px; font-weight: 900;
-  color: #fff; text-shadow: 0 0 10px #fff, 0 0 20px var(--cobalt), 0 0 40px var(--cobalt);
-}
-
-/* 3D Glass Dashboard */
-.main-stage { flex: 1; display: flex; gap: 2vw; }
-
-.left-panel { width: 340px; display: flex; flex-direction: column; gap: 2vh; }
-
-.glass-card {
-  flex: 1; position: relative; border-radius: 30px;
-  background: var(--glass-fill); backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,0.3);
-  border-left: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 20px 20px 50px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.05);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-bottom: 2px solid var(--glass-border);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+  position: relative;
   overflow: hidden;
 }
 
-.label-text { font-family: 'Rajdhani'; font-size: 1.8vh; color: var(--cyan); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 1vh; text-shadow: 0 0 10px var(--cyan); }
-.score-main { font-size: 10vh; font-weight: 900; color: #fff; text-shadow: 0 0 30px var(--cobalt); line-height: 1; }
+.header-ui::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-bright), transparent);
+  opacity: 0.5;
+}
 
+.header-ui h1 { 
+  font-size: clamp(2rem, 4vh, 4rem); 
+  letter-spacing: 1vw; 
+  font-weight: 900;
+  color: #ffffff; 
+  text-transform: uppercase;
+  text-shadow: 
+    0 0 10px rgba(255,255,255,0.5), 
+    0 0 20px var(--cobalt-primary), 
+    0 0 40px var(--cobalt-primary);
+}
+
+/* Main Layout Grid */
+.main-stage { 
+  flex: 1; 
+  display: flex; 
+  flex-wrap: wrap;
+  gap: 3vw; 
+  padding: 3vh 1vw; 
+  perspective: 1500px;
+}
+
+/* Left Stack: Controls */
+.left-panel { 
+  flex: 1; 
+  min-width: 300px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 3vh; 
+}
+
+.glass-card {
+  flex: 1; 
+  position: relative; 
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.6) 100%);
+  border-top: 1px solid var(--glass-highlight);
+  border-left: 1px solid var(--glass-highlight);
+  box-shadow: var(--shadow-outer);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  padding: 2vh;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 23px;
+  box-shadow: var(--shadow-inner);
+  pointer-events: none;
+}
+
+.label-text { 
+  font-family: 'Rajdhani', sans-serif; 
+  font-size: clamp(1rem, 2vh, 1.5rem); 
+  color: var(--cyan-bright); 
+  letter-spacing: 6px; 
+  text-transform: uppercase; 
+  margin-bottom: 1vh; 
+  text-shadow: 0 0 15px var(--cyan-bright); 
+  z-index: 2;
+}
+
+.score-main { 
+  font-size: clamp(4rem, 10vh, 8rem); 
+  font-weight: 900; 
+  color: #ffffff; 
+  text-shadow: 0 0 40px var(--cobalt-primary), 0 0 80px var(--cobalt-primary); 
+  line-height: 1; 
+  z-index: 2;
+}
+
+/* Beautiful Inputs */
 input.neon-input {
-  width: 80%; background: rgba(0,0,0,0.6); border: 2px solid var(--cobalt); 
-  border-radius: 15px; font-size: 5vh; color: #fff; text-align: center;
-  font-family: 'Orbitron'; outline: none; box-shadow: 0 0 15px rgba(10,99,255,0.4);
+  width: 85%; 
+  background: rgba(0,0,0,0.8); 
+  border: 2px solid var(--cobalt-primary); 
+  border-radius: 15px; 
+  font-size: clamp(2rem, 5vh, 4rem); 
+  color: #ffffff; 
+  text-align: center;
+  font-family: 'Orbitron', sans-serif; 
+  outline: none; 
+  box-shadow: inset 0 0 20px rgba(10,99,255,0.5), 0 0 15px rgba(10,99,255,0.3);
+  padding: 1vh;
+  margin-bottom: 2vh;
+  z-index: 2;
+  transition: all 0.3s ease;
 }
 
-.btn-container { display: flex; gap: 10px; width: 80%; margin-top: 10px; }
+input.neon-input:focus {
+  border-color: var(--cyan-bright);
+  box-shadow: inset 0 0 30px rgba(0,242,255,0.6), 0 0 25px rgba(0,242,255,0.4);
+}
+
+/* Hyper-detailed Buttons */
+.btn-container { 
+  display: flex; 
+  gap: 15px; 
+  width: 85%; 
+  z-index: 2;
+}
+
 .btn-action {
-  flex: 1; padding: 1.5vh; border-radius: 12px; border: 1px solid var(--glass-stroke);
-  background: linear-gradient(145deg, #111, #000); color: #fff; font-weight: 900;
-  cursor: pointer; transition: 0.2s; font-family: 'Rajdhani'; font-size: 2vh; letter-spacing: 2px;
+  flex: 1; 
+  padding: 2vh; 
+  border-radius: 15px; 
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(145deg, #1a1c23, #050608); 
+  color: #a0aab5; 
+  font-weight: 900;
+  cursor: pointer; 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+  font-family: 'Rajdhani', sans-serif; 
+  font-size: clamp(1rem, 2vh, 1.5rem); 
+  letter-spacing: 3px;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.1);
 }
-.btn-apply { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3); width: 80%; margin-top: 10px; }
-.btn-action:active { transform: scale(0.95); box-shadow: 0 0 25px var(--hot-pink); border-color: var(--hot-pink); }
 
-/* The Crystal Ovals */
-.right-stage { flex: 1; display: flex; gap: 1.5vw; }
+.btn-action:hover { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+
+.btn-apply { 
+  border-color: var(--cyan-bright); 
+  color: #ffffff;
+  background: linear-gradient(145deg, rgba(0, 242, 255, 0.1), rgba(0,0,0,0.9));
+  box-shadow: 0 0 20px rgba(0,242,255,0.2), inset 1px 1px 5px rgba(0,242,255,0.5); 
+  width: 85%; 
+  margin-top: 1vh; 
+}
+
+.btn-apply:active { 
+  transform: translateY(4px) scale(0.98); 
+  box-shadow: 0 0 40px var(--cyan-bright); 
+  background: var(--cyan-bright);
+  color: #000;
+}
+
+/* Right Stack: Crystal Ovals */
+.right-stage { 
+  flex: 2; 
+  min-width: 300px;
+  display: flex; 
+  flex-direction: row; 
+  gap: 2vw; 
+}
+
+@media (max-width: 768px) {
+  .right-stage { flex-direction: column; }
+}
+
 .crystal-housing {
-  flex: 1; border-radius: 200px;
-  background: linear-gradient(160deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.4) 100%);
-  border: 1px solid var(--glass-stroke);
-  display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
-  box-shadow: 10px 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(10,99,255,0.1);
+  flex: 1; 
+  border-radius: 120px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 40%, rgba(0,0,0,0.8) 100%);
+  border: 1px solid var(--glass-highlight);
+  border-right: 1px solid rgba(0,0,0,0.5);
+  border-bottom: 1px solid rgba(0,0,0,0.5);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: space-evenly;
+  box-shadow: var(--shadow-outer);
+  position: relative;
+  overflow: hidden;
+  padding: 2vh 0;
+}
+
+.crystal-housing::before {
+  content: '';
+  position: absolute;
+  top: -10%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
 .crystal-orb {
-  width: 12vw; height: 12vw; border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #333 0%, #000 70%);
-  border: 5px solid #000;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 4vw; font-weight: 900; position: relative;
-  box-shadow: 0 0 50px rgba(10,99,255,0.6), inset 0 10px 20px rgba(255,255,255,0.2);
+  width: clamp(80px, 12vw, 150px); 
+  height: clamp(80px, 12vw, 150px); 
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2a2d35 0%, #000000 70%);
+  border: 4px solid #000;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: clamp(1.5rem, 3.5vw, 3rem); 
+  font-weight: 900; 
+  position: relative;
+  box-shadow: 
+    0 15px 35px rgba(0,0,0,0.9),
+    0 0 50px rgba(10,99,255,0.4), 
+    inset 0 10px 20px rgba(255,255,255,0.15),
+    inset 0 -10px 20px rgba(0,0,0,0.9);
+  z-index: 2;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
+
 .crystal-orb::after {
-  content: ''; position: absolute; top: 15%; left: 15%; width: 30%; height: 20%;
-  background: rgba(255,255,255,0.2); border-radius: 50%; filter: blur(5px);
+  content: ''; 
+  position: absolute; 
+  top: 10%; 
+  left: 15%; 
+  width: 40%; 
+  height: 25%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent); 
+  border-radius: 50%; 
+  filter: blur(2px);
+  transform: rotate(-15deg);
 }
 
-.leave-text { font-size: 5vw; font-weight: 900; color: var(--hot-pink); text-shadow: 0 0 20px var(--hot-pink); }
+.leave-text { 
+  font-size: clamp(2rem, 4vw, 4rem); 
+  font-weight: 900; 
+  color: var(--pink-alert); 
+  text-shadow: 0 0 25px var(--pink-alert), 0 0 50px rgba(255, 0, 122, 0.5); 
+  z-index: 2;
+}
 
-.footer { height: 6vh; display: flex; align-items: center; justify-content: center; font-size: 1.2vh; color: #444; letter-spacing: 4px; }
+/* Footer */
+.footer { 
+  flex: 0 0 6vh; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.8rem, 1.5vh, 1.2rem); 
+  color: rgba(255,255,255,0.3); 
+  letter-spacing: 5px; 
+  border-top: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.3);
+  border-radius: 0 0 20px 20px;
+}
 </style>
 </head>
 <body>
 
-<div id="landscape-lock">
-  <h1 style="color:var(--hot-pink); text-shadow: 0 0 20px var(--hot-pink);">LANDSCAPE MODE ONLY</h1>
-  <p>STEVE'S GRAPHIC DESIGNS ELITE HUD</p>
-</div>
-
 <div class="app-container">
-  <div class="header-ui"><h1>01 OUT TRAINER</h1></div>
+  <div class="header-ui">
+    <h1>01 OUT TRAINER</h1>
+  </div>
   
   <div class="main-stage">
     <div class="left-panel">
@@ -128,9 +343,10 @@ input.neon-input {
           <button class="btn-action" onclick="playClick();resetTo(701)">701</button>
         </div>
       </div>
+      
       <div class="glass-card">
         <div class="label-text">Enter Hit</div>
-        <input type="number" id="hit" class="neon-input" inputmode="numeric" placeholder="000">
+        <input type="number" id="hit" class="neon-input" inputmode="numeric" placeholder="---">
         <button class="btn-action btn-apply" onclick="playClick();enterScore()">APPLY TURN</button>
       </div>
     </div>
@@ -154,10 +370,11 @@ input.neon-input {
     </div>
   </div>
   
-  <div class="footer">ENGINE: RLHF-ALAN-V8 // STEVE_EDITION // HIGH_FIDELITY_LOCKED</div>
+  <div class="footer">STEVE'S MASTER BUILD // UNLOCKED ROTATION // FIXED MATH</div>
 </div>
 
 <script>
+// Core Math Logic - Untouched
 let rem = 701;
 const $ = (id) => document.getElementById(id);
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -169,33 +386,46 @@ function playClick() {
   osc.frequency.setValueAtTime(200, audioCtx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.1);
   g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+  osc.connect(g); 
+  g.connect(audioCtx.destination);
+  osc.start(); 
+  osc.stop(audioCtx.currentTime + 0.1);
 }
 
-function resetTo(v) { rem = v; $('bal').textContent = rem; update(); }
+function resetTo(v) { 
+  rem = v; 
+  $('bal').textContent = rem; 
+  update(); 
+}
 
 function enterScore() {
   const v = parseInt($('hit').value) || 0;
-  // STATIC MATH PROTECTION
+  
+  // Exact Math Validation
   if (rem - v >= 0 && rem - v !== 1) { 
     rem -= v; 
     $('bal').textContent = rem; 
     update(); 
   } else {
-    $('bal').style.textShadow = "0 0 30px #ff007a";
-    setTimeout(() => { $('bal').style.textShadow = "0 0 30px var(--cobalt)"; }, 400);
+    // Visual error feedback instead of altering math
+    $('bal').style.textShadow = "0 0 30px var(--pink-alert)";
+    setTimeout(() => { 
+      $('bal').style.textShadow = "0 0 40px var(--cobalt-primary), 0 0 80px var(--cobalt-primary)"; 
+    }, 400);
   }
+  
   $('hit').value = '';
   $('hit').focus();
 }
 
 function update() {
-  // STEVE'S SPECIFIC MATH: DO NOT MODIFY
+  // Steve's Fixed Target Deductions
   $('l1').textContent = rem - 60;
   $('l2').textContent = rem - 120;
   $('l3').textContent = rem - 180;
 }
+
+// Initialize on load
 update();
 </script>
 </body>
