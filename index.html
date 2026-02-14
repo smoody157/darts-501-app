@@ -13,16 +13,17 @@
   --glass-layer: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
 }
 
-/* HARD LANDSCAPE LOCK */
+/* HARD LANDSCAPE LOCK & FILL */
 @media screen and (orientation: portrait) {
-  html {
-    transform: rotate(-90deg);
-    transform-origin: left top;
+  html, body {
     width: 100vh;
     height: 100vw;
-    overflow: hidden;
+  }
+  body {
+    transform: rotate(90deg);
+    transform-origin: bottom left;
     position: absolute;
-    top: 100%;
+    top: -100vw;
     left: 0;
   }
 }
