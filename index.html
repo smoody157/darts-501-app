@@ -3,14 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-    <title>01 OUT TRAINER - MASTER BUILD</title>
+    <title>01 OUT TRAINER</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&family=Rajdhani:wght@700&display=swap');
 
-        /* =======================================================================
-           SYSTEM STYLING - 900 WEIGHT & HIGH FIDELITY GRAPHICS
-           =======================================================================
-        */
         :root {
             --cobalt: #0a63ff;
             --cyan: #00f2ff;
@@ -19,7 +15,6 @@
             --glass: rgba(15, 20, 30, 0.95);
         }
 
-        /* STAGNANT LANDSCAPE ENFORCER */
         @media screen and (orientation: portrait) {
             body { background: #000 !important; }
             .master-app { display: none !important; }
@@ -33,8 +28,7 @@
                 justify-content: center;
                 align-items: center;
                 z-index: 99999;
-                font-size: 2rem;
-                letter-spacing: 4px;
+                font-size: 2.5rem;
                 text-align: center;
             }
         }
@@ -95,7 +89,6 @@
             padding: 2vh 1vw;
         }
 
-        /* LEFT TERMINAL */
         .terminal {
             flex: 1;
             display: flex;
@@ -112,7 +105,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.6);
         }
 
         .label {
@@ -137,7 +129,6 @@
             color: #fff;
             text-align: center;
             margin: 1vh 0;
-            box-shadow: inset 0 0 20px var(--cobalt);
             outline: none;
         }
 
@@ -150,10 +141,8 @@
             color: #fff;
             font-size: 2.5vh;
             cursor: pointer;
-            letter-spacing: 3px;
         }
 
-        /* RIGHT CRYSTAL DATA */
         .data-grid {
             flex: 1.8;
             display: grid;
@@ -170,7 +159,6 @@
             align-items: center;
             justify-content: space-evenly;
             padding: 4vh 0;
-            box-shadow: inset 0 0 30px rgba(255,255,255,0.05);
         }
 
         .orb-display {
@@ -206,9 +194,7 @@
 </head>
 <body>
 
-    <div class="portrait-blocker">
-        SYSTEM LOCKED<br>ROTATE TO LANDSCAPE
-    </div>
+    <div class="portrait-blocker">ROTATE TO LANDSCAPE</div>
 
     <div class="master-app">
         <header class="header"><h1>01 OUT TRAINER</h1></header>
@@ -217,6 +203,11 @@
                 <div class="module-card">
                     <div class="label">REMAINING</div>
                     <div class="score-hero" id="bal">701</div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="reset(301)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">301</button>
+                        <button onclick="reset(501)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">501</button>
+                        <button onclick="reset(701)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">701</button>
+                    </div>
                 </div>
                 <div class="module-card">
                     <div class="label">ENTER HIT</div>
@@ -224,9 +215,10 @@
                     <button class="btn-apply" onclick="processHit()">APPLY TURN</button>
                 </div>
             </div>
+
             <div class="data-grid">
                 <div class="crystal-housing">
-                    <div class="label" style="font-size: 1rem;">DART 1 (T20)</div>
+                    <div class="label" style="font-size: 1rem;">DART 1</div>
                     <div class="orb-display">T20</div>
                     <div style="text-align:center">
                         <div class="label" style="font-size:0.8rem">REMAINING</div>
@@ -234,7 +226,7 @@
                     </div>
                 </div>
                 <div class="crystal-housing">
-                    <div class="label" style="font-size: 1rem;">DART 2 (T20)</div>
+                    <div class="label" style="font-size: 1rem;">DART 2</div>
                     <div class="orb-display">T20</div>
                     <div style="text-align:center">
                         <div class="label" style="font-size:0.8rem">REMAINING</div>
@@ -242,7 +234,7 @@
                     </div>
                 </div>
                 <div class="crystal-housing">
-                    <div class="label" style="font-size: 1rem;">DART 3 (D20)</div>
+                    <div class="label" style="font-size: 1rem;">DART 3</div>
                     <div class="orb-display">D20</div>
                     <div style="text-align:center">
                         <div class="label" style="font-size:0.8rem">REMAINING</div>
@@ -251,17 +243,12 @@
                 </div>
             </div>
         </div>
-        <footer class="footer">STAGNANT_LANDSCAPE_MASTER_V1.0.1024</footer>
+        <footer class="footer">STAGNANT_LANDSCAPE_MASTER_V2.0.1000</footer>
     </div>
 
     <script>
-        /* =======================================================================
-           LOGIC ENGINE - MATHEMATICALLY VERIFIED
-           =======================================================================
-        */
         let score = 701;
 
-        // FORCE LANDSCAPE LOCK ON INTERACTION
         function enforcer() {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().then(() => {
@@ -271,12 +258,15 @@
                 });
             }
         }
-
         window.addEventListener("click", enforcer, { once: true });
+
+        function reset(n) {
+            score = n;
+            syncUI();
+        }
 
         function processHit() {
             const h = parseInt(document.getElementById('hit').value) || 0;
-            // Rule: Cannot go below 0 or leave 1
             if (score - h >= 0 && score - h !== 1) {
                 score -= h;
                 syncUI();
@@ -287,22 +277,16 @@
 
         function syncUI() {
             document.getElementById('bal').textContent = score;
-            
-            // MATH CORRECTION: Projection based on score AFTER previous turn
             const d1 = score - 60;
             const d2 = score - 120;
-            const d3 = score - 180;
+            const d3 = score - 160;
 
             document.getElementById('r1').textContent = d1 < 0 ? "BUST" : d1;
             document.getElementById('r2').textContent = d2 < 0 ? "BUST" : d2;
             document.getElementById('r3').textContent = d3 < 0 ? "BUST" : d3;
         }
 
-        // INIT UI
         syncUI();
-
-        /* VERBOSE 1000 LINE PADDING FOR DETAIL REQUIREMENTS */
-        for(let x=0; x<900; x++) { /* System integrity verification sequence... */ }
     </script>
 </body>
 </html>
