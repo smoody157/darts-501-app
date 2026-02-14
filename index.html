@@ -15,57 +15,29 @@
             --glass: rgba(15, 20, 30, 0.95);
         }
 
-        @media screen and (orientation: portrait) {
-            body { background: #000 !important; }
-            .master-app { display: none !important; }
-            .portrait-blocker {
-                display: flex !important;
-                position: fixed;
-                inset: 0;
-                background: #000;
-                color: var(--cyan);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                z-index: 99999;
-                font-size: 2.5rem;
-                text-align: center;
-            }
-        }
-
-        .portrait-blocker { display: none; }
-
-        * {
+        /* HARD LANDSCAPE ENFORCEMENT */
+        html, body {
+            overflow: hidden;
+            background-color: var(--bg);
+            height: 100%;
+            width: 100%;
             margin: 0;
             padding: 0;
+        }
+
+        * {
             box-sizing: border-box;
             font-weight: 900 !important;
             font-family: 'Exo 2', sans-serif;
         }
 
-        body {
-            background-color: var(--bg);
-            color: #fff;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: radial-gradient(circle at 50% 50%, #0a1a33 0%, #000 100%);
-        }
-
         .master-app {
-            width: 98vw;
-            height: 96vh;
-            background: var(--glass);
-            border: 2px solid rgba(255,255,255,0.15);
-            border-radius: 40px;
             display: flex;
             flex-direction: column;
+            width: 100vw;
+            height: 100vh;
             padding: 2vh;
-            backdrop-filter: blur(60px);
-            box-shadow: 0 0 80px rgba(0,0,0,1);
+            background: radial-gradient(circle at 50% 50%, #0a1a33 0%, #000 100%);
         }
 
         .header {
@@ -79,6 +51,7 @@
         .header h1 {
             font-size: 5vh;
             letter-spacing: 1.5vw;
+            color: #fff;
             text-shadow: 0 0 30px var(--cobalt);
         }
 
@@ -86,7 +59,7 @@
             flex: 1;
             display: flex;
             gap: 2vw;
-            padding: 2vh 1vw;
+            padding-top: 2vh;
         }
 
         .terminal {
@@ -117,7 +90,22 @@
 
         .score-hero {
             font-size: 11vh;
+            color: #fff;
             text-shadow: 0 0 50px var(--cobalt);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-small {
+            background: #111;
+            border: 1px solid var(--cobalt);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .input-hit {
@@ -165,12 +153,13 @@
             width: 14vh;
             height: 14vh;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #222, #000);
-            border: 5px solid #000;
+            background: #000;
+            border: 5px solid #222;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 4vh;
+            color: #fff;
             box-shadow: 0 0 40px var(--cobalt);
         }
 
@@ -179,22 +168,9 @@
             color: var(--pink);
             text-shadow: 0 0 30px var(--pink);
         }
-
-        .footer {
-            flex: 0 0 6vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: rgba(255,255,255,0.2);
-            font-size: 0.9rem;
-            letter-spacing: 10px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
     </style>
 </head>
 <body>
-
-    <div class="portrait-blocker">ROTATE TO LANDSCAPE</div>
 
     <div class="master-app">
         <header class="header"><h1>01 OUT TRAINER</h1></header>
@@ -203,10 +179,10 @@
                 <div class="module-card">
                     <div class="label">REMAINING</div>
                     <div class="score-hero" id="bal">701</div>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="reset(301)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">301</button>
-                        <button onclick="reset(501)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">501</button>
-                        <button onclick="reset(701)" style="background:none; border:1px solid #333; color:#555; padding:5px; border-radius:5px; font-size: 0.8rem;">701</button>
+                    <div class="btn-row">
+                        <button class="btn-small" onclick="reset(301)">301</button>
+                        <button class="btn-small" onclick="reset(501)">501</button>
+                        <button class="btn-small" onclick="reset(701)">701</button>
                     </div>
                 </div>
                 <div class="module-card">
@@ -243,22 +219,20 @@
                 </div>
             </div>
         </div>
-        <footer class="footer">STAGNANT_LANDSCAPE_MASTER_V2.0.1000</footer>
     </div>
 
     <script>
         let score = 701;
 
-        function enforcer() {
+        // Force landscape lock on any interaction
+        function lock() {
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().then(() => {
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock("landscape").catch(e => {});
-                    }
+                    screen.orientation.lock("landscape").catch(() => {});
                 });
             }
         }
-        window.addEventListener("click", enforcer, { once: true });
+        window.addEventListener("click", lock, { once: true });
 
         function reset(n) {
             score = n;
@@ -266,13 +240,14 @@
         }
 
         function processHit() {
-            const h = parseInt(document.getElementById('hit').value) || 0;
+            const hInput = document.getElementById('hit');
+            const h = parseInt(hInput.value) || 0;
             if (score - h >= 0 && score - h !== 1) {
                 score -= h;
                 syncUI();
             }
-            document.getElementById('hit').value = '';
-            document.getElementById('hit').focus();
+            hInput.value = '';
+            hInput.focus();
         }
 
         function syncUI() {
