@@ -10,145 +10,142 @@
   --cobalt-glow: #0a63ff;
   --text-main: #eef2f7;
   --text-dim: rgba(238, 242, 247, 0.5);
+  --chrome-border: #444;
 }
 
 * { box-sizing: border-box; }
 body { 
   margin: 0; background: var(--bg-deep); color: var(--text-main); 
   font-family: -apple-system, system-ui, sans-serif; font-weight: 800;
-  overflow: hidden; /* Prevents scrolling */
+  height: 100vh; overflow: hidden; display: flex; flex-direction: column;
 }
 
-.wrap { 
-  display: flex; flex-direction: column; height: 100vh; 
-  max-width: 1200px; margin: 0 auto; padding: 15px; 
-}
-
-/* Header */
+/* Updated 01 OUT TRAINER Header */
 .header {
-  padding: 15px; border-radius: 20px; 
-  background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
-  border: 1px solid #333; text-align: center; margin-bottom: 15px;
+  padding: 15px; background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+  border-bottom: 2px solid #333; text-align: center;
   box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
-.title { margin: 0; font-size: 28px; letter-spacing: 3px; text-shadow: 0 0 15px var(--cobalt-glow); }
+.title { margin: 0; font-size: 32px; letter-spacing: 4px; text-shadow: 0 0 20px var(--cobalt-glow); }
 
-/* Horizontal Layout */
+/* Main Screen - Side by Side */
 .main-layout { 
-  display: grid; grid-template-columns: 320px 1fr; gap: 15px; flex-grow: 1; 
+  display: grid; grid-template-columns: 350px 1fr; gap: 20px; flex: 1; padding: 20px; align-items: stretch;
 }
 
-.card { 
-  display: flex; flex-direction: column; justify-content: space-between;
-  padding: 20px; border-radius: 24px; background: rgba(0, 80, 255, 0.08); 
-  backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); 
-}
+.left-panel { display: flex; flex-direction: column; gap: 15px; }
 
 .box { 
-  text-align: center; border-radius: 15px; padding: 12px; margin-bottom: 10px; 
-  background: rgba(0, 0, 0, 0.6); border: 1px solid #222; 
+  flex: 1; text-align: center; border-radius: 20px; padding: 15px; 
+  background: rgba(0, 0, 0, 0.6); border: 2px solid #222; 
+  display: flex; flex-direction: column; justify-content: center;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
 }
 
 input.score, .bigNumber { 
-  width: 100%; font-size: 50px; background: transparent; border: none; 
+  width: 100%; font-size: 70px; background: transparent; border: none; 
   color: #fff; text-align: center; font-weight: 900; outline: none; 
-  text-shadow: 0 0 15px var(--cobalt-glow); 
+  text-shadow: 0 0 20px var(--cobalt-glow); 
 }
 
-/* Buttons */
-.btnRow { display: flex; gap: 10px; justify-content: center; }
+/* Chrome Buttons with Click Sound Trigger */
+.btnRow { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
 button.btn { 
-  padding: 12px 20px; border-radius: 10px; border: 1px solid #444; 
-  background: linear-gradient(180deg, #2a2a2a 0%, #000 100%); 
-  color: #fff; font-weight: 700; cursor: pointer;
+  flex: 1; padding: 15px; border-radius: 12px; border: 1px solid var(--chrome-border); 
+  background: linear-gradient(180deg, #333 0%, #000 100%); 
+  color: #fff; font-weight: 700; cursor: pointer; text-transform: uppercase;
 }
+button.btn:active { background: #444; transform: translateY(2px); }
 button.btn.primary { border-color: var(--cobalt-glow); background: linear-gradient(180deg, #004ecc 0%, #000 100%); }
 
-/* Side-by-Side Glass Ovals */
-.flights { display: flex; gap: 10px; height: 100%; }
+/* Oval Glass Number Housings - Side by Side */
+.right-panel {
+  display: flex; gap: 15px; background: rgba(0, 80, 255, 0.05); 
+  padding: 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);
+}
+
 .flight {
-  flex: 1; border-radius: 40px; padding: 20px 5px; 
+  flex: 1; border-radius: 60px; padding: 20px 10px; 
   background: linear-gradient(145deg, rgba(255,255,255,0.05), transparent);
   border: 1px solid rgba(255,255,255,0.1); text-align: center; 
-  display: flex; flex-direction: column; justify-content: center;
-  box-shadow: 0 0 20px rgba(10, 99, 255, 0.1);
+  display: flex; flex-direction: column; justify-content: space-around;
+  box-shadow: 0 0 40px rgba(10, 99, 255, 0.1), inset 0 0 20px rgba(255,255,255,0.02);
 }
 
 .shot {
-  font-size: 55px; font-weight: 900; color: #fff; margin: 10px auto; 
-  width: 110px; height: 110px; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; background: #000; border: 2px solid #333;
-  box-shadow: 0 0 25px rgba(10, 99, 255, 0.3), inset 0 5px 10px rgba(255,255,255,0.1);
-  text-shadow: 0 0 15px var(--cobalt-glow);
+  font-size: 85px; font-weight: 900; color: #fff; margin: 0 auto; 
+  width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: #000; border: 3px solid #333;
+  box-shadow: 0 0 35px rgba(10, 99, 255, 0.5), inset 0 10px 20px rgba(255,255,255,0.1);
+  text-shadow: 0 0 25px var(--cobalt-glow);
 }
 
-.leave { font-size: 40px; color: var(--cobalt-glow); font-weight: 900; }
-.label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; }
+.leave { font-size: 55px; color: var(--cobalt-glow); font-weight: 900; }
+.label { font-size: 14px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
 
 /* Footer */
-.footer { padding: 10px; text-align: center; border-top: 1px solid #222; }
-.footer-text { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+.footer { padding: 15px; text-align: center; border-top: 1px solid #222; background: #000; }
+.footer-text { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="header">
-    <h1 class="title">01 OUT TRAINER</h1>
-  </div>
+<div class="header">
+  <h1 class="title">01 OUT TRAINER</h1>
+</div>
 
-  <div class="main-layout">
-    <div class="card">
-      <div class="box">
-        <div class="label">Target Score</div>
-        <input id="startScore" class="score" type="number" value="701" />
+<div class="main-layout">
+  <div class="left-panel">
+    <div class="box">
+      <div class="label">Target</div>
+      <input id="startScore" class="score" type="number" value="701" />
+      <div class="btnRow">
+        <button class="btn" onclick="playClick();resetTo(501)">501</button>
+        <button class="btn" onclick="playClick();resetTo(701)">701</button>
+      </div>
+    </div>
+    <div class="box">
+      <div class="label">Hit</div>
+      <form onsubmit="event.preventDefault(); playClick(); enterScore();">
+        <input id="hit" class="score" type="number" placeholder="0" inputmode="numeric" />
         <div class="btnRow">
-          <button class="btn" onclick="playClick();resetTo(501)">501</button>
-          <button class="btn" onclick="playClick();resetTo(701)">701</button>
+          <button class="btn primary" type="submit">ENTER</button>
+          <button class="btn" onclick="playClick();$('hit').value=''">CLR</button>
         </div>
-      </div>
-      <div class="box">
-        <div class="label">Score Hit</div>
-        <form onsubmit="event.preventDefault(); playClick(); enterScore();">
-          <input id="hit" class="score" type="number" placeholder="0" inputmode="numeric" />
-          <button class="btn primary" style="width:100%; margin-top:10px;" type="submit">ENTER</button>
-        </form>
-      </div>
-      <div class="box" style="margin-bottom:0;">
-        <div class="label">Balance</div>
-        <div class="bigNumber" id="left">701</div>
-      </div>
+      </form>
     </div>
-
-    <div class="card">
-      <div class="flights">
-        <div class="flight">
-          <div class="label">DART 1</div>
-          <div class="shot" id="d1">T20</div>
-          <div class="label">LEAVE</div>
-          <div class="leave" id="l1">641</div>
-        </div>
-        <div class="flight">
-          <div class="label">DART 2</div>
-          <div class="shot" id="d2">T20</div>
-          <div class="label">LEAVE</div>
-          <div class="leave" id="l2">581</div>
-        </div>
-        <div class="flight">
-          <div class="label">DART 3</div>
-          <div class="shot" id="d3">T20</div>
-          <div class="label">LEAVE</div>
-          <div class="leave" id="l3">521</div>
-        </div>
-      </div>
+    <div class="box">
+      <div class="label">Balance</div>
+      <div class="bigNumber" id="left">701</div>
     </div>
   </div>
 
-  <div class="footer">
-    <div class="footer-text">
-      01 Out Trainer is an official Dart Room online training tool. All rights reserved &copy;<br>
-      Steve’s Graphic Designs. &bull; Build v57_2026-02-14
+  <div class="right-panel">
+    <div class="flight">
+      <div class="label">DART 1</div>
+      <div class="shot" id="d1">T20</div>
+      <div class="label">LEAVE</div>
+      <div class="leave" id="l1">641</div>
     </div>
+    <div class="flight">
+      <div class="label">DART 2</div>
+      <div class="shot" id="d2">T20</div>
+      <div class="label">LEAVE</div>
+      <div class="leave" id="l2">581</div>
+    </div>
+    <div class="flight">
+      <div class="label">DART 3</div>
+      <div class="shot" id="d3">D20</div>
+      <div class="label">LEAVE</div>
+      <div class="leave" id="l3">541</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-text">
+    01 Out Trainer is an official Dart Room online training tool. All rights reserved &copy;<br>
+    Steve’s Graphic Designs. &bull; Build v57_2026-02-14
   </div>
 </div>
 
@@ -156,6 +153,7 @@ button.btn.primary { border-color: var(--cobalt-glow); background: linear-gradie
 let remaining = 701;
 const $ = (id) => document.getElementById(id);
 
+// Button Click Sound Logic
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playClick() {
   if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -163,13 +161,13 @@ function playClick() {
   const gain = audioCtx.createGain();
   osc.type = 'sine';
   osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+  osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
   gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.start();
-  osc.stop(audioCtx.currentTime + 0.08);
+  osc.stop(audioCtx.currentTime + 0.1);
 }
 
 function resetTo(val) {
