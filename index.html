@@ -6,182 +6,121 @@
 <title>01 OUT TRAINER - Steve's Graphic Designs</title>
 <style>
 :root {
-  --bg-black: #000103;
+  --bg: #000;
   --cobalt: #0a63ff;
-  --cobalt-glow: rgba(10, 99, 255, 0.8);
-  --chrome-border: linear-gradient(145deg, #777, #000, #333);
-  --glass-layer: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
+  --panel: #080808;
+  --border: #222;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
 body { 
-  margin: 0; padding: 0; background: var(--bg-black); color: #fff;
-  font-family: 'Arial Black', sans-serif; 
-  height: 100vh; width: 100vw; 
-  display: flex; flex-direction: column; 
-  overflow: hidden; 
+  margin: 0; background: var(--bg); color: #fff; font-family: 'Arial Black', sans-serif;
+  height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column;
 }
 
-/* HEADER: 01 OUT TRAINER */
-.header-ui {
-  height: 80px; background: #000; border-bottom: 3px solid #1a1a1a;
+header {
+  height: 12%; border-bottom: 4px solid var(--border);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 40px #000; z-index: 100;
+  background: linear-gradient(to bottom, #111, #000);
 }
-.header-ui h1 { 
-  margin: 0; font-size: 36px; letter-spacing: 10px; font-weight: 900;
-  background: linear-gradient(to bottom, #fff, #555);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px var(--cobalt));
-}
-
-/* FIXED LANDSCAPE STAGE */
-.main-stage {
-  flex: 1; display: flex; padding: 20px; gap: 30px; align-items: stretch;
+header h1 { 
+  font-size: 5vh; letter-spacing: 1.5vw; margin: 0;
+  background: linear-gradient(#fff, #666); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 10px var(--cobalt));
 }
 
-/* LEFT CONTROLS */
-.left-stack { width: 320px; display: flex; flex-direction: column; gap: 15px; }
+main {
+  flex: 1; display: flex; padding: 2vh; gap: 3vw;
+}
 
-.panel-3d {
-  flex: 1; background: #050505; border: 2px solid #222; border-radius: 30px;
+.controls { width: 30%; display: flex; flex-direction: column; gap: 2vh; }
+.card {
+  flex: 1; background: var(--panel); border: 2px solid var(--border); border-radius: 20px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 30px rgba(10,99,255,0.1), 0 20px 50px rgba(0,0,0,0.9);
-  padding: 15px;
+  box-shadow: inset 0 0 20px rgba(10,99,255,0.1);
 }
 
-.label-ui { font-size: 11px; color: var(--cobalt); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 5px; }
-.score-big { font-size: 70px; font-weight: 900; text-shadow: 0 0 35px var(--cobalt-glow); margin: 5px 0; }
+.label { font-size: 1.5vh; color: var(--cobalt); letter-spacing: 3px; text-transform: uppercase; }
+.total { font-size: 10vh; text-shadow: 0 0 20px var(--cobalt); margin: 1vh 0; }
 
-input.score-input {
-  width: 90%; background: #000; border: 2px solid #333; color: #fff;
-  font-size: 45px; text-align: center; border-radius: 15px; font-family: inherit;
-  box-shadow: inset 0 8px 15px #000; outline: none; margin-bottom: 10px;
+input {
+  width: 80%; background: #000; border: 2px solid #333; color: #fff;
+  font-size: 5vh; text-align: center; border-radius: 10px; margin-bottom: 1vh;
 }
 
-/* 3D BUTTONS */
-.btn-chrome {
-  width: 90%; padding: 15px; border-radius: 15px;
-  background: var(--chrome-border); border: 1px solid #444; color: #fff;
-  font-weight: 900; text-transform: uppercase; cursor: pointer;
-  box-shadow: 0 6px 0 #000, 0 8px 15px rgba(0,0,0,0.7);
-  transition: transform 0.05s;
+button {
+  width: 80%; padding: 1.5vh; border-radius: 10px; border: 1px solid #444;
+  background: linear-gradient(#444, #000); color: #fff; font-weight: 900;
+  cursor: pointer; box-shadow: 0 4px 0 #000;
 }
-.btn-chrome:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
-.btn-blue { border-color: var(--cobalt); box-shadow: 0 6px 0 #002e80, 0 0 20px rgba(10,99,255,0.3); }
+button:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+.btn-blue { border-color: var(--cobalt); background: linear-gradient(#1a73ff, #003bb3); }
 
-/* ALIGNED OVAL GLASS */
-.right-stage { flex: 1; display: flex; gap: 15px; }
-
-.oval-housing {
-  flex: 1; border-radius: 130px; border: 2px solid rgba(255,255,255,0.15);
-  background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.1), transparent);
+.display { flex: 1; display: flex; gap: 2vw; }
+.oval {
+  flex: 1; border-radius: 100px; border: 2px solid rgba(255,255,255,0.1);
+  background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.05), transparent);
   display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
-  box-shadow: inset 0 0 50px rgba(10,99,255,0.2), 0 20px 40px rgba(0,0,0,1);
-  position: relative; overflow: hidden; padding: 15px 0;
-}
-.oval-housing::after {
-  content: ""; position: absolute; inset: 0; background: var(--glass-layer); pointer-events: none;
+  box-shadow: 0 10px 30px #000;
 }
 
-.glass-circle {
-  width: 140px; height: 140px; border-radius: 50%; background: #000;
+.dart {
+  width: 12vw; height: 12vw; border-radius: 50%; background: #000;
   border: 4px solid #1a1a1a; display: flex; align-items: center; justify-content: center;
-  font-size: 65px; font-weight: 900; z-index: 10;
-  box-shadow: 0 0 40px var(--cobalt-glow), inset 0 10px 20px #000;
+  font-size: 5vw; box-shadow: 0 0 30px var(--cobalt);
 }
-.leave-big { font-size: 45px; color: var(--cobalt); font-weight: 900; z-index: 10; }
+.leave { font-size: 4vw; color: var(--cobalt); }
 
-/* BRANDED FOOTER */
-.footer-ui {
-  height: 80px; background: #000; border-top: 1px solid #1a1a1a;
+footer {
+  height: 10%; border-top: 2px solid var(--border);
   display: flex; align-items: center; justify-content: center; text-align: center;
+  font-size: 1.2vh; color: #444; background: #000;
 }
-.footer-ui p { margin: 0; font-size: 14px; color: #555; font-family: sans-serif; line-height: 1.6; }
-
 </style>
 </head>
 <body>
 
-<div class="header-ui">
-  <h1>01 OUT TRAINER</h1>
-</div>
+<header><h1>01 OUT TRAINER</h1></header>
 
-<div class="main-stage">
-  <div class="left-stack">
-    <div class="panel-3d">
-      <div class="label-ui">Balance</div>
-      <div class="score-big" id="bal">701</div>
-      <div style="display:flex; gap:10px; width:90%">
-         <button class="btn-chrome" onclick="playClick();resetTo(501)">501</button>
-         <button class="btn-chrome" onclick="playClick();resetTo(701)">701</button>
-      </div>
+<main>
+  <div class="controls">
+    <div class="card">
+      <div class="label">Balance</div>
+      <div class="total" id="b">701</div>
+      <button onclick="rs(501)">501</button>
     </div>
-    <div class="panel-3d">
-      <div class="label-ui">Score Hit</div>
-      <input type="number" id="hit" class="score-input" placeholder="0" inputmode="numeric">
-      <button class="btn-chrome btn-blue" onclick="playClick();enterScore()">Apply Score</button>
+    <div class="card">
+      <div class="label">Hit</div>
+      <input type="number" id="h" inputmode="numeric">
+      <button class="btn-blue" onclick="ex()">APPLY</button>
     </div>
   </div>
 
-  <div class="right-stage">
-    <div class="oval-housing">
-      <div class="label-ui">Dart 1</div>
-      <div class="glass-circle" id="d1">T20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l1">641</div>
-    </div>
-    <div class="oval-housing">
-      <div class="label-ui">Dart 2</div>
-      <div class="glass-circle" id="d2">T20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l2">581</div>
-    </div>
-    <div class="oval-housing">
-      <div class="label-ui">Dart 3</div>
-      <div class="glass-circle" id="d3">D20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l3">541</div>
-    </div>
+  <div class="display">
+    <div class="oval"><div class="label">Dart 1</div><div class="dart">T20</div><div class="leave" id="l1">641</div></div>
+    <div class="oval"><div class="label">Dart 2</div><div class="dart">T20</div><div class="leave" id="l2">581</div></div>
+    <div class="oval"><div class="label">Dart 3</div><div class="dart">D20</div><div class="leave" id="l3">541</div></div>
   </div>
-</div>
+</main>
 
-<div class="footer-ui">
-  <p>
-    01 Out Trainer is an official Dart Room online training tool. All rights reserved &copy;<br>
-    Steve’s Graphic Designs. • Build v57_2026-02-14
-  </p>
-</div>
+<footer>
+  All rights reserved &copy; Steve’s Graphic Designs • Build v60_2026
+</footer>
 
 <script>
-let rem = 701;
+let r = 701;
 const $ = (id) => document.getElementById(id);
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playClick() {
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-  g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+function rs(v) { r = v; $('b').textContent = r; up(); }
+function ex() {
+  const v = parseInt($('h').value) || 0;
+  if (r-v >= 0 && r-v !== 1) { r -= v; $('b').textContent = r; up(); }
+  $('h').value = '';
 }
-
-function resetTo(v) { rem = v; $('bal').textContent = rem; update(); }
-function enterScore() {
-  const v = parseInt($('hit').value) || 0;
-  if (rem - v >= 0 && rem - v !== 1) { rem -= v; $('bal').textContent = rem; update(); }
-  $('hit').value = '';
+function up() {
+  $('l1').textContent = r - 60;
+  $('l2').textContent = r - 120;
+  $('l3').textContent = r - 180;
 }
-function update() {
-  $('l1').textContent = rem - 60;
-  $('l2').textContent = rem - 120;
-  $('l3').textContent = rem - 180;
-}
-resetTo(701);
 </script>
 </body>
 </html>
