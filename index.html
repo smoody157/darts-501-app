@@ -7,186 +7,83 @@
 <title>THE DART ROOM</title>
 <style>
 :root {
-  /* Black Chrome & Cobalt Blue Glass Palette */
-  --bg-deep: #000000;
-  --chrome-border: linear-gradient(145deg, #7a7a7a, #1a1a1a, #555555, #000000);
-  --cobalt-glass: rgba(0, 71, 171, 0.25);
-  --cobalt-glow: #1e90ff;
-  --text-main: #e0e6ed;
-  --text-dim: rgba(224, 230, 237, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --r: 20px;
+  --bg-deep: #00040a;
+  --chrome-shiny: linear-gradient(145deg, #888, #111, #444, #000);
+  --cobalt-glass: rgba(0, 80, 255, 0.15);
+  --cobalt-glow: #0a63ff;
+  --text-main: #eef2f7;
+  --text-dim: rgba(238, 242, 247, 0.5);
+  --r: 24px;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; background: var(--bg-deep); overflow-x: hidden; }
+body { font-family: -apple-system, system-ui, sans-serif; font-weight: 800; color: var(--text-main); }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  font-weight: 800;
-  color: var(--text-main);
-}
+.bg { position: fixed; inset: 0; z-index: 0; background: radial-gradient(circle at 50% -20%, #001a33 0%, #000 100%); }
 
-/* Background Effects */
-.bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(circle at 50% -20%, #001f3f 0%, #000000 100%);
-}
+.wrap { position: relative; z-index: 2; max-width: 1000px; margin: 0 auto; padding: 20px 14px 60px; }
 
-.lightning {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(circle at 80% 80%, rgba(30, 144, 255, 0.05) 0%, transparent 50%);
-  filter: blur(40px);
-}
-
-.wrap { position: relative; z-index: 2; max-width: 1000px; margin: 0 auto; padding: 20px 16px 60px; }
-
-/* Header - Black Chrome Style */
+/* Header - Black Chrome */
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px;
-  border-radius: var(--r);
-  background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
-  border: 1px solid #444;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: space-between; padding: 20px;
+  border-radius: var(--r); background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+  border: 1px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
 }
+.logo { width: 50px; height: 50px; border-radius: 12px; background: var(--chrome-shiny); border: 1px solid #666; position: relative; }
+.logo::after { content: ""; position: absolute; inset: 6px; background: var(--cobalt-glow); border-radius: 6px; box-shadow: 0 0 15px var(--cobalt-glow); }
+.title { margin: 0; font-size: 32px; letter-spacing: 2px; text-shadow: 0 0 15px var(--cobalt-glow); }
+.subtitle { font-size: 11px; color: var(--cobalt-glow); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
-.logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--chrome-border);
-  border: 1px solid #777;
-  position: relative;
-}
-.logo::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  background: var(--cobalt-glow);
-  border-radius: 8px;
-  box-shadow: 0 0 15px var(--cobalt-glow);
-}
-
-.title { margin: 0; font-size: 28px; letter-spacing: 2px; text-shadow: 0 0 10px var(--cobalt-glow); }
-.subtitle { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-
-.chip {
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: #000;
-  border: 1px solid #333;
-  color: var(--cobalt-glow);
-  font-size: 13px;
-  box-shadow: inset 0 0 5px var(--cobalt-glow);
-}
-
-/* Grid & Cards */
-.grid { margin-top: 20px; display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
+/* Grid & Layout */
+.grid { margin-top: 24px; display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
 @media(max-width:980px) { .grid { grid-template-columns: 1fr; } }
 
-/* Cobalt Glass Cards */
-.card {
-  padding: 16px;
-  border-radius: var(--r);
-  background: var(--cobalt-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
+.card { padding: 20px; border-radius: var(--r); background: var(--cobalt-glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
 
-.box {
-  text-align: center;
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 15px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #222;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-}
+.box { text-align: center; border-radius: 20px; padding: 20px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid #222; box-shadow: inset 0 2px 10px rgba(0,0,0,0.8); }
+.label { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
 
-.label { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; }
-
-/* Score Inputs */
-input.score, .bigNumber {
-  width: 100%;
-  font-size: 64px;
-  background: transparent;
-  border: none;
-  color: #fff;
-  text-align: center;
-  font-weight: 900;
-  outline: none;
-  text-shadow: 0 0 20px var(--cobalt-glow);
-}
+/* Scoring Displays */
+input.score, .bigNumber { width: 100%; font-size: 72px; background: transparent; border: none; color: #fff; text-align: center; font-weight: 900; outline: none; text-shadow: 0 0 25px var(--cobalt-glow); }
 
 /* Chrome Buttons */
-.btnRow { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
-button.btn {
-  padding: 12px 20px;
-  border-radius: 10px;
-  border: 1px solid #444;
-  background: linear-gradient(180deg, #333 0%, #000 100%);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button.btn.primary {
-  border-color: var(--cobalt-glow);
-  background: linear-gradient(180deg, #0047ab 0%, #000 100%);
-}
-button.btn:active { transform: scale(0.96); }
+.btnRow { display: flex; gap: 12px; justify-content: center; margin-top: 15px; }
+button.btn { padding: 14px 22px; border-radius: 12px; border: 1px solid #444; background: linear-gradient(180deg, #2a2a2a 0%, #000 100%); color: #fff; font-weight: 700; cursor: pointer; border-bottom: 2px solid #000; }
+button.btn.primary { border-color: var(--cobalt-glow); background: linear-gradient(180deg, #004ecc 0%, #000 100%); box-shadow: 0 0 10px rgba(10, 99, 255, 0.3); }
 
-/* Flight Cards - High Gloss Glass */
+/* Oval Glass Number Housings */
 .flights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
 @media(max-width:920px) { .flights { grid-template-columns: 1fr; } }
 
 .flight {
-  border-radius: 20px;
-  padding: 20px 10px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,71,171,0.1) 100%);
-  border: 1px solid var(--glass-border);
-  text-align: center;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  border-radius: 40px; padding: 30px 15px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,80,255,0.05) 100%);
+  border: 1px solid rgba(255,255,255,0.15); text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.4);
 }
-
-.dartLabel { font-size: 20px; color: var(--text-dim); margin-bottom: 10px; }
+.dartLabel { font-size: 18px; color: var(--text-dim); margin-bottom: 15px; letter-spacing: 2px; }
 
 .shot {
-  font-size: 52px;
-  color: #fff;
-  margin-bottom: 15px;
-  background: linear-gradient(180deg, #444 0%, #111 100%);
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid #555;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+  font-size: 68px; font-weight: 900; color: #fff; margin: 0 auto 15px; width: 140px; height: 140px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; /* Oval/Round look */
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), linear-gradient(180deg, #111 0%, #000 100%);
+  border: 2px solid #555; box-shadow: 0 10px 30px rgba(0,0,0,1), inset 0 5px 15px rgba(255,255,255,0.05), 0 0 20px rgba(10, 99, 255, 0.2);
+  text-shadow: 0 0 15px var(--cobalt-glow);
 }
 
-.leave {
-  font-size: 42px;
-  color: var(--cobalt-glow);
-  font-weight: 900;
-}
+.leave { font-size: 48px; color: var(--cobalt-glow); font-weight: 900; }
 
-.status { min-height: 20px; font-size: 14px; margin-top: 10px; }
-.status.error { color: #ff4d4d; }
+/* Status & Footer */
+.status { min-height: 24px; font-size: 14px; margin-top: 10px; font-style: italic; }
+.status.error { color: #ff3333; }
 .status.win { color: #00ffcc; text-shadow: 0 0 10px #00ffcc; }
 
-.footerNote, .credit { font-size: 10px; color: var(--text-dim); text-align: center; margin-top: 20px; opacity: 0.5; }
+.footer-section { margin-top: 40px; text-align: center; padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+.footer-text { font-size: 14px; color: var(--text-dim); line-height: 1.8; letter-spacing: 0.5px; }
 </style>
 </head>
 <body>
-<div class="bg"></div><div class="lightning"></div>
+<div class="bg"></div>
 
 <div class="wrap">
   <div class="header">
@@ -194,7 +91,7 @@ button.btn:active { transform: scale(0.96); }
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1 class="title">THE DART ROOM</h1>
-        <div class="subtitle">Black Chrome Edition • Professional Grade</div>
+        <div class="subtitle">Official Online Training Tool // Cobalt Series</div>
       </div>
     </div>
     <div class="chip">701 / 501</div>
@@ -204,27 +101,27 @@ button.btn:active { transform: scale(0.96); }
     <div class="card">
       <div class="stack">
         <div class="box">
-          <div class="label">REMAINING TARGET</div>
+          <div class="label">Remaining Target</div>
           <input id="startScore" class="score" type="number" inputmode="numeric" value="701" />
           <div class="btnRow">
-            <button class="btn" id="set501" type="button">501</button>
-            <button class="btn" id="set701" type="button">701</button>
+            <button class="btn" id="set501" type="button">Set 501</button>
+            <button class="btn" id="set701" type="button">Set 701</button>
           </div>
         </div>
 
         <div class="box">
-          <div class="label">SCORE HIT</div>
+          <div class="label">Score Hit</div>
           <form id="scoreForm" autocomplete="off">
             <input id="hit" class="score" type="number" inputmode="numeric" placeholder="0" />
             <div class="btnRow">
-              <button class="btn primary" type="submit">SUBMIT</button>
+              <button class="btn primary" type="submit">ENTER SCORE</button>
               <button class="btn" id="clearBtn" type="button">CLEAR</button>
             </div>
           </form>
         </div>
 
         <div class="box">
-          <div class="label">CURRENT BALANCE</div>
+          <div class="label">Current Balance</div>
           <div class="bigNumber" id="left">—</div>
           <div class="status" id="status"></div>
         </div>
@@ -236,29 +133,35 @@ button.btn:active { transform: scale(0.96); }
         <div class="flight">
           <div class="dartLabel">DART 1</div>
           <div class="shot" id="d1">—</div>
-          <div class="label">REMAINING</div>
+          <div class="label">LEAVE</div>
           <div class="leave" id="l1">—</div>
         </div>
         <div class="flight">
           <div class="dartLabel">DART 2</div>
           <div class="shot" id="d2">—</div>
-          <div class="label">REMAINING</div>
+          <div class="label">LEAVE</div>
           <div class="leave" id="l2">—</div>
         </div>
         <div class="flight">
           <div class="dartLabel">DART 3</div>
           <div class="shot" id="d3">—</div>
-          <div class="label">REMAINING</div>
+          <div class="label">LEAVE</div>
           <div class="leave" id="l3">—</div>
         </div>
       </div>
-      <div class="footerNote">DOUBLE-OUT RULES: BUST IF < 0 OR LEAVE 1.</div>
-      <div class="credit">DEVISED BY STEVE’S GRAPHIC DESIGNS</div>
+      
+      <div class="footer-section">
+        <div class="footer-text">
+          The Dart Room is an official online training tool. All rights reserved &copy;<br>
+          Steve’s Graphic Designs. &bull; Build v57_2026-02-12
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+// ALL ORIGINAL LOGIC PRESERVED
 let remaining=null;
 const $=(id)=>document.getElementById(id);
 const setText=(id,v)=>{$(id).textContent=v;};
@@ -308,7 +211,7 @@ function resetTo(start){
     remaining=null;
     setText("left","—");
     clearFlights();
-    setStatus("INVALID SCORE (2-701)","error");
+    setStatus("Start score must be 2-701.","error");
     return;
   }
   remaining=start;
@@ -326,12 +229,12 @@ function enterScore(){
   const hit=Number(raw);
   if(raw==="" || !Number.isFinite(hit)) return;
   if(hit<0 || hit>180){
-    setStatus("INVALID VISIT (0–180)","error");
+    setStatus("Score must be 0-180.","error");
     return;
   }
   const newRemaining=remaining-hit;
   if(newRemaining<0 || newRemaining===1){
-    setStatus("BUST!","error");
+    setStatus("BUST! — No count.","error");
     $("hit").value="";
     $("hit").blur();
     return;
@@ -347,7 +250,6 @@ function enterScore(){
 
 const OUTS = {
   "2":{"shoot":"D1","left":0}, "3":{"shoot":"S1","left":2}, "4":{"shoot":"D2","left":0}, "5":{"shoot":"S1","left":4}, "6":{"shoot":"D3","left":0}, "7":{"shoot":"S3","left":4}, "8":{"shoot":"D4","left":0}, "9":{"shoot":"S1","left":8}, "10":{"shoot":"D5","left":0}, "11":{"shoot":"S3","left":8}, "12":{"shoot":"D6","left":0}, "13":{"shoot":"S5","left":8}, "14":{"shoot":"D7","left":0}, "15":{"shoot":"S7","left":8}, "16":{"shoot":"D8","left":0}, "17":{"shoot":"S1","left":16}, "18":{"shoot":"D9","left":0}, "19":{"shoot":"S3","left":16}, "20":{"shoot":"D10","left":0}, "21":{"shoot":"S5","left":16}, "22":{"shoot":"D11","left":0}, "23":{"shoot":"S7","left":16}, "24":{"shoot":"D12","left":0}, "25":{"shoot":"S9","left":16}, "26":{"shoot":"D13","left":0}, "27":{"shoot":"S11","left":16}, "28":{"shoot":"D14","left":0}, "29":{"shoot":"S13","left":16}, "30":{"shoot":"D15","left":0}, "31":{"shoot":"S15","left":16}, "32":{"shoot":"D16","left":0}, "33":{"shoot":"S1","left":32}, "34":{"shoot":"D17","left":0}, "35":{"shoot":"S3","left":32}, "36":{"shoot":"D18","left":0}, "37":{"shoot":"S5","left":32}, "38":{"shoot":"D19","left":0}, "39":{"shoot":"S7","left":32}, "40":{"shoot":"D20","left":0}, "41":{"shoot":"S9","left":32}, "42":{"shoot":"S10","left":32}, "43":{"shoot":"S3","left":40}, "44":{"shoot":"D22","left":0}, "45":{"shoot":"S5","left":40}, "46":{"shoot":"S6","left":40}, "47":{"shoot":"S7","left":40}, "48":{"shoot":"D24","left":0}, "49":{"shoot":"S9","left":40}, "50":{"shoot":"DB","left":0}, "51":{"shoot":"S11","left":40}, "52":{"shoot":"D26","left":0}, "53":{"shoot":"S13","left":40}, "54":{"shoot":"D27","left":0}, "55":{"shoot":"S15","left":40}, "56":{"shoot":"D28","left":0}, "57":{"shoot":"S17","left":40}, "58":{"shoot":"D29","left":0}, "59":{"shoot":"S19","left":40}, "60":{"shoot":"D30","left":0}, "61":{"shoot":"S1","left":60}, "62":{"shoot":"D31","left":0}, "63":{"shoot":"S3","left":60}, "64":{"shoot":"D32","left":0}, "65":{"shoot":"SB","left":40}, "66":{"shoot":"T14","left":24}, "67":{"shoot":"T17","left":16}, "68":{"shoot":"T16","left":20}, "69":{"shoot":"T15","left":24}, "70":{"shoot":"T10","left":40}, "71":{"shoot":"T13","left":32}, "72":{"shoot":"T16","left":24}, "73":{"shoot":"T19","left":16}, "74":{"shoot":"T14","left":32}, "75":{"shoot":"T17","left":24}, "76":{"shoot":"T20","left":16}, "77":{"shoot":"T19","left":20}, "78":{"shoot":"T18","left":24}, "79":{"shoot":"T19","left":22}, "80":{"shoot":"T20","left":20}, "81":{"shoot":"T19","left":24}, "82":{"shoot":"DB","left":32}, "83":{"shoot":"T17","left":32}, "84":{"shoot":"T20","left":24}, "85":{"shoot":"T15","left":40}, "86":{"shoot":"T18","left":32}, "87":{"shoot":"T17","left":36}, "88":{"shoot":"T20","left":28}, "89":{"shoot":"T19","left":32}, "90":{"shoot":"T20","left":30}, "91":{"shoot":"T17","left":40}, "92":{"shoot":"T20","left":32}, "93":{"shoot":"T19","left":36}, "94":{"shoot":"T18","left":40}, "95":{"shoot":"T19","left":38}, "96":{"shoot":"T20","left":36}, "97":{"shoot":"T19","left":40}, "98":{"shoot":"T20","left":38}, "99":{"shoot":"T19","left":42}, "100":{"shoot":"T20","left":40}, "101":{"shoot":"T19","left":44}, "102":{"shoot":"T20","left":42}, "103":{"shoot":"T19","left":46}, "104":{"shoot":"T18","left":50}, "105":{"shoot":"T19","left":48}, "106":{"shoot":"T20","left":46}, "107":{"shoot":"T19","left":50}, "108":{"shoot":"T20","left":48}, "109":{"shoot":"T20","left":49}, "110":{"shoot":"T20","left":50}, "111":{"shoot":"T20","left":51}, "112":{"shoot":"T20","left":52}, "113":{"shoot":"T20","left":53}, "114":{"shoot":"T20","left":54}, "115":{"shoot":"T20","left":55}, "116":{"shoot":"T20","left":56}, "117":{"shoot":"T20","left":57}, "118":{"shoot":"T20","left":58}, "119":{"shoot":"T20","left":59}, "120":{"shoot":"T20","left":60}, "121":{"shoot":"T20","left":61}, "122":{"shoot":"T20","left":62}, "123":{"shoot":"T20","left":63}, "124":{"shoot":"T20","left":64}, "125":{"shoot":"T20","left":65}, "126":{"shoot":"T19","left":69}, "127":{"shoot":"T20","left":67}, "128":{"shoot":"T18","left":74}, "129":{"shoot":"T19","left":72}, "130":{"shoot":"T20","left":70}, "131":{"shoot":"T17","left":80}, "132":{"shoot":"DB","left":82}, "133":{"shoot":"T20","left":73}, "134":{"shoot":"T18","left":80}, "135":{"shoot":"DB","left":85}, "136":{"shoot":"T20","left":76}, "137":{"shoot":"T20","left":77}, "138":{"shoot":"T20","left":78}, "139":{"shoot":"T20","left":79}, "140":{"shoot":"T20","left":80}, "141":{"shoot":"T20","left":81}, "142":{"shoot":"T20","left":82}, "143":{"shoot":"T20","left":83}, "144":{"shoot":"T20","left":84}, "145":{"shoot":"T20","left":85}, "146":{"shoot":"T20","left":86}, "147":{"shoot":"T20","left":87}, "148":{"shoot":"T20","left":88}, "149":{"shoot":"T20","left":89}, "150":{"shoot":"T20","left":90}, "151":{"shoot":"T20","left":91}, "152":{"shoot":"T20","left":92}, "153":{"shoot":"T20","left":93}, "154":{"shoot":"T20","left":94}, "155":{"shoot":"T20","left":95}, "156":{"shoot":"T20","left":96}, "157":{"shoot":"T20","left":97}, "158":{"shoot":"T20","left":98}, "159":{"shoot":"T20","left":99}, "160":{"shoot":"T20","left":100}, "161":{"shoot":"T20","left":101}, "162":{"shoot":"T20","left":102}, "163":{"shoot":"T20","left":103}, "164":{"shoot":"T20","left":104}, "165":{"shoot":"T20","left":105}, "166":{"shoot":"T20","left":106}, "167":{"shoot":"T20","left":107}, "168":{"shoot":"T20","left":108}, "169":{"shoot":"T20","left":109}, "170":{"shoot":"T20","left":110}, "171":{"shoot":"T20","left":111}, "172":{"shoot":"T20","left":112}, "173":{"shoot":"T20","left":113}, "174":{"shoot":"T20","left":114}, "175":{"shoot":"T20","left":115}, "176":{"shoot":"T20","left":116}, "177":{"shoot":"T20","left":117}, "178":{"shoot":"T20","left":118}, "179":{"shoot":"T20","left":119}, "180":{"shoot":"T20","left":120}
-  // ... (Full data continues mapped up to 701 per logic)
 };
 
 $("scoreForm").addEventListener("submit",(e)=>{e.preventDefault();enterScore();});
