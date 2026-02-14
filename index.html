@@ -4,28 +4,25 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
 <title>01 OUT TRAINER - STEVE'S MASTER BUILD</title>
-
 <link rel="manifest" href="data:application/json,{'name':'OutTrainer','display':'fullscreen','orientation':'landscape'}">
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&family=Rajdhani:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&display=swap');
 
 :root {
   --bg-base: #030408;
   --bg-surface: #0a0d14;
   --cobalt-primary: #0a63ff;
-  --cobalt-glow: rgba(10, 99, 255, 0.8);
   --cyan-bright: #00f2ff;
   --pink-alert: #ff007a;
   --glass-border: rgba(255, 255, 255, 0.15);
-  --panel-bg: rgba(15, 20, 30, 0.6);
+  --panel-bg: rgba(15, 20, 30, 0.7);
 }
 
 * { 
   box-sizing: border-box; 
   margin: 0; 
   padding: 0; 
-  font-weight: 900 !important; /* Force Master Build Bold */
+  font-weight: 900 !important; 
   -webkit-tap-highlight-color: transparent; 
 }
 
@@ -39,13 +36,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
 }
 
-/* Landscape Guard Overlay */
 @media screen and (orientation: portrait) {
   body::after {
-    content: "ROTATE TO LANDSCAPE";
+    content: "PLEASE ROTATE TO LANDSCAPE";
     position: fixed;
     inset: 0;
     background: var(--bg-base);
@@ -54,8 +49,6 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
   }
 }
 
@@ -63,148 +56,95 @@ body {
   display: flex; 
   flex-direction: column; 
   height: 96vh; 
-  width: 96vw;
+  width: 98vw;
   background: var(--panel-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 30px;
-  backdrop-filter: blur(25px);
-  padding: 2vh 2vw;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 1.5vh;
 }
 
 .header-ui {
-  flex: 0 0 10vh;
+  flex: 0 0 8vh;
   display: flex; 
   align-items: center; 
   justify-content: center;
-  border-bottom: 2px solid var(--glass-border);
-  margin-bottom: 2vh;
+  border-bottom: 1px solid var(--glass-border);
 }
 
-.header-ui h1 { 
-  font-size: clamp(2rem, 5vh, 4rem); 
-  letter-spacing: 0.5vw; 
-  text-shadow: 0 0 20px var(--cobalt-primary);
-}
+.header-ui h1 { font-size: 3vh; letter-spacing: 4px; }
 
-.main-stage { 
-  flex: 1; 
-  display: flex; 
-  gap: 3vw; 
-}
+.main-stage { flex: 1; display: flex; gap: 2vw; padding-top: 2vh; }
 
-.left-panel { 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 2vh; 
-}
+.left-panel { flex: 1; display: flex; flex-direction: column; gap: 2vh; }
 
 .glass-card {
   flex: 1; 
-  border-radius: 25px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.6) 100%);
+  border-radius: 15px;
+  background: rgba(0,0,0,0.5);
   border: 1px solid var(--glass-border);
   display: flex; 
   flex-direction: column; 
   align-items: center; 
   justify-content: center;
-  padding: 10px;
 }
 
-.label-text { 
-  font-family: 'Rajdhani', sans-serif; 
-  font-size: 1.2rem; 
-  color: var(--cyan-bright); 
-  letter-spacing: 4px; 
-}
-
-.score-main { 
-  font-size: clamp(4rem, 12vh, 8rem); 
-  text-shadow: 0 0 40px var(--cobalt-primary); 
-}
+.score-main { font-size: 12vh; text-shadow: 0 0 30px var(--cobalt-primary); }
 
 .neon-input {
-  width: 90%; 
+  width: 80%; 
   background: #000; 
   border: 2px solid var(--cobalt-primary); 
-  border-radius: 15px; 
-  font-size: 3rem; 
+  border-radius: 10px; 
+  font-size: 5vh; 
   color: #fff; 
   text-align: center;
   font-family: 'Exo 2', sans-serif;
-  outline: none;
-  box-shadow: inset 0 0 15px var(--cobalt-primary);
 }
 
-.btn-container { display: flex; gap: 10px; width: 90%; margin-top: 10px; }
+.btn-container { display: flex; gap: 10px; width: 80%; margin-top: 10px; }
 
 .btn-action {
   flex: 1;
   padding: 1.5vh; 
-  border-radius: 15px; 
-  background: #1a1c23; 
+  border-radius: 10px; 
+  background: #111; 
   color: #fff; 
-  cursor: pointer; 
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 1.2rem;
+  font-size: 2vh;
   border: 1px solid var(--glass-border);
 }
 
-.btn-apply { 
-  border-color: var(--cyan-bright); 
-  width: 90%; 
-  margin-top: 10px; 
-  background: rgba(0, 242, 255, 0.1);
-}
+.btn-apply { border-color: var(--cyan-bright); width: 80%; margin-top: 10px; }
 
-.right-stage { 
-  flex: 1.5; 
-  display: flex; 
-  gap: 1.5vw; 
-}
+.right-stage { flex: 2; display: flex; gap: 1vw; }
 
 .crystal-housing {
   flex: 1; 
-  border-radius: 100px;
-  background: rgba(255,255,255,0.05);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.03);
   border: 1px solid var(--glass-border);
   display: flex; 
   flex-direction: column; 
   align-items: center; 
   justify-content: space-evenly;
-  padding: 2vh 0;
 }
 
 .crystal-orb {
-  width: clamp(70px, 10vw, 120px); 
-  height: clamp(70px, 10vw, 120px); 
-  border-radius: 50%;
-  background: #000; 
-  border: 4px solid var(--cobalt-primary);
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  font-size: 2rem; 
-  box-shadow: 0 0 30px var(--cobalt-primary);
+  width: 10vh; height: 10vh; border-radius: 50%;
+  background: #000; border: 3px solid var(--cobalt-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3vh;
 }
 
-.leave-text { 
-  font-size: clamp(2rem, 5vh, 4rem); 
-  color: var(--pink-alert); 
-  text-shadow: 0 0 20px var(--pink-alert);
-}
+.leave-text { font-size: 6vh; color: var(--pink-alert); }
 </style>
 </head>
 <body>
-
 <div class="app-container">
   <div class="header-ui"><h1>01 OUT TRAINER</h1></div>
-  
   <div class="main-stage">
     <div class="left-panel">
       <div class="glass-card">
-        <div class="label-text">REMAINING</div>
         <div class="score-main" id="bal">701</div>
         <div class="btn-container">
           <button class="btn-action" onclick="resetTo(501)">501</button>
@@ -212,63 +152,38 @@ body {
         </div>
       </div>
       <div class="glass-card">
-        <input type="number" id="hit" class="neon-input" inputmode="numeric" placeholder="---">
-        <button class="btn-action btn-apply" onclick="enterScore()">APPLY TURN</button>
+        <input type="number" id="hit" class="neon-input" inputmode="numeric">
+        <button class="btn-action btn-apply" onclick="enterScore()">APPLY</button>
       </div>
     </div>
-
     <div class="right-stage">
-      <div class="crystal-housing">
-        <div class="label-text">DART 1</div>
-        <div class="crystal-orb">T20</div>
-        <div class="leave-text" id="l1">641</div>
-      </div>
-      <div class="crystal-housing">
-        <div class="label-text">DART 2</div>
-        <div class="crystal-orb">T20</div>
-        <div class="leave-text" id="l2">581</div>
-      </div>
-      <div class="crystal-housing">
-        <div class="label-text">DART 3</div>
-        <div class="crystal-orb">D20</div>
-        <div class="leave-text" id="l3">541</div>
-      </div>
+      <div class="crystal-housing"><div class="crystal-orb">T20</div><div class="leave-text" id="l1">---</div></div>
+      <div class="crystal-housing"><div class="crystal-orb">T20</div><div class="leave-text" id="l2">---</div></div>
+      <div class="crystal-housing"><div class="crystal-orb">D20</div><div class="leave-text" id="l3">---</div></div>
     </div>
   </div>
 </div>
-
 <script>
 let rem = 701;
 const $ = (id) => document.getElementById(id);
 
-// Force Fullscreen & Landscape Lock on First Tap
 window.addEventListener("click", () => {
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().then(() => {
-      if(screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock("landscape").catch(e => console.log("Manual rotation required."));
+  const de = document.documentElement;
+  if (de.requestFullscreen) {
+    de.requestFullscreen().then(() => {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(() => {});
       }
     });
   }
 }, { once: true });
 
-function resetTo(v) { 
-  rem = v; 
-  $('bal').textContent = rem; 
-  update(); 
-}
-
+function resetTo(v) { rem = v; $('bal').textContent = rem; update(); }
 function enterScore() {
   const v = parseInt($('hit').value) || 0;
-  if (rem - v >= 0 && rem - v !== 1) { 
-    rem -= v; 
-    $('bal').textContent = rem; 
-    update(); 
-  }
+  if (rem - v >= 0 && rem - v !== 1) { rem -= v; $('bal').textContent = rem; update(); }
   $('hit').value = '';
-  $('hit').focus();
 }
-
 function update() {
   $('l1').textContent = rem - 60;
   $('l2').textContent = rem - 120;
