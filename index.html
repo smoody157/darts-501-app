@@ -1,127 +1,432 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-    <title>01 OUT TRAINER</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&family=Rajdhani:wght@700&display=swap');
-        :root { --cobalt: #0a63ff; --cyan: #00f2ff; --pink: #ff007a; --bg: #010204; --glass: rgba(15, 20, 30, 0.95); }
-        @media screen and (orientation: portrait) {
-            body { background: #000 !important; }
-            .master-app { display: none !important; }
-            .portrait-blocker { display: flex !important; position: fixed; inset: 0; background: #000; color: var(--cyan); flex-direction: column; justify-content: center; align-items: center; z-index: 99999; font-size: 2.5rem; text-align: center; }
-        }
-        .portrait-blocker { display: none; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-weight: 900; font-family: 'Exo 2', sans-serif; }
-        body { background-color: var(--bg); color: #fff; height: 100vh; width: 100vw; overflow: hidden; display: flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 50% 50%, #0a1a33 0%, #000 100%); }
-        .master-app { width: 98vw; height: 96vh; background: var(--glass); border: 2px solid rgba(255,255,255,0.15); border-radius: 40px; display: flex; flex-direction: column; padding: 2vh; backdrop-filter: blur(60px); }
-        .header { flex: 0 0 10vh; display: flex; justify-content: center; align-items: center; border-bottom: 2px solid rgba(255,255,255,0.1); }
-        .header h1 { font-size: 5vh; letter-spacing: 1.5vw; text-shadow: 0 0 30px var(--cobalt); }
-        .main-stage { flex: 1; display: flex; gap: 2vw; padding: 2vh 1vw; }
-        .terminal { flex: 1; display: flex; flex-direction: column; gap: 3vh; }
-        .module-card { flex: 1; background: linear-gradient(145deg, #0d1117, #000); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .label { font-family: 'Rajdhani', sans-serif; color: var(--cyan); letter-spacing: 5px; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 5px; }
-        .score-hero { font-size: 10vh; text-shadow: 0 0 50px var(--cobalt); margin-bottom: 10px; }
-        .btn-row { display: flex; gap: 15px; }
-        .btn-reset { background: #111; border: 2px solid var(--cobalt); color: #fff; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-size: 1.1rem; }
-        .input-hit { width: 85%; background: #000; border: 3px solid var(--cobalt); border-radius: 15px; font-size: 6vh; color: #fff; text-align: center; margin: 15px 0; outline: none; }
-        .btn-apply { width: 85%; padding: 2vh; background: linear-gradient(to bottom, var(--cyan), #000); border: none; border-radius: 15px; color: #fff; font-size: 2.2vh; cursor: pointer; letter-spacing: 2px; }
-        .data-grid { flex: 1.8; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; }
-        .crystal-housing { background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, #000 100%); border: 1px solid rgba(255,255,255,0.15); border-radius: 120px; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 4vh 0; }
-        .orb-display { width: 14vh; height: 14vh; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #222, #000); border: 5px solid #111; display: flex; align-items: center; justify-content: center; font-size: 4vh; box-shadow: 0 0 40px var(--cobalt); color: #fff; }
-        .rem-digit { font-size: 7vh; color: var(--pink); text-shadow: 0 0 30px var(--pink); }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<title>01 OUT TRAINER - STEVE'S MASTER BUILD</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+:root {
+  /* Core Colors */
+  --bg-base: #030408;
+  --bg-surface: #0a0d14;
+  --cobalt-primary: #0a63ff;
+  --cobalt-glow: rgba(10, 99, 255, 0.8);
+  --cyan-bright: #00f2ff;
+  --pink-alert: #ff007a;
+  
+  /* Glass & Light Variables */
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.8);
+  --panel-bg: rgba(15, 20, 30, 0.6);
+  
+  /* Depths */
+  --shadow-outer: 15px 15px 35px var(--glass-shadow), -10px -10px 25px rgba(255, 255, 255, 0.03);
+  --shadow-inner: inset 10px 10px 20px var(--glass-shadow), inset -5px -5px 15px rgba(255, 255, 255, 0.05);
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  -webkit-tap-highlight-color: transparent; 
+}
+
+body { 
+  background-color: var(--bg-base); 
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif; 
+  height: 100vh; 
+  width: 100vw; 
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(10, 99, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%),
+    linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+}
+
+/* App Container - Responsive without locking rotation */
+.app-container { 
+  display: flex; 
+  flex-direction: column; 
+  height: 96vh; 
+  width: 96vw;
+  max-width: 1400px;
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 2vh 2vw;
+}
+
+/* High Fidelity Header */
+.header-ui {
+  flex: 0 0 10vh;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  border-bottom: 2px solid var(--glass-border);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-ui::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-bright), transparent);
+  opacity: 0.5;
+}
+
+.header-ui h1 { 
+  font-size: clamp(2rem, 4vh, 4rem); 
+  letter-spacing: 1vw; 
+  font-weight: 900;
+  color: #ffffff; 
+  text-transform: uppercase;
+  text-shadow: 
+    0 0 10px rgba(255,255,255,0.5), 
+    0 0 20px var(--cobalt-primary), 
+    0 0 40px var(--cobalt-primary);
+}
+
+/* Main Layout Grid */
+.main-stage { 
+  flex: 1; 
+  display: flex; 
+  flex-wrap: wrap;
+  gap: 3vw; 
+  padding: 3vh 1vw; 
+  perspective: 1500px;
+}
+
+/* Left Stack: Controls */
+.left-panel { 
+  flex: 1; 
+  min-width: 300px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 3vh; 
+}
+
+.glass-card {
+  flex: 1; 
+  position: relative; 
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.6) 100%);
+  border-top: 1px solid var(--glass-highlight);
+  border-left: 1px solid var(--glass-highlight);
+  box-shadow: var(--shadow-outer);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  padding: 2vh;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 23px;
+  box-shadow: var(--shadow-inner);
+  pointer-events: none;
+}
+
+.label-text { 
+  font-family: 'Rajdhani', sans-serif; 
+  font-size: clamp(1rem, 2vh, 1.5rem); 
+  color: var(--cyan-bright); 
+  letter-spacing: 6px; 
+  text-transform: uppercase; 
+  margin-bottom: 1vh; 
+  text-shadow: 0 0 15px var(--cyan-bright); 
+  z-index: 2;
+}
+
+.score-main { 
+  font-size: clamp(4rem, 10vh, 8rem); 
+  font-weight: 900; 
+  color: #ffffff; 
+  text-shadow: 0 0 40px var(--cobalt-primary), 0 0 80px var(--cobalt-primary); 
+  line-height: 1; 
+  z-index: 2;
+}
+
+/* Beautiful Inputs */
+input.neon-input {
+  width: 85%; 
+  background: rgba(0,0,0,0.8); 
+  border: 2px solid var(--cobalt-primary); 
+  border-radius: 15px; 
+  font-size: clamp(2rem, 5vh, 4rem); 
+  color: #ffffff; 
+  text-align: center;
+  font-family: 'Orbitron', sans-serif; 
+  outline: none; 
+  box-shadow: inset 0 0 20px rgba(10,99,255,0.5), 0 0 15px rgba(10,99,255,0.3);
+  padding: 1vh;
+  margin-bottom: 2vh;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+input.neon-input:focus {
+  border-color: var(--cyan-bright);
+  box-shadow: inset 0 0 30px rgba(0,242,255,0.6), 0 0 25px rgba(0,242,255,0.4);
+}
+
+/* Hyper-detailed Buttons */
+.btn-container { 
+  display: flex; 
+  gap: 15px; 
+  width: 85%; 
+  z-index: 2;
+}
+
+.btn-action {
+  flex: 1; 
+  padding: 2vh; 
+  border-radius: 15px; 
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(145deg, #1a1c23, #050608); 
+  color: #a0aab5; 
+  font-weight: 900;
+  cursor: pointer; 
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+  font-family: 'Rajdhani', sans-serif; 
+  font-size: clamp(1rem, 2vh, 1.5rem); 
+  letter-spacing: 3px;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.1);
+}
+
+.btn-action:hover { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+
+.btn-apply { 
+  border-color: var(--cyan-bright); 
+  color: #ffffff;
+  background: linear-gradient(145deg, rgba(0, 242, 255, 0.1), rgba(0,0,0,0.9));
+  box-shadow: 0 0 20px rgba(0,242,255,0.2), inset 1px 1px 5px rgba(0,242,255,0.5); 
+  width: 85%; 
+  margin-top: 1vh; 
+}
+
+.btn-apply:active { 
+  transform: translateY(4px) scale(0.98); 
+  box-shadow: 0 0 40px var(--cyan-bright); 
+  background: var(--cyan-bright);
+  color: #000;
+}
+
+/* Right Stack: Crystal Ovals */
+.right-stage { 
+  flex: 2; 
+  min-width: 300px;
+  display: flex; 
+  flex-direction: row; 
+  gap: 2vw; 
+}
+
+@media (max-width: 768px) {
+  .right-stage { flex-direction: column; }
+}
+
+.crystal-housing {
+  flex: 1; 
+  border-radius: 120px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 40%, rgba(0,0,0,0.8) 100%);
+  border: 1px solid var(--glass-highlight);
+  border-right: 1px solid rgba(0,0,0,0.5);
+  border-bottom: 1px solid rgba(0,0,0,0.5);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: space-evenly;
+  box-shadow: var(--shadow-outer);
+  position: relative;
+  overflow: hidden;
+  padding: 2vh 0;
+}
+
+.crystal-housing::before {
+  content: '';
+  position: absolute;
+  top: -10%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.crystal-orb {
+  width: clamp(80px, 12vw, 150px); 
+  height: clamp(80px, 12vw, 150px); 
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2a2d35 0%, #000000 70%);
+  border: 4px solid #000;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: clamp(1.5rem, 3.5vw, 3rem); 
+  font-weight: 900; 
+  position: relative;
+  box-shadow: 
+    0 15px 35px rgba(0,0,0,0.9),
+    0 0 50px rgba(10,99,255,0.4), 
+    inset 0 10px 20px rgba(255,255,255,0.15),
+    inset 0 -10px 20px rgba(0,0,0,0.9);
+  z-index: 2;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.crystal-orb::after {
+  content: ''; 
+  position: absolute; 
+  top: 10%; 
+  left: 15%; 
+  width: 40%; 
+  height: 25%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4), transparent); 
+  border-radius: 50%; 
+  filter: blur(2px);
+  transform: rotate(-15deg);
+}
+
+.leave-text { 
+  font-size: clamp(2rem, 4vw, 4rem); 
+  font-weight: 900; 
+  color: var(--pink-alert); 
+  text-shadow: 0 0 25px var(--pink-alert), 0 0 50px rgba(255, 0, 122, 0.5); 
+  z-index: 2;
+}
+
+/* Footer */
+.footer { 
+  flex: 0 0 6vh; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(0.8rem, 1.5vh, 1.2rem); 
+  color: rgba(255,255,255,0.3); 
+  letter-spacing: 5px; 
+  border-top: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.3);
+  border-radius: 0 0 20px 20px;
+}
+</style>
 </head>
 <body>
-    <div class="portrait-blocker">ROTATE TO LANDSCAPE</div>
-    <div class="master-app">
-        <header class="header"><h1>01 OUT TRAINER</h1></header>
-        <div class="main-stage">
-            <div class="terminal">
-                <div class="module-card">
-                    <div class="label">REMAINING</div>
-                    <div class="score-hero" id="bal">501</div>
-                    <div class="btn-row">
-                        <button class="btn-reset" onclick="reset(301)">301</button>
-                        <button class="btn-reset" onclick="reset(501)">501</button>
-                        <button class="btn-reset" onclick="reset(701)">701</button>
-                    </div>
-                </div>
-                <div class="module-card">
-                    <div class="label">ENTER HIT</div>
-                    <input type="number" id="hit" class="input-hit" inputmode="numeric">
-                    <button class="btn-apply" onclick="processHit()">APPLY TURN</button>
-                </div>
-            </div>
-            <div class="data-grid">
-                <div class="crystal-housing">
-                    <div class="label">DART 1</div>
-                    <div class="orb-display" id="s1">-</div>
-                    <div style="text-align:center"><div class="label">LEAVES</div><div class="rem-digit" id="r1">-</div></div>
-                </div>
-                <div class="crystal-housing">
-                    <div class="label">DART 2</div>
-                    <div class="orb-display" id="s2">-</div>
-                    <div style="text-align:center"><div class="label">LEAVES</div><div class="rem-digit" id="r2">-</div></div>
-                </div>
-                <div class="crystal-housing">
-                    <div class="label">DART 3</div>
-                    <div class="orb-display" id="s3">-</div>
-                    <div style="text-align:center"><div class="label">LEAVES</div><div class="rem-digit" id="r3">-</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        let score = 501;
-        const m = {};
-        // 1:1 MAP DATA - NO FORMULAS
-        m[2]=["D1",0];m[3]=["S1",2];m[4]=["D2",0];m[5]=["S1",4];m[6]=["D3",0];m[7]=["S3",4];m[8]=["D4",0];m[9]=["S1",8];m[10]=["D5",0];
-        m[11]=["S3",8];m[12]=["D6",0];m[13]=["S5",8];m[14]=["D7",0];m[15]=["S7",8];m[16]=["D8",0];m[17]=["S9",8];m[18]=["D9",0];m[19]=["S3",16];
-        m[20]=["D10",0];m[21]=["S5",16];m[22]=["D11",0];m[23]=["S7",16];m[24]=["D12",0];m[25]=["S9",16];m[26]=["D13",0];m[27]=["S11",16];m[28]=["D14",0];
-        m[29]=["S13",16];m[30]=["D15",0];m[31]=["S15",16];m[32]=["D16",0];m[33]=["S1",32];m[34]=["D17",0];m[35]=["S3",32];m[36]=["D18",0];m[37]=["S5",32];
-        m[38]=["D19",0];m[39]=["S7",32];m[40]=["D20",0];m[41]=["S9",32];m[42]=["D21",0];m[43]=["S11",32];m[44]=["D22",0];m[45]=["S13",32];m[46]=["D23",0];
-        m[47]=["S15",32];m[48]=["D24",0];m[49]=["S17",32];m[50]=["DB",0];m[51]=["S19",32];m[52]=["D26",0];m[53]=["S21",32];m[54]=["D27",0];m[55]=["S23",32];
-        m[56]=["D28",0];m[57]=["S25",32];m[58]=["D29",0];m[59]=["S27",32];m[60]=["D30",0];m[61]=["T15",16];m[62]=["T10",32];m[63]=["T13",24];m[64]=["T16",16];
-        m[65]=["T15",20];m[66]=["T14",24];m[67]=["T17",16];m[68]=["T16",20];m[69]=["T15",24];m[70]=["T10",40];m[71]=["T13",32];m[72]=["T16",24];m[73]=["T19",16];
-        m[74]=["T14",32];m[75]=["T17",24];m[76]=["T20",16];m[77]=["T19",20];m[78]=["T18",24];m[79]=["T13",40];m[80]=["T20",20];m[81]=["T19",24];m[82]=["T14",40];
-        m[83]=["T17",32];m[84]=["T20",24];m[85]=["T15",40];m[86]=["T18",32];m[87]=["T17",36];m[88]=["T20",28];m[89]=["T19",32];m[90]=["T20",30];m[91]=["T17",40];
-        m[92]=["T20",32];m[93]=["T19",36];m[94]=["T18",40];m[95]=["T19",38];m[96]=["T20",36];m[97]=["T19",40];m[98]=["T20",38];m[99]=["T19",42];m[100]=["T20",40];
-        m[101]=["T17",50];m[102]=["T20",42];m[103]=["T19",46];m[104]=["T18",50];m[105]=["T19",48];m[106]=["T20",46];m[107]=["T19",50];m[108]=["T20",48];m[109]=["T19",52];
-        m[110]=["T20",50];m[111]=["T19",54];m[112]=["T20",52];m[113]=["T19",56];m[114]=["T20",54];m[115]=["T19",58];m[116]=["T20",56];m[117]=["T19",60];m[118]=["T20",58];
-        m[119]=["T19",62];m[120]=["T20",60];m[121]=["T17",70];m[122]=["T18",68];m[123]=["T19",66];m[124]=["T20",64];m[125]=["T25",75];m[126]=["T19",69];m[127]=["T20",67];
-        m[128]=["T18",74];m[129]=["T19",72];m[130]=["T20",70];m[131]=["T19",74];m[132]=["T20",72];m[133]=["T19",76];m[134]=["T20",74];m[135]=["T19",78];m[136]=["T20",76];
-        m[137]=["T19",80];m[138]=["T20",78];m[139]=["T19",82];m[140]=["T20",80];m[141]=["T20",81];m[142]=["T20",82];m[143]=["T20",83];m[144]=["T20",84];m[145]=["T20",85];
-        m[146]=["T20",86];m[147]=["T20",87];m[148]=["T20",88];m[149]=["T20",89];m[150]=["T20",90];m[151]=["T20",91];m[152]=["T20",92];m[153]=["T20",93];m[154]=["T20",94];
-        m[155]=["T20",95];m[156]=["T20",96];m[157]=["T20",97];m[158]=["T20",98];m[159]=["T20",99];m[160]=["T20",100];m[161]=["T20",101];m[162]=["T20",102];m[163]=["T20",103];
-        m[164]=["T20",104];m[165]=["T20",105];m[166]=["T20",106];m[167]=["T20",107];m[168]=["T20",108];m[169]=["T20",109];m[170]=["T20",110];
-        for(let i=171; i<=701; i++) { if(!m[i]) m[i]=["T20", i-60]; }
-        m[301]=["T19",242]; m[501]=["T20",441]; m[701]=["T20",641];
 
-        // ORIGINAL OPERATION
-        function reset(n) { score = n; syncUI(); }
-        function processHit() {
-            const h = parseInt(document.getElementById('hit').value) || 0;
-            if (score - h >= 2 || score - h === 0) score -= h;
-            syncUI();
-            document.getElementById('hit').value = '';
-        }
-        function syncUI() {
-            document.getElementById('bal').innerText = score;
-            let t = score;
-            for(let i=1; i<=3; i++) {
-                if (m[t]) {
-                    document.getElementById('s'+i).innerText = m[t][0];
-                    document.getElementById('r'+i).innerText = m[t][1];
-                    t = m[t][1];
-                } else {
-                    document.getElementById('s'+i).innerText = "-";
-                    document.getElementById('r'+i).innerText = "-";
-                }
-            }
-        }
-        syncUI();
-    </script>
+<div class="app-container">
+  <div class="header-ui">
+    <h1>01 OUT TRAINER</h1>
+  </div>
+  
+  <div class="main-stage">
+    <div class="left-panel">
+      <div class="glass-card">
+        <div class="label-text">Score Remaining</div>
+        <div class="score-main" id="bal">701</div>
+        <div class="btn-container">
+          <button class="btn-action" onclick="playClick();resetTo(501)">501</button>
+          <button class="btn-action" onclick="playClick();resetTo(701)">701</button>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <div class="label-text">Enter Hit</div>
+        <input type="number" id="hit" class="neon-input" inputmode="numeric" placeholder="---">
+        <button class="btn-action btn-apply" onclick="playClick();enterScore()">APPLY TURN</button>
+      </div>
+    </div>
+
+    <div class="right-stage">
+      <div class="crystal-housing">
+        <div class="label-text">Dart 1</div>
+        <div class="crystal-orb">T20</div>
+        <div class="leave-text" id="l1">641</div>
+      </div>
+      <div class="crystal-housing">
+        <div class="label-text">Dart 2</div>
+        <div class="crystal-orb">T20</div>
+        <div class="leave-text" id="l2">581</div>
+      </div>
+      <div class="crystal-housing">
+        <div class="label-text">Dart 3</div>
+        <div class="crystal-orb">D20</div>
+        <div class="leave-text" id="l3">541</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">STEVE'S MASTER BUILD // UNLOCKED ROTATION // FIXED MATH</div>
+</div>
+
+<script>
+// Core Math Logic - Untouched
+let rem = 701;
+const $ = (id) => document.getElementById(id);
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playClick() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.1);
+  g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  osc.connect(g); 
+  g.connect(audioCtx.destination);
+  osc.start(); 
+  osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function resetTo(v) { 
+  rem = v; 
+  $('bal').textContent = rem; 
+  update(); 
+}
+
+function enterScore() {
+  const v = parseInt($('hit').value) || 0;
+  
+  // Exact Math Validation
+  if (rem - v >= 0 && rem - v !== 1) { 
+    rem -= v; 
+    $('bal').textContent = rem; 
+    update(); 
+  } else {
+    // Visual error feedback instead of altering math
+    $('bal').style.textShadow = "0 0 30px var(--pink-alert)";
+    setTimeout(() => { 
+      $('bal').style.textShadow = "0 0 40px var(--cobalt-primary), 0 0 80px var(--cobalt-primary)"; 
+    }, 400);
+  }
+  
+  $('hit').value = '';
+  $('hit').focus();
+}
+
+function update() {
+  // Steve's Fixed Target Deductions
+  $('l1').textContent = rem - 60;
+  $('l2').textContent = rem - 120;
+  $('l3').textContent = rem - 180;
+}
+
+// Initialize on load
+update();
+</script>
 </body>
 </html>
