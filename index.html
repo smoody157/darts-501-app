@@ -10,7 +10,7 @@
         @media screen and (orientation: portrait) {
             body { background: #000 !important; }
             .master-app { display: none !important; }
-            .portrait-blocker { display: flex !important; position: fixed; inset: 0; background: #000; color: var(--cyan); flex-direction: column; justify-content: center; align-items: center; z-index: 99999; font-size: 2rem; text-align: center; }
+            .portrait-blocker { display: flex !important; position: fixed; inset: 0; background: #000; color: var(--cyan); flex-direction: column; justify-content: center; align-items: center; z-index: 99999; font-size: 2.5rem; text-align: center; }
         }
         .portrait-blocker { display: none; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-weight: 900; font-family: 'Exo 2', sans-serif; }
@@ -22,10 +22,9 @@
         .terminal { flex: 1; display: flex; flex-direction: column; gap: 3vh; }
         .module-card { flex: 1; background: linear-gradient(145deg, #0d1117, #000); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .label { font-family: 'Rajdhani', sans-serif; color: var(--cyan); letter-spacing: 5px; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 5px; }
-        .score-hero { font-size: 11vh; text-shadow: 0 0 50px var(--cobalt); margin-bottom: 10px; }
+        .score-hero { font-size: 10vh; text-shadow: 0 0 50px var(--cobalt); margin-bottom: 10px; }
         .btn-row { display: flex; gap: 15px; }
         .btn-reset { background: #111; border: 2px solid var(--cobalt); color: #fff; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-size: 1.1rem; }
-        .btn-reset:active { transform: scale(0.9); background: var(--cobalt); }
         .input-hit { width: 85%; background: #000; border: 3px solid var(--cobalt); border-radius: 15px; font-size: 6vh; color: #fff; text-align: center; margin: 15px 0; outline: none; }
         .btn-apply { width: 85%; padding: 2vh; background: linear-gradient(to bottom, var(--cyan), #000); border: none; border-radius: 15px; color: #fff; font-size: 2.2vh; cursor: pointer; letter-spacing: 2px; }
         .data-grid { flex: 1.8; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5vw; }
@@ -76,46 +75,26 @@
     </div>
     <script>
         let score = 501;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // Exact Mapping from DATA SHEET (Scores 2-501)
-        const outsMap = {"2":["D1",0],"3":["S1",2],"4":["D2",0],"5":["S1",4],"6":["D3",0],"7":["S3",4],"8":["D4",0],"9":["S1",8],"10":["D5",0],"11":["S3",8],"12":["D6",0],"13":["S5",8],"14":["D7",0],"15":["S7",8],"16":["D8",0],"17":["S9",8],"18":["D9",0],"19":["S3",16],"20":["D10",0],"21":["S5",16],"22":["D11",0],"23":["S7",16],"24":["D12",0],"25":["S9",16],"26":["D13",0],"27":["S11",16],"28":["D14",0],"29":["S13",16],"30":["D15",0],"31":["S15",16],"32":["D16",0],"33":["S1",32],"34":["D17",0],"35":["S3",32],"36":["D18",0],"37":["S5",32],"38":["D19",0],"39":["S7",32],"40":["D20",0],"41":["S9",32],"42":["S10",32],"43":["S11",32],"44":["S12",32],"45":["S13",32],"46":["S14",32],"47":["S15",32],"48":["S16",32],"49":["S17",32],"50":["DBULL",0],"51":["S19",32],"52":["S20",32],"53":["S21",32],"54":["S22",32],"55":["S23",32],"56":["S24",32],"57":["S25",32],"58":["S26",32],"59":["S19",40],"60":["S20",40],"61":["T15",16],"62":["T10",32],"63":["T13",24],"64":["D16",32],"65":["T15",20],"66":["T10",36],"67":["T17",16],"68":["T16",20],"69":["T15",24],"70":["T10",40],"71":["T13",32],"72":["T12",36],"73":["T11",40],"74":["T14",32],"75":["T13",36],"76":["T20",16],"77":["T15",32],"78":["T14",36],"79":["T13",40],"80":["T16",32],"81":["T15",36],"82":["T14",40],"83":["T17",32],"84":["T16",36],"85":["T15",40],"86":["T18",32],"87":["T17",36],"88":["T16",40],"89":["T19",32],"90":["T18",36],"91":["T17",40],"92":["T20",32],"93":["T19",36],"94":["T18",40],"95":["T19",38],"96":["T20",36],"97":["T19",40],"98":["T20",38],"99":["T19",42],"100":["T20",40],"101":["T17",50],"102":["T20",42],"103":["T19",46],"104":["T18",50],"105":["T19",48],"106":["T20",46],"107":["T19",50],"108":["T20",48],"109":["T19",52],"110":["T20",50],"111":["T19",54],"112":["T20",52],"113":["T19",56],"114":["T20",54],"115":["T19",58],"116":["T20",56],"117":["T19",60],"118":["T20",58],"119":["T19",62],"120":["T20",60],"121":["T17",70],"122":["T18",68],"123":["T19",66],"124":["T20",64],"125":["T15",80],"126":["T19",69],"127":["T20",67],"128":["T18",74],"129":["T19",72],"130":["T20",70],"131":["T17",80],"132":["T20",72],"133":["T19",76],"134":["T18",80],"135":["T19",78],"136":["T20",76],"137":["T19",80],"138":["T20",78],"139":["T19",82],"140":["T20",80],"141":["T19",84],"142":["T20",82],"143":["T19",86],"144":["T20",84],"145":["T19",88],"146":["T20",86],"147":["T19",90],"148":["T20",88],"149":["T19",92],"150":["T20",90],"151":["T19",94],"152":["T20",92],"153":["T19",96],"154":["T20",94],"155":["T19",98],"156":["T20",96],"157":["T19",100],"158":["T20",98],"159":["T19",102],"160":["T20",100],"161":["T17",110],"162":["T18",108],"163":["T19",106],"164":["T20",104],"165":["T19",108],"166":["T20",106],"167":["T20",107],"168":["T20",108],"169":["T20",109],"170":["T20",110],"171":["T20",111],"174":["T20",114],"177":["T20",117],"180":["T20",120],"501":["T20",441],"441":["T20",381],"381":["T20",321],"321":["T20",261],"261":["T20",201],"201":["T20",141],"141":["T19",84],"84":["T16",36],"36":["D18",0]};
-
-        // Populate intermediate spreadsheet logic (filling gaps between 180 and 501)
-        for (let i = 2; i <= 501; i++) {
-            if (!outsMap[i]) {
-                if (i > 170) outsMap[i] = ["T20", i - 60];
-                else outsMap[i] = ["S1", i - 1];
-            }
-        }
-
-        function playSound(f) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            osc.connect(g); g.connect(audioCtx.destination);
-            osc.frequency.setValueAtTime(f || 440, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
+        // EXACT DATA FROM SPREADSHEET (Scores 2-501)
+        const outsMap = {"2": ["D1", 0], "3": ["S1", 2], "4": ["D2", 0], "5": ["S1", 4], "6": ["D3", 0], "7": ["S3", 4], "8": ["D4", 0], "9": ["S1", 8], "10": ["D5", 0], "11": ["S3", 8], "12": ["D6", 0], "13": ["S5", 8], "14": ["D7", 0], "15": ["S7", 8], "16": ["D8", 0], "17": ["S9", 8], "18": ["D9", 0], "19": ["S3", 16], "20": ["D10", 0], "21": ["S5", 16], "22": ["D11", 0], "23": ["S7", 16], "24": ["D12", 0], "25": ["S9", 16], "26": ["D13", 0], "27": ["S11", 16], "28": ["D14", 0], "29": ["S13", 16], "30": ["D15", 0], "31": ["S15", 16], "32": ["D16", 0], "33": ["S1", 32], "34": ["D17", 0], "35": ["S3", 32], "36": ["D18", 0], "37": ["S5", 32], "38": ["D19", 0], "39": ["S7", 32], "40": ["D20", 0], "41": ["S9", 32], "42": ["S10", 32], "43": ["S11", 32], "44": ["S12", 32], "45": ["S13", 32], "46": ["S6", 40], "47": ["S7", 40], "48": ["S8", 40], "49": ["S9", 40], "50": ["S10", 40], "51": ["S11", 40], "52": ["S12", 40], "53": ["S13", 40], "54": ["S14", 40], "55": ["S15", 40], "56": ["S16", 40], "57": ["S17", 40], "58": ["S18", 40], "59": ["S19", 40], "60": ["S20", 40], "61": ["SB", 36], "62": ["T10", 32], "63": ["T13", 24], "64": ["T16", 16], "65": ["SB", 40], "66": ["T14", 24], "67": ["T17", 16], "68": ["T16", 20], "69": ["T15", 24], "70": ["T10", 40], "71": ["T13", 32], "72": ["T16", 24], "73": ["T19", 16], "74": ["T14", 32], "75": ["T17", 24], "76": ["T16", 28], "77": ["T19", 20], "78": ["T18", 24], "79": ["T19", 22], "80": ["D20", 40], "81": ["T19", 24], "82": ["DB", 32], "83": ["T17", 32], "84": ["T20", 24], "85": ["T15", 40], "86": ["T18", 32], "87": ["T17", 36], "88": ["T20", 28], "89": ["T19", 32], "90": ["T18", 36], "91": ["T17", 40], "92": ["T20", 32], "93": ["T19", 36], "94": ["T18", 40], "95": ["T19", 38], "96": ["T20", 36], "97": ["T19", 40], "98": ["T20", 38], "99": ["T19", 42], "100": ["T20", 40], "101": ["T19", 44], "102": ["T20", 42], "103": ["T19", 46], "104": ["T16", 56], "105": ["DB", 55], "106": ["T20", 46], "107": ["T19", 50], "108": ["T19", 51], "109": ["T20", 49], "110": ["T19", 53], "111": ["T19", 54], "112": ["T20", 52], "113": ["T19", 56], "114": ["T18", 60], "115": ["T19", 58], "116": ["T20", 56], "117": ["T20", 57], "118": ["T20", 58], "119": ["T19", 62], "120": ["T20", 60], "121": ["T20", 61], "122": ["T18", 68], "123": ["T19", 66], "124": ["T20", 64], "125": ["DB", 75], "126": ["T19", 69], "127": ["T20", 67], "128": ["T18", 74], "129": ["T19", 72], "130": ["T20", 70], "131": ["T17", 80], "132": ["DB", 82], "133": ["T20", 73], "134": ["T18", 80], "135": ["DB", 85], "136": ["T20", 76], "137": ["T20", 77], "138": ["T19", 81], "139": ["T19", 82], "140": ["T20", 80], "141": ["T20", 81], "142": ["T20", 82], "143": ["T20", 83], "144": ["T20", 84], "145": ["T20", 85], "146": ["T20", 86], "147": ["T20", 87], "148": ["T20", 88], "149": ["T20", 89], "150": ["T19", 93], "151": ["T20", 91], "152": ["T20", 92], "153": ["T20", 93], "154": ["T19", 97], "155": ["T20", 95], "156": ["T20", 96], "157": ["T20", 97], "158": ["T20", 98], "159": ["T20", 99], "160": ["T20", 100], "161": ["T20", 101], "162": ["T20", 102], "163": ["T20", 103], "164": ["T19", 107], "165": ["T20", 105], "166": ["T20", 106], "167": ["T20", 107], "168": ["T20", 108], "169": ["T20", 109], "170": ["T20", 110], "180": ["T20", 120], "301": ["T19", 241], "501": ["T20", 441]};
 
         function reset(n) { score = n; syncUI(); }
-
         function processHit() {
             const h = parseInt(document.getElementById('hit').value) || 0;
-            if (score - h >= 2 || score - h === 0) { score -= h; syncUI(); playSound(880); }
-            else { document.getElementById('bal').style.color = 'var(--pink)'; setTimeout(()=>document.getElementById('bal').style.color='#fff', 300); playSound(220); }
+            if (score - h >= 2 || score - h === 0) score -= h;
+            syncUI();
             document.getElementById('hit').value = '';
         }
-
         function syncUI() {
             document.getElementById('bal').innerText = score;
             let temp = score;
             for(let i=1; i<=3; i++) {
-                const data = outsMap[temp] || (temp > 501 ? ["T20", temp-60] : ["-", temp]);
-                document.getElementById('s'+i).innerText = temp > 1 ? data[0] : "-";
-                document.getElementById('r'+i).innerText = temp > 1 ? data[1] : "-";
-                temp = data[1];
+                let d = ["T20", temp-60];
+                if (outsMap[temp]) d = outsMap[temp];
+                else if (temp <= 1) d = ["-", 0];
+                document.getElementById('s'+i).innerText = temp > 1 ? d[0] : "-";
+                document.getElementById('r'+i).innerText = temp > 1 ? d[1] : "-";
+                temp = d[1];
             }
         }
         syncUI();
