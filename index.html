@@ -6,152 +6,118 @@
 <title>01 OUT TRAINER - Steve's Graphic Designs</title>
 <style>
 :root {
-  --bg-black: #000103;
+  --bg: #000103;
   --cobalt: #0a63ff;
-  --cobalt-glow: rgba(10, 99, 255, 0.8);
-  --chrome-border: linear-gradient(145deg, #777, #000, #333);
-  --glass-layer: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
+  --glow: rgba(10, 99, 255, 0.8);
+  --glass: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body { 
-  margin: 0; padding: 0; background: var(--bg-black); color: #fff;
+  margin: 0; padding: 0; background: var(--bg); color: #fff;
   font-family: 'Arial Black', sans-serif; 
-  height: 100vh; width: 100vw; 
-  display: flex; flex-direction: column; 
-  overflow: hidden; 
+  height: 100vh; width: 100vw; overflow: hidden;
 }
 
-/* HEADER: 01 OUT TRAINER */
+/* LANDSCAPE LOCK OVERLAY */
+#landscape-lock {
+  display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+@media (orientation: portrait) {
+  #landscape-lock { display: flex; }
+  .app-container { display: none; }
+}
+
+.app-container { display: flex; flex-direction: column; height: 100vh; }
+
 .header-ui {
   height: 12vh; background: #000; border-bottom: 3px solid #1a1a1a;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 40px #000; z-index: 100;
 }
 .header-ui h1 { 
-  margin: 0; font-size: 5vh; letter-spacing: 10px; font-weight: 900;
-  background: linear-gradient(to bottom, #fff, #555);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin: 0; font-size: 5vh; letter-spacing: 10px;
+  background: linear-gradient(#fff, #555); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 0 20px var(--cobalt));
 }
 
-/* FIXED LANDSCAPE STAGE */
-.main-stage {
-  flex: 1; display: flex; padding: 2vh; gap: 3vw; align-items: stretch;
-}
+.main-stage { flex: 1; display: flex; padding: 2vh; gap: 3vw; }
 
-/* LEFT CONTROLS */
 .left-stack { width: 300px; display: flex; flex-direction: column; gap: 2vh; }
-
 .panel-3d {
   flex: 1; background: #050505; border: 2px solid #222; border-radius: 30px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 30px rgba(10,99,255,0.1), 0 20px 50px rgba(0,0,0,0.9);
-  padding: 15px;
+  box-shadow: inset 0 0 30px rgba(10,99,255,0.1), 0 20px 50px #000;
 }
 
-.label-ui { font-size: 1.5vh; color: var(--cobalt); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 5px; }
-.score-big { font-size: 8vh; font-weight: 900; text-shadow: 0 0 35px var(--cobalt-glow); margin: 5px 0; }
+.label-ui { font-size: 1.5vh; color: var(--cobalt); letter-spacing: 5px; text-transform: uppercase; }
+.score-big { font-size: 8vh; text-shadow: 0 0 35px var(--glow); margin: 5px 0; }
 
 input.score-input {
   width: 90%; background: #000; border: 2px solid #333; color: #fff;
-  font-size: 5vh; text-align: center; border-radius: 15px; font-family: inherit;
-  box-shadow: inset 0 8px 15px #000; outline: none; margin-bottom: 10px;
+  font-size: 5vh; text-align: center; border-radius: 15px; outline: none; margin-bottom: 10px;
 }
 
-/* 3D BUTTONS */
 .btn-chrome {
   width: 90%; padding: 1.5vh; border-radius: 15px;
-  background: var(--chrome-border); border: 1px solid #444; color: #fff;
-  font-weight: 900; text-transform: uppercase; cursor: pointer;
-  box-shadow: 0 6px 0 #000, 0 8px 15px rgba(0,0,0,0.7);
-  transition: transform 0.05s;
+  background: linear-gradient(145deg, #777, #000, #333); border: 1px solid #444; color: #fff;
+  font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 #000;
 }
 .btn-chrome:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
-.btn-blue { border-color: var(--cobalt); box-shadow: 0 6px 0 #002e80, 0 0 20px rgba(10,99,255,0.3); background: linear-gradient(#1a73ff, #003bb3); }
+.btn-blue { border-color: var(--cobalt); background: linear-gradient(#1a73ff, #003bb3); box-shadow: 0 6px 0 #002e80; }
 
-/* ALIGNED OVAL GLASS */
 .right-stage { flex: 1; display: flex; gap: 2vw; }
-
 .oval-housing {
   flex: 1; border-radius: 130px; border: 2px solid rgba(255,255,255,0.15);
   background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.1), transparent);
   display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
-  box-shadow: inset 0 0 50px rgba(10,99,255,0.2), 0 20px 40px rgba(0,0,0,1);
-  position: relative; overflow: hidden; padding: 15px 0;
+  position: relative; overflow: hidden;
 }
-.oval-housing::after {
-  content: ""; position: absolute; inset: 0; background: var(--glass-layer); pointer-events: none;
-}
+.oval-housing::after { content: ""; position: absolute; inset: 0; background: var(--glass); pointer-events: none; }
 
 .glass-circle {
-  width: 12vw; height: 12vw; border-radius: 50%; background: #000;
-  border: 4px solid #1a1a1a; display: flex; align-items: center; justify-content: center;
-  font-size: 5vw; font-weight: 900; z-index: 10;
-  box-shadow: 0 0 40px var(--cobalt-glow), inset 0 10px 20px #000;
+  width: 12vw; height: 12vw; border-radius: 50%; background: #000; border: 4px solid #1a1a1a;
+  display: flex; align-items: center; justify-content: center; font-size: 5vw; z-index: 10;
+  box-shadow: 0 0 40px var(--glow), inset 0 10px 20px #000;
 }
-.leave-big { font-size: 4vw; color: var(--cobalt); font-weight: 900; z-index: 10; }
+.leave-big { font-size: 4vw; color: var(--cobalt); z-index: 10; }
 
-/* BRANDED FOOTER */
-.footer-ui {
-  height: 10vh; background: #000; border-top: 3px solid #1a1a1a;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-}
-.footer-ui p { margin: 0; font-size: 1.5vh; color: #555; font-family: sans-serif; line-height: 1.6; }
-
+.footer-ui { height: 10vh; background: #000; border-top: 3px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 1.5vh; color: #555; }
 </style>
 </head>
 <body>
 
-<div class="header-ui">
-  <h1>01 OUT TRAINER</h1>
+<div id="landscape-lock">
+  <h1>ROTATE DEVICE</h1>
+  <p>Please turn your phone to Landscape mode.</p>
 </div>
 
-<div class="main-stage">
-  <div class="left-stack">
-    <div class="panel-3d">
-      <div class="label-ui">Balance</div>
-      <div class="score-big" id="bal">701</div>
-      <div style="display:flex; gap:10px; width:90%">
-         <button class="btn-chrome" onclick="playClick();resetTo(501)">501</button>
-         <button class="btn-chrome" onclick="playClick();resetTo(701)">701</button>
+<div class="app-container">
+  <div class="header-ui"><h1>01 OUT TRAINER</h1></div>
+  <div class="main-stage">
+    <div class="left-stack">
+      <div class="panel-3d">
+        <div class="label-ui">Balance</div>
+        <div class="score-big" id="bal">701</div>
+        <div style="display:flex; gap:10px; width:90%">
+           <button class="btn-chrome" onclick="playClick();resetTo(501)">501</button>
+           <button class="btn-chrome" onclick="playClick();resetTo(701)">701</button>
+        </div>
+      </div>
+      <div class="panel-3d">
+        <div class="label-ui">Hit</div>
+        <input type="number" id="hit" class="score-input" inputmode="numeric">
+        <button class="btn-chrome btn-blue" onclick="playClick();enterScore()">Apply</button>
       </div>
     </div>
-    <div class="panel-3d">
-      <div class="label-ui">Score Hit</div>
-      <input type="number" id="hit" class="score-input" placeholder="0" inputmode="numeric">
-      <button class="btn-chrome btn-blue" onclick="playClick();enterScore()">Apply Score</button>
+    <div class="right-stage">
+      <div class="oval-housing"><div class="label-ui">Dart 1</div><div class="glass-circle">T20</div><div class="leave-big" id="l1">641</div></div>
+      <div class="oval-housing"><div class="label-ui">Dart 2</div><div class="glass-circle">T20</div><div class="leave-big" id="l2">581</div></div>
+      <div class="oval-housing"><div class="label-ui">Dart 3</div><div class="glass-circle">D20</div><div class="leave-big" id="l3">541</div></div>
     </div>
   </div>
-
-  <div class="right-stage">
-    <div class="oval-housing">
-      <div class="label-ui">Dart 1</div>
-      <div class="glass-circle" id="d1">T20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l1">641</div>
-    </div>
-    <div class="oval-housing">
-      <div class="label-ui">Dart 2</div>
-      <div class="glass-circle" id="d2">T20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l2">581</div>
-    </div>
-    <div class="oval-housing">
-      <div class="label-ui">Dart 3</div>
-      <div class="glass-circle" id="d3">D20</div>
-      <div class="label-ui">Leave</div>
-      <div class="leave-big" id="l3">541</div>
-    </div>
-  </div>
-</div>
-
-<div class="footer-ui">
-  <p>
-    01 Out Trainer is an official Dart Room online training tool. All rights reserved &copy;<br>
-    Steve’s Graphic Designs. • Build v62_2026-02-14
-  </p>
+  <div class="footer-ui">Build v67 • Steve’s Graphic Designs • Dart Room</div>
 </div>
 
 <script>
@@ -181,7 +147,6 @@ function update() {
   $('l2').textContent = rem - 120;
   $('l3').textContent = rem - 180;
 }
-resetTo(701);
 </script>
 </body>
 </html>
