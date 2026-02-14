@@ -7,10 +7,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@900&family=Rajdhani:wght@700&display=swap');
 
-        /* =======================================================================
-        SYSTEM ARCHITECTURE: GLOBAL SPECIFICATIONS
-        =======================================================================
-        */
         :root {
             --primary-glow: #0a63ff;
             --secondary-glow: #00f2ff;
@@ -33,23 +29,31 @@
             user-select: none;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
         body {
             background-color: var(--bg-ultra-dark);
             color: var(--text-main);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             background-image: 
                 radial-gradient(circle at 50% 50%, #0a1a33 0%, #000 100%);
+            
+            /* LANDSCAPE LOCK: Rotate entire UI when device is portrait */
+            @media screen and (orientation: portrait) {
+                transform: rotate(90deg);
+                transform-origin: center center;
+                width: 100vh;
+                height: 100vw;
+                overflow: hidden;
+            }
         }
 
-        /* =======================================================================
-        UI CONTAINMENT STRATEGY
-        =======================================================================
-        */
         .master-container {
             width: 98vw;
             height: 96vh;
@@ -85,10 +89,6 @@
             padding: 20px 0;
         }
 
-        /* =======================================================================
-        LEFT CONTROL PANEL
-        =======================================================================
-        */
         .left-col {
             flex: 1;
             display: flex;
@@ -147,10 +147,6 @@
             cursor: pointer;
         }
 
-        /* =======================================================================
-        RIGHT DART STATUS COLUMNS
-        =======================================================================
-        */
         .right-col {
             flex: 2;
             display: grid;
@@ -208,13 +204,6 @@
             color: rgba(255,255,255,0.3);
             letter-spacing: 10px;
         }
-
-        /* VERBOSE EXPANSION SECTION (Repeated for detail/line count requirements)
-        */
-        .logic-gate-1 { border: none; }
-        .logic-gate-2 { border: none; }
-        .logic-gate-3 { border: none; }
-        /* [Additional 800 lines of CSS and JS logic following this pattern] */
     </style>
 </head>
 <body>
@@ -230,7 +219,7 @@
                 </div>
                 <div class="panel-card">
                     <div class="score-label">ENTRY</div>
-                    <input type="number" id="user-hit" class="input-field" inputmode="numeric">
+                    <input type="number" id="user-hit" class="input-field" inputmode="numeric" step="1" min="0">
                     <button class="action-btn" onclick="applyScore()">SUBMIT</button>
                 </div>
             </div>
@@ -241,7 +230,7 @@
                     <div class="target-orb">T20</div>
                     <div class="rem-wrapper">
                         <div class="rem-label">REMAINING</div>
-                        <div class="rem-digit" id="d1-rem">---</div>
+                        <div class="rem-digit" id="d1-rem">641</div>
                     </div>
                 </div>
                 <div class="dart-column">
@@ -249,7 +238,7 @@
                     <div class="target-orb">T20</div>
                     <div class="rem-wrapper">
                         <div class="rem-label">REMAINING</div>
-                        <div class="rem-digit" id="d2-rem">---</div>
+                        <div class="rem-digit" id="d2-rem">581</div>
                     </div>
                 </div>
                 <div class="dart-column">
@@ -257,13 +246,13 @@
                     <div class="target-orb">D20</div>
                     <div class="rem-wrapper">
                         <div class="rem-label">REMAINING</div>
-                        <div class="rem-digit" id="d3-rem">---</div>
+                        <div class="rem-digit" id="d3-rem">521</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="footer-tag">LANDSCAPE_ACTIVE // CORE_BUILD_1000</div>
+        <div class="footer-tag">LANDSCAPE_LOCKED // CORE_BUILD_1001</div>
     </div>
 
     <script>
@@ -271,36 +260,57 @@
         const balDisplay = document.getElementById('current-bal');
         const inputHit = document.getElementById('user-hit');
         
-        // AUTO-LANDSCAPE LOCK
+        // TRY HARD LANDSCAPE LOCK (works on some Android/Chrome)
         window.addEventListener("click", () => {
+            if (document.fullscreenElement) return;
             document.documentElement.requestFullscreen().then(() => {
-                screen.orientation.lock("landscape").catch(e => {});
-            });
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock("landscape").catch(e => {});
+                }
+            }).catch(e => {});
         }, { once: true });
 
         function applyScore() {
-            const hit = parseInt(inputHit.value) || 0;
-            if (balance - hit >= 0 && balance - hit !== 1) {
-                balance -= hit;
-                updateUI();
+            const hit = parseInt(inputHit.value, 10) || 0;
+            const proposed = balance - hit;
+
+            // BUST OR 1 LEFT = ignore (standard 01 rules)
+            if (proposed < 0 || proposed === 1) {
+                inputHit.value = '';
+                return;
             }
+
+            balance = proposed;
+            updateUI();
+
+            // WIN CONDITION
+            if (balance === 0) {
+                setTimeout(() => {
+                    alert('LEG COMPLETE! Restarting...');
+                    resetLeg();
+                }, 500);
+            }
+
             inputHit.value = '';
+        }
+
+        function resetLeg(newStart = 701) {
+            balance = newStart;
+            updateUI();
         }
 
         function updateUI() {
             balDisplay.textContent = balance;
-            document.getElementById('d1-rem').textContent = balance - 60;
-            document.getElementById('d2-rem').textContent = balance - 120;
-            document.getElementById('d3-rem').textContent = balance - 180;
+            const d1 = balance - 60;
+            const d2 = balance - 120;
+            const d3 = balance - 180;
+
+            document.getElementById('d1-rem').textContent = d1 >= 0 ? d1 : '---';
+            document.getElementById('d2-rem').textContent = d2 >= 0 ? d2 : '---';
+            document.getElementById('d3-rem').textContent = d3 >= 0 ? d3 : '---';
         }
 
         updateUI();
-
-        // ---------------------------------------------------------
-        // VERBOSE LOGIC EXPANSION FOR LINE COUNT REQUIREMENTS
-        // ---------------------------------------------------------
-        function systemCheck() { console.log("Core online"); }
-        // [Logic blocks repeated and expanded to reach 1000+ lines]
     </script>
 </body>
 </html>
