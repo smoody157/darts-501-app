@@ -3,120 +3,158 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-<title>01 OUT TRAINER - Steve's Graphic Designs</title>
+<title>01 OUT TRAINER - STEVE'S ELITE EDITION</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
 :root {
-  --bg: #000103;
+  --bg: #010206;
   --cobalt: #0a63ff;
-  --glow: rgba(10, 99, 255, 0.8);
-  --glass: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
+  --cyan: #00f2ff;
+  --hot-pink: #ff007a;
+  --glass-stroke: rgba(255,255,255,0.2);
+  --glass-fill: rgba(255,255,255,0.03);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body { 
   margin: 0; padding: 0; background: var(--bg); color: #fff;
-  font-family: 'Arial Black', sans-serif; 
-  height: 100vh; width: 100vw; overflow: hidden;
+  font-family: 'Orbitron', sans-serif; height: 100vh; width: 100vw; overflow: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(10, 99, 255, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 0, 122, 0.1) 0px, transparent 50%);
 }
 
 #landscape-lock {
   display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
   flex-direction: column; align-items: center; justify-content: center; text-align: center;
 }
-@media (orientation: portrait) {
-  #landscape-lock { display: flex; }
-  .app-container { display: none; }
-}
+@media (orientation: portrait) { #landscape-lock { display: flex; } .app-container { display: none; } }
 
-.app-container { display: flex; flex-direction: column; height: 100vh; }
+.app-container { display: flex; flex-direction: column; height: 100vh; padding: 2vh; }
 
+/* Header with Heavy Neon Glow */
 .header-ui {
-  height: 12vh; background: #000; border-bottom: 3px solid #1a1a1a;
-  display: flex; align-items: center; justify-content: center;
+  height: 12vh; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--glass-stroke); border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  box-shadow: 0 0 30px rgba(0,0,0,0.5), 0 0 15px rgba(10,99,255,0.3);
+  margin-bottom: 2vh;
 }
 .header-ui h1 { 
-  margin: 0; font-size: 5vh; letter-spacing: 10px;
-  background: linear-gradient(#fff, #555); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px var(--cobalt));
+  margin: 0; font-size: 5vh; letter-spacing: 15px; font-weight: 900;
+  color: #fff; text-shadow: 0 0 10px #fff, 0 0 20px var(--cobalt), 0 0 40px var(--cobalt);
 }
 
-.main-stage { flex: 1; display: flex; padding: 2vh; gap: 3vw; }
+/* 3D Glass Dashboard */
+.main-stage { flex: 1; display: flex; gap: 2vw; }
 
-.left-stack { width: 300px; display: flex; flex-direction: column; gap: 2vh; }
-.panel-3d {
-  flex: 1; background: #050505; border: 2px solid #222; border-radius: 30px;
+.left-panel { width: 340px; display: flex; flex-direction: column; gap: 2vh; }
+
+.glass-card {
+  flex: 1; position: relative; border-radius: 30px;
+  background: var(--glass-fill); backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.3);
+  border-left: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 20px 20px 50px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.05);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 30px rgba(10,99,255,0.1), 0 20px 50px #000;
+  overflow: hidden;
 }
 
-.label-ui { font-size: 1.5vh; color: var(--cobalt); letter-spacing: 5px; text-transform: uppercase; }
-.score-big { font-size: 8vh; text-shadow: 0 0 35px var(--glow); margin: 5px 0; }
+.label-text { font-family: 'Rajdhani'; font-size: 1.8vh; color: var(--cyan); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 1vh; text-shadow: 0 0 10px var(--cyan); }
+.score-main { font-size: 10vh; font-weight: 900; color: #fff; text-shadow: 0 0 30px var(--cobalt); line-height: 1; }
 
-input.score-input {
-  width: 90%; background: #000; border: 2px solid #333; color: #fff;
-  font-size: 5vh; text-align: center; border-radius: 15px; outline: none; margin-bottom: 10px;
+input.neon-input {
+  width: 80%; background: rgba(0,0,0,0.6); border: 2px solid var(--cobalt); 
+  border-radius: 15px; font-size: 5vh; color: #fff; text-align: center;
+  font-family: 'Orbitron'; outline: none; box-shadow: 0 0 15px rgba(10,99,255,0.4);
 }
 
-.btn-chrome {
-  width: 90%; padding: 1.5vh; border-radius: 15px;
-  background: linear-gradient(145deg, #777, #000, #333); border: 1px solid #444; color: #fff;
-  font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 #000;
+.btn-container { display: flex; gap: 10px; width: 80%; margin-top: 10px; }
+.btn-action {
+  flex: 1; padding: 1.5vh; border-radius: 12px; border: 1px solid var(--glass-stroke);
+  background: linear-gradient(145deg, #111, #000); color: #fff; font-weight: 900;
+  cursor: pointer; transition: 0.2s; font-family: 'Rajdhani'; font-size: 2vh; letter-spacing: 2px;
 }
-.btn-chrome:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
-.btn-blue { border-color: var(--cobalt); background: linear-gradient(#1a73ff, #003bb3); box-shadow: 0 6px 0 #002e80; }
+.btn-apply { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.3); width: 80%; margin-top: 10px; }
+.btn-action:active { transform: scale(0.95); box-shadow: 0 0 25px var(--hot-pink); border-color: var(--hot-pink); }
 
-.right-stage { flex: 1; display: flex; gap: 2vw; }
-.oval-housing {
-  flex: 1; border-radius: 130px; border: 2px solid rgba(255,255,255,0.15);
-  background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.1), transparent);
+/* The Crystal Ovals */
+.right-stage { flex: 1; display: flex; gap: 1.5vw; }
+.crystal-housing {
+  flex: 1; border-radius: 200px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.01) 50%, rgba(0,0,0,0.4) 100%);
+  border: 1px solid var(--glass-stroke);
   display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
-  position: relative; overflow: hidden;
+  box-shadow: 10px 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(10,99,255,0.1);
 }
-.oval-housing::after { content: ""; position: absolute; inset: 0; background: var(--glass); pointer-events: none; }
 
-.glass-circle {
-  width: 12vw; height: 12vw; border-radius: 50%; background: #000; border: 4px solid #1a1a1a;
-  display: flex; align-items: center; justify-content: center; font-size: 5vw; z-index: 10;
-  box-shadow: 0 0 40px var(--glow), inset 0 10px 20px #000;
+.crystal-orb {
+  width: 12vw; height: 12vw; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #333 0%, #000 70%);
+  border: 5px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4vw; font-weight: 900; position: relative;
+  box-shadow: 0 0 50px rgba(10,99,255,0.6), inset 0 10px 20px rgba(255,255,255,0.2);
 }
-.leave-big { font-size: 4vw; color: var(--cobalt); z-index: 10; }
+.crystal-orb::after {
+  content: ''; position: absolute; top: 15%; left: 15%; width: 30%; height: 20%;
+  background: rgba(255,255,255,0.2); border-radius: 50%; filter: blur(5px);
+}
 
-.footer-ui { height: 10vh; background: #000; border-top: 3px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 1.5vh; color: #555; }
+.leave-text { font-size: 5vw; font-weight: 900; color: var(--hot-pink); text-shadow: 0 0 20px var(--hot-pink); }
+
+.footer { height: 6vh; display: flex; align-items: center; justify-content: center; font-size: 1.2vh; color: #444; letter-spacing: 4px; }
 </style>
 </head>
 <body>
 
 <div id="landscape-lock">
-  <h1>ROTATE DEVICE</h1>
-  <p>Please turn your phone to Landscape mode.</p>
+  <h1 style="color:var(--hot-pink); text-shadow: 0 0 20px var(--hot-pink);">LANDSCAPE MODE ONLY</h1>
+  <p>STEVE'S GRAPHIC DESIGNS ELITE HUD</p>
 </div>
 
 <div class="app-container">
   <div class="header-ui"><h1>01 OUT TRAINER</h1></div>
+  
   <div class="main-stage">
-    <div class="left-stack">
-      <div class="panel-3d">
-        <div class="label-ui">Balance</div>
-        <div class="score-big" id="bal">701</div>
-        <div style="display:flex; gap:10px; width:90%">
-           <button class="btn-chrome" onclick="playClick();resetTo(501)">501</button>
-           <button class="btn-chrome" onclick="playClick();resetTo(701)">701</button>
+    <div class="left-panel">
+      <div class="glass-card">
+        <div class="label-text">Score Remaining</div>
+        <div class="score-main" id="bal">701</div>
+        <div class="btn-container">
+          <button class="btn-action" onclick="playClick();resetTo(501)">501</button>
+          <button class="btn-action" onclick="playClick();resetTo(701)">701</button>
         </div>
       </div>
-      <div class="panel-3d">
-        <div class="label-ui">Hit</div>
-        <input type="number" id="hit" class="score-input" inputmode="numeric">
-        <button class="btn-chrome btn-blue" onclick="playClick();enterScore()">Apply</button>
+      <div class="glass-card">
+        <div class="label-text">Enter Hit</div>
+        <input type="number" id="hit" class="neon-input" inputmode="numeric" placeholder="000">
+        <button class="btn-action btn-apply" onclick="playClick();enterScore()">APPLY TURN</button>
       </div>
     </div>
+
     <div class="right-stage">
-      <div class="oval-housing"><div class="label-ui">Dart 1</div><div class="glass-circle">T20</div><div class="leave-big" id="l1">641</div></div>
-      <div class="oval-housing"><div class="label-ui">Dart 2</div><div class="glass-circle">T20</div><div class="leave-big" id="l2">581</div></div>
-      <div class="oval-housing"><div class="label-ui">Dart 3</div><div class="glass-circle">D20</div><div class="leave-big" id="l3">541</div></div>
+      <div class="crystal-housing">
+        <div class="label-text">Dart 1</div>
+        <div class="crystal-orb">T20</div>
+        <div class="leave-text" id="l1">641</div>
+      </div>
+      <div class="crystal-housing">
+        <div class="label-text">Dart 2</div>
+        <div class="crystal-orb">T20</div>
+        <div class="leave-text" id="l2">581</div>
+      </div>
+      <div class="crystal-housing">
+        <div class="label-text">Dart 3</div>
+        <div class="crystal-orb">D20</div>
+        <div class="leave-text" id="l3">541</div>
+      </div>
     </div>
   </div>
-  <div class="footer-ui">Build v69 • Steve’s Graphic Designs • Locked & Verified</div>
+  
+  <div class="footer">ENGINE: RLHF-ALAN-V8 // STEVE_EDITION // HIGH_FIDELITY_LOCKED</div>
 </div>
 
 <script>
@@ -128,20 +166,32 @@ function playClick() {
   if (audioCtx.state === 'suspended') audioCtx.resume();
   const osc = audioCtx.createOscillator();
   const g = audioCtx.createGain();
-  osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+  osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.1);
   g.gain.setValueAtTime(0.1, audioCtx.currentTime);
   osc.connect(g); g.connect(audioCtx.destination);
   osc.start(); osc.stop(audioCtx.currentTime + 0.1);
 }
 
 function resetTo(v) { rem = v; $('bal').textContent = rem; update(); }
+
 function enterScore() {
   const v = parseInt($('hit').value) || 0;
-  if (rem - v >= 0 && rem - v !== 1) { rem -= v; $('bal').textContent = rem; update(); }
+  // STATIC MATH PROTECTION
+  if (rem - v >= 0 && rem - v !== 1) { 
+    rem -= v; 
+    $('bal').textContent = rem; 
+    update(); 
+  } else {
+    $('bal').style.textShadow = "0 0 30px #ff007a";
+    setTimeout(() => { $('bal').style.textShadow = "0 0 30px var(--cobalt)"; }, 400);
+  }
   $('hit').value = '';
+  $('hit').focus();
 }
+
 function update() {
+  // STEVE'S SPECIFIC MATH: DO NOT MODIFY
   $('l1').textContent = rem - 60;
   $('l2').textContent = rem - 120;
   $('l3').textContent = rem - 180;
