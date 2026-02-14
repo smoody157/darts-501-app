@@ -20,7 +20,6 @@ body {
   height: 100vh; width: 100vw; overflow: hidden;
 }
 
-/* LANDSCAPE LOCK OVERLAY */
 #landscape-lock {
   display: none; position: fixed; inset: 0; background: #000; z-index: 9999;
   flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -117,7 +116,7 @@ input.score-input {
       <div class="oval-housing"><div class="label-ui">Dart 3</div><div class="glass-circle">D20</div><div class="leave-big" id="l3">541</div></div>
     </div>
   </div>
-  <div class="footer-ui">Build v67 • Steve’s Graphic Designs • Dart Room</div>
+  <div class="footer-ui">Build v68 • Steve’s Graphic Designs • Landscape Locked</div>
 </div>
 
 <script>
@@ -147,6 +146,7 @@ function update() {
   $('l2').textContent = rem - 120;
   $('l3').textContent = rem - 180;
 }
+update();
 </script>
 </body>
 </html>
