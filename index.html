@@ -1,100 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
-        
-        #app-shell {
-            width: 430px; height: 932px;
-            /* LINKING DIRECTLY TO YOUR REPO ASSET */
-            background-image: url('IMG_7543.png');
-            background-size: 100% 100%;
-            position: relative;
-        }
+Steve’s 501 Dart Calculator
+DART 501 CALCULATOR
+501
 
-        /* THE FIVE BLACKOUT PATCHES - BLENDED TO #080812 */
-        .mask { position: absolute; background: #080812; z-index: 5; }
-        #p1-status { top: 0; left: 0; width: 430px; height: 92px; z-index: 30; } 
-        #p2-score  { top: 255px; left: 145px; width: 140px; height: 78px; border-radius: 10px; }
-        #p3-d1     { top: 468px; left: 78px; width: 50px; height: 25px; }
-        #p4-d2     { top: 468px; left: 203px; width: 50px; height: 25px; }
-        #p5-d3     { top: 468px; left: 328px; width: 50px; height: 25px; }
+Dart 1:
 
-        /* NEON CALCULATOR READOUTS */
-        .neon {
-            background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-family: 'Arial Black', sans-serif;
-            font-weight: 900;
-            z-index: 10;
-            position: absolute;
-            text-align: center;
-        }
+Dart 2:
 
-        #main-score { top: 232px; width: 430px; font-size: 92px; }
-        #input-read { top: 515px; width: 430px; font-size: 52px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
-        
-        /* VERSION TAG */
-        #rev { position: absolute; bottom: 8px; right: 15px; font-family: monospace; color: rgba(255,255,255,0.3); font-size: 10px; z-index: 40; }
+Dart 3:
 
-        /* HIT-BOXES MAPPED TO YOUR BACKGROUND BUTTONS */
-        .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
-        .mode { top: 375px; width: 60px; height: 40px; }
-        .keypad { position: absolute; top: 620px; left: 50px; width: 330px; height: 240px; display: grid; grid-template-columns: repeat(3, 1fr); }
-        .apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
-    </style>
-</head>
-<body>
-<div id="app-shell">
-    <div class="mask" id="p1-status"></div>
-    <div class="mask" id="p2-score"></div>
-    <div class="mask" id="p3-d1"></div><div class="mask" id="p4-d2"></div><div class="mask" id="p5-d3"></div>
+7
+8
+9
+4
+5
+6
+1
+2
+3
+DEL
+0
+Donations Welcome
 
-    <div id="main-score" class="neon">501</div>
-    <div id="input-read" class="neon">---</div>
-    <div id="rev">REV: 89</div>
-
-    <button class="hit mode" style="left:125px" onclick="APP.reset(301)"></button>
-    <button class="hit mode" style="left:185px" onclick="APP.reset(501)"></button>
-    <button class="hit mode" style="left:245px" onclick="APP.reset(701)"></button>
-
-    <div class="keypad">
-        <button class="hit" style="position:relative" onclick="APP.num(7)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(8)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(9)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(4)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(5)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(6)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(1)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(2)"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(3)"></button>
-        <button class="hit" style="position:relative" onclick="APP.del()"></button>
-        <button class="hit" style="position:relative" onclick="APP.num(0)"></button>
-    </div>
-    <button class="hit apply" onclick="APP.run()"></button>
-</div>
-
-<script>
-const APP = {
-    total: 501, entry: "",
-    update: function() {
-        document.getElementById('main-score').innerText = this.total;
-        document.getElementById('input-read').innerText = this.entry || "---";
-    },
-    reset: function(n) { this.total = n; this.entry = ""; this.update(); },
-    num: function(n) { if (this.entry.length < 3) this.entry += n; this.update(); },
-    del: function() { this.entry = ""; this.update(); },
-    run: function() { 
-        let val = parseInt(this.entry); 
-        if (!isNaN(val)) { this.total -= val; } 
-        this.entry = ""; this.update(); 
-    }
-};
-APP.update();
-</script>
-</body>
-</html>
+APPLY TURN
