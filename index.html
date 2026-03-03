@@ -2,34 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Responsive viewport (we scale the 430x932 design to fit any screen) -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!-- IMPORTANT: viewport-fit=cover prevents iOS safe-area weirdness in hosted Safari/PWA -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Dart Calculator</title>
 
   <style>
-    /* --- SECTION 1: THE SKIN --- */
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
     html, body {
       margin: 0; padding: 0;
       width: 100%; height: 100%;
       background: #000;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    /* We keep the original 430x932 canvas, but scale it to the screen */
+    /* Center the fixed 430x932 canvas. We scale with CSS zoom (NOT transform) to avoid iOS black-layer glitches. */
+    #stage {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      /* iOS safe area */
+      padding-top: env(safe-area-inset-top);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+    }
+
     #app-shell {
       width: 430px;
       height: 932px;
       position: relative;
-      background-image: url('IMG_7543.jpeg'); /* FIX: correct extension */
+      background-image: url('IMG_7543.jpeg');
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      transform-origin: top left;
-      will-change: transform;
+      /* Make sure iOS doesn't "black box" repaint these layers */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      isolation: isolate;
     }
 
     /* 1.1: SURGICAL BLENDED MASKS */
@@ -41,7 +53,7 @@
     /* Main Score Area */
     #mask-main-score { top: 255px; left: 145px; width: 140px; height: 78px; border-radius: 10px; }
 
-    /* Dart suggestion boxes - Feathered edges for blending */
+    /* Dart suggestion boxes */
     .dart-mask { width: 50px; height: 25px; box-shadow: 0 0 5px #080812; }
     #mask-d1 { top: 468px; left: 78px; }
     #mask-d2 { top: 468px; left: 203px; }
@@ -61,7 +73,9 @@
       z-index: 10;
       position: absolute;
       text-align: center;
-      pointer-events: none; /* IMPORTANT: don't block taps */
+      pointer-events: none;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
     }
 
     #score-val {
@@ -115,10 +129,8 @@
     /* --- SECTION 2: ACTIVATED CONTROLS --- */
     .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
 
-    /* 301/501/701 buttons */
     .mode-hit { top: 375px; width: 60px; height: 40px; }
 
-    /* Keypad grid */
     .grid {
       position: absolute;
       top: 620px;
@@ -128,12 +140,9 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(4, 1fr);
-      gap: 0px;
       z-index: 25;
     }
 
-    /* FIX: The original had absolute-positioned .hit buttons with no size inside a grid.
-       These must be normal grid items with full cell size. */
     .grid .hit {
       position: relative;
       width: 100%;
@@ -141,80 +150,75 @@
       border-radius: 18px;
     }
 
-    /* Apply button */
     .apply-hit { bottom: 30px; left: 50px; width: 330px; height: 70px; }
 
-    /* Optional: small active feedback for debugging taps (kept subtle) */
     .hit:active { background: rgba(255,255,255,0.04); }
   </style>
 </head>
 
 <body>
-  <div id="app-shell" aria-label="Dart Calculator">
-    <!-- Masks -->
-    <div class="mask" id="mask-status"></div>
-    <div class="mask" id="mask-main-score"></div>
-    <div class="mask dart-mask" id="mask-d1"></div>
-    <div class="mask dart-mask" id="mask-d2"></div>
-    <div class="mask dart-mask" id="mask-d3"></div>
-    <div class="mask" id="mask-input"></div>
+  <div id="stage">
+    <div id="app-shell" aria-label="Dart Calculator">
+      <!-- Masks -->
+      <div class="mask" id="mask-status"></div>
+      <div class="mask" id="mask-main-score"></div>
+      <div class="mask dart-mask" id="mask-d1"></div>
+      <div class="mask dart-mask" id="mask-d2"></div>
+      <div class="mask dart-mask" id="mask-d3"></div>
+      <div class="mask" id="mask-input"></div>
 
-    <!-- Neon text overlays -->
-    <div id="score-val" class="neon-active">501</div>
-    <div id="v1" class="neon-active dart-txt">-</div><div id="r1" class="rem-txt"></div>
-    <div id="v2" class="neon-active dart-txt">-</div><div id="r2" class="rem-txt"></div>
-    <div id="v3" class="neon-active dart-txt">-</div><div id="r3" class="rem-txt"></div>
-    <div id="input-val" class="neon-active">---</div>
-    <div id="build-tag">REV: 87 (fixed)</div>
+      <!-- Text overlays -->
+      <div id="score-val" class="neon-active">501</div>
+      <div id="v1" class="neon-active dart-txt">-</div><div id="r1" class="rem-txt"></div>
+      <div id="v2" class="neon-active dart-txt">-</div><div id="r2" class="rem-txt"></div>
+      <div id="v3" class="neon-active dart-txt">-</div><div id="r3" class="rem-txt"></div>
+      <div id="input-val" class="neon-active">---</div>
+      <div id="build-tag">REV: 88 (iOS repaint fix)</div>
 
-    <!-- Mode buttons -->
-    <button class="hit mode-hit" style="left:125px" onclick="APP.set(301)" aria-label="Set to 301"></button>
-    <button class="hit mode-hit" style="left:185px" onclick="APP.set(501)" aria-label="Set to 501"></button>
-    <button class="hit mode-hit" style="left:245px" onclick="APP.set(701)" aria-label="Set to 701"></button>
+      <!-- Mode buttons -->
+      <button class="hit mode-hit" style="left:125px" onclick="APP.set(301)" aria-label="Set to 301"></button>
+      <button class="hit mode-hit" style="left:185px" onclick="APP.set(501)" aria-label="Set to 501"></button>
+      <button class="hit mode-hit" style="left:245px" onclick="APP.set(701)" aria-label="Set to 701"></button>
 
-    <!-- Keypad -->
-    <div class="grid" aria-label="Keypad">
-      <button class="hit" onclick="APP.key(7)" aria-label="7"></button>
-      <button class="hit" onclick="APP.key(8)" aria-label="8"></button>
-      <button class="hit" onclick="APP.key(9)" aria-label="9"></button>
+      <!-- Keypad -->
+      <div class="grid" aria-label="Keypad">
+        <button class="hit" onclick="APP.key(7)" aria-label="7"></button>
+        <button class="hit" onclick="APP.key(8)" aria-label="8"></button>
+        <button class="hit" onclick="APP.key(9)" aria-label="9"></button>
 
-      <button class="hit" onclick="APP.key(4)" aria-label="4"></button>
-      <button class="hit" onclick="APP.key(5)" aria-label="5"></button>
-      <button class="hit" onclick="APP.key(6)" aria-label="6"></button>
+        <button class="hit" onclick="APP.key(4)" aria-label="4"></button>
+        <button class="hit" onclick="APP.key(5)" aria-label="5"></button>
+        <button class="hit" onclick="APP.key(6)" aria-label="6"></button>
 
-      <button class="hit" onclick="APP.key(1)" aria-label="1"></button>
-      <button class="hit" onclick="APP.key(2)" aria-label="2"></button>
-      <button class="hit" onclick="APP.key(3)" aria-label="3"></button>
+        <button class="hit" onclick="APP.key(1)" aria-label="1"></button>
+        <button class="hit" onclick="APP.key(2)" aria-label="2"></button>
+        <button class="hit" onclick="APP.key(3)" aria-label="3"></button>
 
-      <button class="hit" onclick="APP.clr()" aria-label="Delete / Clear"></button>
-      <button class="hit" onclick="APP.key(0)" aria-label="0"></button>
-      <!-- Empty cell (bottom-right) to match your background layout -->
-      <div></div>
+        <button class="hit" onclick="APP.clr()" aria-label="Delete / Clear"></button>
+        <button class="hit" onclick="APP.key(0)" aria-label="0"></button>
+        <div></div>
+      </div>
+
+      <button class="hit apply-hit" onclick="APP.apply()" aria-label="Apply turn"></button>
     </div>
-
-    <button class="hit apply-hit" onclick="APP.apply()" aria-label="Apply turn"></button>
   </div>
 
 <script>
 /* SECTION 3: THE BRAIN (JS) */
-
-/* A small (incomplete) out chart table; app falls back to a heuristic when missing. */
 const OATS = {
   170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 160:["T20","T20","D20"],
   100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
 };
 
 const APP = {
-  s: 501,
-  i: "",
-  v: null,
+  s: 501, i: "", v: null,
 
   speak(m) {
     if (!m) return;
     try {
       const u = new SpeechSynthesisUtterance(m);
       u.rate = 0.85;
-      window.speechSynthesis.cancel(); // prevent stacking chatter
+      window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
     } catch (e) {}
   },
@@ -260,47 +264,42 @@ const APP = {
     }
   },
 
-  set(n) {
-    this.s = n;
-    this.i = "";
-    this.v = null;
-    this.draw();
-  },
-
-  key(n) {
-    if (this.i.length < 3) this.i += String(n);
-    this.draw();
-  },
-
-  clr() {
-    this.i = "";
-    this.draw();
-  },
+  set(n) { this.s = n; this.i = ""; this.v = null; this.draw(); },
+  key(n) { if (this.i.length < 3) this.i += String(n); this.draw(); },
+  clr() { this.i = ""; this.draw(); },
 
   apply() {
     const v = parseInt(this.i, 10);
     if (!Number.isNaN(v)) {
-      if (this.s - v < 0 || this.s - v === 1) {
-        this.speak("Bust");
-      } else {
-        this.s -= v;
-      }
+      if (this.s - v < 0 || this.s - v === 1) this.speak("Bust");
+      else this.s -= v;
     }
-    this.i = "";
-    this.draw();
+    this.i = ""; this.draw();
   }
 };
 
-/* FIX: scale the 430x932 shell to fit screen */
-function scaleToFit() {
+/* iOS FIX:
+   Use CSS zoom to scale the entire 430x932 canvas.
+   This avoids iOS Safari compositing bugs that create black rectangles when using transform: scale().
+*/
+function fit() {
   const shell = document.getElementById('app-shell');
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const scale = Math.min(vw / 430, vh / 932);
-  shell.style.transform = `scale(${scale})`;
+  const scale = Math.min(window.innerWidth / 430, window.innerHeight / 932);
+
+  const supportsZoom = CSS && CSS.supports && CSS.supports('zoom', '1');
+  if (supportsZoom) {
+    shell.style.zoom = String(scale);
+    shell.style.transform = '';
+  } else {
+    /* Fallback for browsers that don't support zoom */
+    shell.style.zoom = '';
+    shell.style.transformOrigin = 'top left';
+    shell.style.transform = `scale(${scale})`;
+  }
 }
-window.addEventListener('resize', scaleToFit, { passive: true });
-scaleToFit();
+
+window.addEventListener('resize', fit, { passive: true });
+fit();
 APP.draw();
 </script>
 </body>
