@@ -17,7 +17,7 @@
 
         /* SURGICAL BLACKOUT PATCHES */
         .mask { position: absolute; background: #0b0b1a; z-index: 5; }
-        #mask-status { top: 0; left: 0; width: 430px; height: 105px; z-index: 30; } /* Battery/Clock */
+        #mask-status { top: 0; left: 0; width: 430px; height: 105px; z-index: 30; } 
         #mask-score { top: 255px; left: 145px; width: 140px; height: 75px; border-radius: 10px; }
         #mask-d1 { top: 468px; left: 75px; width: 40px; height: 25px; }
         #mask-d2 { top: 468px; left: 198px; width: 40px; height: 25px; }
@@ -37,14 +37,16 @@
         }
 
         #score-val { top: 228px; width: 430px; font-size: 90px; filter: drop-shadow(0 0 12px rgba(0,210,255,0.8)); }
-        
+        #input-val { top: 518px; width: 430px; font-size: 50px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+
         .dart-box { width: 105px; z-index: 10; text-align: center; font-size: 26px; }
         #v1 { top: 422px; left: 40px; } #v2 { top: 422px; left: 164px; } #v3 { top: 422px; left: 288px; }
 
         .rem-box { position: absolute; font-size: 15px; color: #ff007f; font-weight: 900; z-index: 10; width: 105px; text-align: center; }
         #r1 { top: 472px; left: 40px; } #r2 { top: 472px; left: 164px; } #r3 { top: 472px; left: 288px; }
 
-        #input-val { top: 518px; width: 430px; font-size: 50px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+        /* BUILD NUMBER DISPLAY */
+        #build-tag { position: absolute; bottom: 5px; right: 10px; font-family: monospace; color: rgba(255,255,255,0.3); font-size: 10px; z-index: 40; }
 
         /* BUTTON HIT-BOXES */
         .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
@@ -66,6 +68,8 @@
     <div id="v2" class="neon-active dart-box">-</div><div id="r2" class="rem-box"></div>
     <div id="v3" class="neon-active dart-box">-</div><div id="r3" class="rem-box"></div>
     <div id="input-val" class="neon-active">---</div>
+
+    <div id="build-tag">REV: 81</div>
 
     <button class="hit mode-hit" style="left:128px" onclick="APP.reset(301)"></button>
     <button class="hit mode-hit" style="left:188px" onclick="APP.reset(501)"></button>
@@ -89,9 +93,11 @@
 
 <script>
 /* SECTION 3: THE BRAIN */
+const REV = 81;
+
 const OATS = {
     170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 161:["T20","T17","DB"], 160:["T20","T20","D20"],
-    150:["T20","T18","D18"], 140:["T20","T20","D10"], 121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
+    100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
 };
 
 const APP = {
