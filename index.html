@@ -76,7 +76,7 @@
     /* Top label */
     #scoreRemaining {
       position: absolute;
-      top: 156px;
+      top: 170px;
       width: 430px;
       text-align: center;
       font-size: 14px;
@@ -92,7 +92,7 @@
 
     /* SCORE */
     #score {
-      top: 185px;
+      top: 178px;
       font-size: 96px;
       letter-spacing: 1px;
     }
@@ -101,13 +101,13 @@
     #modes {
       position: absolute;
       left: 86px;
-      top: 300px;
+      top: 288px;
       width: 258px;
       height: 50px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      z-index: 12;
+      z-index: 30;
     }
 
     .modeBtn {
@@ -156,6 +156,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding-top: 16px;
       pointer-events: none;
     }
     #box1 { left: 26px; }
@@ -170,7 +171,7 @@
 
     .dart-label {
       position: absolute;
-      bottom: 8px;
+      top: 10px;
       left: 0;
       width: 100%;
       text-align: center;
@@ -180,6 +181,7 @@
       color: rgba(255,255,255,0.58);
       text-shadow: 0 0 10px rgba(0,0,0,0.75);
       text-transform: uppercase;
+      pointer-events: none;
     }
 
     /* INPUT */
@@ -234,8 +236,8 @@
     .donate-hit::before {
       content: "";
       position: absolute;
-      inset: 6px;
-      border-radius: 14px;
+      inset: 0px;                 /* fill the whole key like DEL */
+      border-radius: 18px;
       border: 3px solid rgba(255, 0, 127, 0.55);
       box-shadow:
         0 0 12px rgba(255, 0, 127, 0.22),
@@ -248,7 +250,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 12px;            /* slightly bigger */
       font-weight: 900;
       letter-spacing: 0.7px;
       color: #ff3a8b;
@@ -260,7 +262,6 @@
       text-align: center;
       padding: 0 6px;
       line-height: 1.05;
-      transform: translate(0px, 2px);
     }
 
     #tag {
@@ -290,16 +291,16 @@
         </div>
 
         <div class="dart-box" id="box1">
-          <div id="d1" class="neon dart-val">-</div>
           <div class="dart-label">Dart 1</div>
+          <div id="d1" class="neon dart-val">-</div>
         </div>
         <div class="dart-box" id="box2">
-          <div id="d2" class="neon dart-val">-</div>
           <div class="dart-label">Dart 2</div>
+          <div id="d2" class="neon dart-val">-</div>
         </div>
         <div class="dart-box" id="box3">
-          <div id="d3" class="neon dart-val">-</div>
           <div class="dart-label">Dart 3</div>
+          <div id="d3" class="neon dart-val">-</div>
         </div>
 
         <div id="input" class="neon">---</div>
@@ -327,7 +328,7 @@
 
         <button id="apply" class="hit" onclick="APP.apply()" aria-label="Apply Turn"></button>
 
-        <div id="tag">REV: v3-top-modes + fixed-calc</div>
+        <div id="tag">REV: v4-align + modes-live + donate-fixed</div>
       </div>
     </div>
   </div>
