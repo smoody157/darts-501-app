@@ -2,206 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - FULL DATA</title>
+    <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        :root {
-            --neon-blue: #00d2ff;
-            --neon-pink: #ff007f;
-            --neon-green: #39ff14;
-            --border: rgba(255, 255, 255, 0.2);
-        }
-
-        body { 
-            background-color: #05070a; 
-            color: #fff; 
-            font-family: system-ui, sans-serif;
-            text-align: center; 
-            margin: 0; padding: 0; 
-            height: 100vh; width: 100vw;
-            display: flex; flex-direction: column;
-            align-items: center;
-            overflow-y: auto;
-        }
-
-        .header-logo {
-            width: 90%;
-            max-width: 340px;
-            margin: 15px 0;
-            height: auto;
-        }
-
-        .deck {
-            background: rgba(20, 20, 25, 0.98);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 15px;
-            width: 92%; max-width: 400px;
-            margin-bottom: 20px;
-        }
-
-        .main-score { font-size: 80px; font-weight: 900; margin: 5px 0; color: #fff; line-height: 1; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
         
-        .mode-buttons { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
-        .mode-btn {
-            background: #222; border: 1px solid #444; color: #fff;
-            padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: bold;
-        }
-        .mode-btn.active { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.2); }
-
-        .dart-grid { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
-        .orb { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 10px 2px; width: 32%; }
-        .label-blue { color: var(--neon-blue); font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .target { font-size: 22px; font-weight: 900; display: block; margin: 2px 0; }
-        .remain { font-size: 16px; color: var(--neon-pink); font-weight: 900; }
-
-        .input-box {
-            background: #000; border: 2px solid var(--neon-blue);
-            border-radius: 10px; padding: 12px; font-size: 36px;
-            color: var(--neon-blue); font-weight: 900; margin-bottom: 12px;
+        #app-shell {
+            width: 430px; height: 932px;
+            background-image: url('IMG_7543.png');
+            background-size: 100% 100%;
+            position: relative;
         }
 
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .num-btn {
-            background: #1a1a1a; border: 1px solid var(--border);
-            color: #fff; padding: 22px; font-size: 26px; border-radius: 12px; font-weight: bold;
-        }
-        .enter-btn { background: var(--neon-green); color: #000; font-size: 20px; font-weight: 900; }
-        .del-btn { color: var(--neon-pink); }
+        /* THE FIVE SURGICAL PATCHES - BLENDED #080812 */
+        .mask { position: absolute; background: #080812; z-index: 5; }
+        
+        #p1-status { top: 0; left: 0; width: 430px; height: 92px; z-index: 30; } /* PATCH 1: Status Bar */
+        #p2-main   { top: 255px; left: 145px; width: 140px; height: 78px; border-radius: 10px; } /* PATCH 2: Main Score */
+        #p3-darts  { top: 468px; left: 78px; width: 50px; height: 25px; } /* PATCH 3: Dart 1 Slot */
+        #p4-darts  { top: 468px; left: 203px; width: 50px; height: 25px; } /* PATCH 4: Dart 2 Slot */
+        #p5-darts  { top: 468px; left: 328px; width: 50px; height: 25px; } /* PATCH 5: Dart 3 Slot */
 
-        .footer { font-size: 10px; padding-bottom: 20px; opacity: 0.6; font-weight: bold; }
+        /* ACTIVE NEON - POSITIONED ON PATCHES */
+        .neon {
+            background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Arial Black', sans-serif;
+            font-weight: 900;
+            z-index: 10;
+            position: absolute;
+            text-align: center;
+        }
+
+        #score-val { top: 232px; width: 430px; font-size: 92px; }
+        .dart-txt { width: 105px; font-size: 25px; }
+        #v1 { top: 424px; left: 40px; } #v2 { top: 424px; left: 164px; } #v3 { top: 424px; left: 288px; }
+        #input-val { top: 515px; width: 430px; font-size: 52px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+
+        /* TOUCH LAYER */
+        .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
+        .mode-hit { top: 375px; width: 60px; height: 40px; }
+        .grid { position: absolute; top: 620px; left: 50px; width: 330px; height: 240px; display: grid; grid-template-columns: repeat(3, 1fr); }
+        .apply-hit { bottom: 30px; left: 50px; width: 330px; height: 70px; }
     </style>
 </head>
 <body>
+<div id="app-shell">
+    <div class="mask" id="p1-status"></div>
+    <div class="mask" id="p2-main"></div>
+    <div class="mask" id="p3-darts"></div>
+    <div class="mask" id="p4-darts"></div>
+    <div class="mask" id="p5-darts"></div>
 
-    <img src="https://raw.githubusercontent.com/smoody157/darts-501-app/main/7F737C26-56A1-497B-A4A2-CCD6141E7B8C.png" alt="Logo" class="header-logo">
+    <div id="score-val" class="neon">501</div>
+    <div id="v1" class="neon dart-txt">-</div>
+    <div id="v2" class="neon dart-txt">-</div>
+    <div id="v3" class="neon dart-txt">-</div>
+    <div id="input-val" class="neon">---</div>
 
-    <div class="deck">
-        <div class="mode-buttons">
-            <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
-            <button class="mode-btn active" id="btn501" onclick="setGame(501)">501</button>
-            <button class="mode-btn" id="btn701" onclick="setGame(701)">701</button>
-        </div>
-
-        <div id="main-score" class="main-score">501</div>
-
-        <div class="dart-grid">
-            <div class="orb"><div class="label-blue">Dart 1</div><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
-            <div class="orb"><div class="label-blue">Dart 2</div><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
-            <div class="orb"><div class="label-blue">Dart 3</div><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
-        </div>
-
-        <div id="input-display" class="input-box">---</div>
-
-        <div class="numpad">
-            <button class="num-btn" onclick="press(7)">7</button><button class="num-btn" onclick="press(8)">8</button><button class="num-btn" onclick="press(9)">9</button>
-            <button class="num-btn" onclick="press(4)">4</button><button class="num-btn" onclick="press(5)">5</button><button class="num-btn" onclick="press(6)">6</button>
-            <button class="num-btn" onclick="press(1)">1</button><button class="num-btn" onclick="press(2)">2</button><button class="num-btn" onclick="press(3)">3</button>
-            <button class="num-btn del-btn" onclick="del()">DEL</button><button class="num-btn" onclick="press(0)">0</button><button class="num-btn enter-btn" onclick="apply()">ENTER</button>
-        </div>
+    <button class="hit mode-hit" style="left:125px" onclick="APP.set(301)"></button>
+    <button class="hit mode-hit" style="left:185px" onclick="APP.set(501)"></button>
+    <button class="hit mode-hit" style="left:245px" onclick="APP.set(701)"></button>
+    <div class="grid">
+        <button class="hit" style="position:relative" onclick="APP.key(7)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(8)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(9)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(4)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(5)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(6)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(1)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(2)"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(3)"></button>
+        <button class="hit" style="position:relative" onclick="APP.clr()"></button>
+        <button class="hit" style="position:relative" onclick="APP.key(0)"></button>
     </div>
-
-    <div class="footer">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
-
+    <button class="hit apply-hit" onclick="APP.apply()"></button>
+</div>
 <script>
-    let score = 501;
-    let input = "";
-
-    // FULL EMBEDDED DATA TABLE (EXCERPT OF THE MASSIVE MAP)
-    // Every single number from 170 to 2 is now defined by PDC standards.
-    const checkoutMap = {
-        170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
-        158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
-        153:["T20","T19","D18"],152:["T20","T20","D16"],151:["T20","T17","D20"],150:["T20","T18","D18"],149:["T20","T19","D16"],
-        148:["T20","T16","D20"],147:["T20","T17","D18"],146:["T20","T18","D16"],145:["T20","T15","D20"],144:["T20","T20","D12"],
-        143:["T20","T17","D16"],142:["T20","T14","D20"],141:["T20","T15","D18"],140:["T20","T20","D10"],139:["T19","T14","D20"],
-        138:["T20","T18","D12"],137:["T19","T16","D16"],136:["T20","T20","D8"],135:["T20","T13","D19"],134:["T20","T14","D16"],
-        133:["T20","T19","D8"],132:["T20","T16","D12"],131:["T20","T13","D16"],130:["T20","T18","D8"],129:["T19","T16","D12"],
-        128:["T18","T14","D16"],127:["T20","T17","D8"],126:["T19","S19","D25"],125:["S25","T20","D20"],124:["T20","T16","D8"],
-        123:["T19","T16","D9"],122:["T18","T20","D4"],121:["T20","T15","D8"],120:["T20","S20","D20"],119:["T19","S12","D25"],
-        118:["T20","S18","D20"],117:["T20","S17","D20"],116:["T20","S16","D20"],115:["T20","S15","D20"],114:["T20","S14","D20"],
-        113:["T20","S13","D20"],112:["T20","S12","D20"],111:["T20","S11","D20"],110:["T20","S10","D20"],109:["T19","S12","D20"],
-        108:["T20","S16","D16"],107:["T19","S10","D20"],106:["T20","S10","D18"],105:["T19","S16","D16"],104:["T18","S10","D20"],
-        103:["T19","S10","D18"],102:["T20","S10","D16"],101:["T17","S10","D20"],100:["T20","D20","-"],99:["T19","S10","D16"],
-        98:["T20","D19","-"],97:["T19","D20","-"],96:["T20","D18","-"],95:["T19","D19","-"],94:["T18","D20","-"],
-        93:["T19","D18","-"],92:["T20","D16","-"],91:["T17","D20","-"],90:["T18","D18","-"],89:["T19","D16","-"],
-        88:["T16","D20","-"],87:["T17","D18","-"],86:["T18","D16","-"],85:["T15","D20","-"],84:["T16","D18","-"],
-        83:["T17","D16","-"],82:["T14","D20","-"],81:["T15","D18","-"],80:["T20","D10","-"],79:["T13","D20","-"],
-        78:["T14","D18","-"],77:["T15","D16","-"],76:["T20","D8","-"],75:["T17","D12","-"],74:["T14","D16","-"],
-        73:["T19","D8","-"],72:["T16","D12","-"],71:["T13","D16","-"],70:["T10","D20","-"],69:["T15","D12","-"],
-        68:["T16","D10","-"],67:["T17","D8","-"],66:["T10","D18","-"],65:["T15","D10","-"],64:["D16","D16","-"],
-        63:["T13","D12","-"],62:["T10","D16","-"],61:["T15","D8","-"],60:["S20","D20","-"],59:["S19","D20","-"],
-        58:["S18","D20","-"],57:["S17","D20","-"],56:["S16","D20","-"],55:["S15","D20","-"],54:["S14","D20","-"],
-        53:["S13","D20","-"],52:["S12","D20","-"],51:["S11","D20","-"],50:["BULL","-","-"],49:["S9","D20","-"],
-        48:["S16","D16","-"],47:["S7","D20","-"],46:["S6","D20","-"],45:["S5","D20","-"],44:["S12","D16","-"],
-        43:["S3","D20","-"],42:["S10","D16","-"],41:["S9","D16","-"],40:["D20","-","-"],39:["S7","D16","-"],
-        38:["D19","-","-"],37:["S5","D16","-"],36:["D18","-","-"],35:["S3","D16","-"],34:["D17","-","-"],
-        33:["S1","D16","-"],32:["D16","-","-"],31:["S7","D12","-"],30:["D15","-","-"],29:["S13","D8","-"],
-        28:["D14","-","-"],27:["S11","D8","-"],26:["D13","-","-"],25:["S9","D8","-"],24:["D12","-","-"],
-        23:["S7","D8","-"],22:["D11","-","-"],21:["S5","D8","-"],20:["D10","-","-"],19:["S3","D8","-"],
-        18:["D9","-","-"],17:["S1","D8","-"],16:["D8","-","-"],15:["S7","D4","-"],14:["D7","-","-"],
-        13:["S5","D4","-"],12:["D6","-","-"],11:["S3","D4","-"],10:["D5","-","-"],9:["S1","D4","-"],
-        8:["D4","-","-"],7:["S3","D2","-"],6:["D3","-","-"],5:["S1","D2","-"],4:["D2","-","-"],
-        3:["S1","D1","-"],2:["D1","-","-"]
-    };
-
-    function getVal(t) {
-        if (!t || t === "-" || t === "None") return 0;
-        if (t === "BULL" || t === "B" || t === "D25") return 50;
-        if (t === "S25" || t === "25") return 25;
-        if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
-        if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
-        if (t.startsWith("S")) return parseInt(t.substring(1));
-        return parseInt(t) || 0;
-    }
-
-    function getFullDataPath(s) {
-        // Reduction path for scores above 170
-        if (s > 170 || [169, 168, 166, 165, 163, 162, 159].includes(s)) {
-            return ["T20", "T20", "T20"];
-        }
-        // Direct data lookup for finishes
-        return checkoutMap[s] || ["T20", "T20", "T20"];
-    }
-
-    function update() {
-        document.getElementById('main-score').innerText = score;
-        document.getElementById('input-display').innerText = input || "---";
-        const path = getFullDataPath(score);
-        
-        let r1 = score - getVal(path[0]);
-        document.getElementById('d1-t').innerText = path[0];
-        document.getElementById('d1-r').innerText = Math.max(0, r1);
-
-        let r2 = (r1 <= 0) ? 0 : r1 - getVal(path[1]);
-        document.getElementById('d2-t').innerText = (r1 <= 0) ? "-" : path[1];
-        document.getElementById('d2-r').innerText = (r1 <= 0) ? "" : Math.max(0, r2);
-
-        let r3 = (r2 <= 0) ? 0 : r2 - getVal(path[2]);
-        document.getElementById('d3-t').innerText = (r2 <= 0) ? "-" : path[2];
-        document.getElementById('d3-r').innerText = (r2 <= 0) ? "" : Math.max(0, r3);
-    }
-
-    function setGame(n) { 
-        score = n; input = ""; 
-        document.getElementById('btn301').classList.toggle('active', n === 301);
-        document.getElementById('btn501').classList.toggle('active', n === 501);
-        document.getElementById('btn701').classList.toggle('active', n === 701);
-        update(); 
-    }
-    
-    function press(n) { if(input.length < 3) input += n; update(); }
-    function del() { input = ""; update(); }
-    
-    function apply() {
-        let v = parseInt(input);
-        if (!isNaN(v)) {
-            if (score - v < 0 || score - v === 1) alert("BUST");
-            else score -= v;
-        }
-        input = ""; update();
-    }
-    update();
+const APP = {
+    s: 501, i: "",
+    draw: function() {
+        document.getElementById('score-val').innerText = this.s;
+        document.getElementById('input-val').innerText = this.i || "---";
+    },
+    set: function(n) { this.s = n; this.i = ""; this.draw(); },
+    key: function(n) { if (this.i.length < 3) this.i += n; this.draw(); },
+    clr: function() { this.i = ""; this.draw(); },
+    apply: function() { let v = parseInt(this.i); if (!isNaN(v)) { this.s -= v; } this.i = ""; this.draw(); }
+};
+APP.draw();
 </script>
 </body>
 </html>
