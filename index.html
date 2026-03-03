@@ -3,154 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR PRO</title>
+    <title>DART CALCULATOR</title>
     <style>
-        body, html {
-            margin: 0; padding: 0;
-            width: 100vw; height: 100vh;
-            /* Pointing directly to your repo image */
-            background: #000 url('7F737C26-56A1-497B-A4A2-CCD6141E7B8C.png') no-repeat center center;
-            background-size: 100% 100%;
-            font-family: 'Arial Black', sans-serif;
+        :root {
+            --neon-blue: #00d2ff;
+            --neon-pink: #ff007f;
+            --neon-green: #39ff14;
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        body { 
+            background-color: #05070a; 
+            color: #fff; 
+            font-family: system-ui, sans-serif;
+            text-align: center; 
+            margin: 0; padding: 0; 
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
+            align-items: center;
             overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
         }
 
-        .canvas { width: 100vw; height: 100vh; max-width: 430px; position: relative; }
+        /* LOGO CONTAINER WITH CUSTOM OVERLAY */
+        .logo-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            margin-top: 5px;
+        }
 
-        /* Main Score Display Area */
-        #main-score {
-            position: absolute; top: 22.5%; left: 50%;
+        .header-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .logo-overlay {
+            position: absolute;
+            top: 55%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 82px; color: #fff; text-shadow: 0 0 20px #00d2ff;
+            width: 100%;
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
         }
 
-        /* Mode Toggles: Invisible boxes over 301, 501, 701 */
-        .mode-grid {
-            position: absolute; top: 31.5%; left: 15%; width: 70%; height: 5%;
-            display: flex; justify-content: space-between;
-        }
-        .mode-btn { width: 30%; background: transparent; border: none; cursor: pointer; }
-
-        /* Outchart Target Orbs */
-        .dart-grid {
-            position: absolute; top: 41.5%; width: 100%;
-            display: flex; justify-content: space-around;
-        }
-        .dart-slot { width: 33%; text-align: center; }
-        .target { font-size: 26px; color: #fff; display: block; font-weight: 900; }
-        .remain { font-size: 16px; color: #ff007f; font-weight: 900; }
-
-        /* Input Display (---) */
-        .input-display {
-            position: absolute; top: 52.8%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px; color: #00d2ff; font-weight: 900;
+        .deck {
+            background: rgba(20, 20, 25, 0.98);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 8px;
+            width: 94%; max-width: 400px;
         }
 
-        /* Numpad: Invisible hit-zones over your graphic keys */
-        .keypad {
-            position: absolute; top: 58%; left: 6%; width: 88%; height: 32%;
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(4, 1fr);
+        .main-score { font-size: 70px; font-weight: 900; margin: -5px 0; color: #fff; line-height: 1; }
+        
+        .mode-buttons { display: flex; justify-content: center; gap: 6px; margin: 5px 0; }
+        .mode-btn {
+            background: #1a1a1a; border: 1px solid #333; color: #fff;
+            padding: 5px 10px; border-radius: 6px; font-size: 12px;
         }
-        .key { background: transparent; border: none; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
+        .mode-btn.active { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.2); }
 
-        /* Bottom "Apply Turn" Button */
-        .apply-btn {
-            position: absolute; bottom: 4.5%; left: 5%; width: 90%; height: 60px;
-            background: transparent; border: none; cursor: pointer;
+        .dart-grid { display: flex; justify-content: center; gap: 5px; margin-bottom: 5px; }
+        .orb { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 5px 2px; width: 32%; }
+        .label-blue { color: var(--neon-blue); font-size: 9px; font-weight: bold; }
+        .target { font-size: 20px; font-weight: 900; display: block; }
+        .remain { font-size: 14px; color: var(--neon-pink); font-weight: 900; }
+
+        .input-box {
+            background: #000; border: 2px solid var(--neon-blue);
+            border-radius: 8px; padding: 5px; font-size: 32px;
+            color: var(--neon-blue); font-weight: 900; margin-bottom: 8px;
         }
+
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .num-btn {
+            background: #151515; border: 1px solid var(--border);
+            color: #fff; padding: 14px 0; font-size: 24px; border-radius: 10px; font-weight: bold;
+        }
+        .enter-btn { background: var(--neon-green); color: #000; font-size: 18px; font-weight: 900; }
+        .del-btn { color: var(--neon-pink); }
+
+        .footer { font-size: 9px; padding: 5px 0; opacity: 0.5; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="canvas">
-    <div id="main-score">501</div>
-
-    <div class="mode-grid">
-        <button class="mode-btn" onclick="setGame(301)"></button>
-        <button class="mode-btn" onclick="setGame(501)"></button>
-        <button class="mode-btn" onclick="setGame(701)"></button>
+    <div class="logo-container">
+        <img src="https://raw.githubusercontent.com/smoody157/darts-501-app/main/7F737C26-56A1-497B-A4A2-CCD6141E7B8C.png" alt="Logo" class="header-logo">
+        <div class="logo-overlay">DART CALCULATOR</div>
     </div>
 
-    <div class="dart-grid">
-        <div class="dart-slot"><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
-        <div class="dart-slot"><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
-        <div class="dart-slot"><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
+    <div class="deck">
+        <div class="mode-buttons">
+            <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
+            <button class="mode-btn active" id="btn501" onclick="setGame(501)">501</button>
+            <button class="mode-btn" id="btn701" onclick="setGame(701)">701</button>
+        </div>
+
+        <div id="main-score" class="main-score">501</div>
+
+        <div class="dart-grid">
+            <div class="orb"><div class="label-blue">D1</div><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
+            <div class="orb"><div class="label-blue">D2</div><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
+            <div class="orb"><div class="label-blue">D3</div><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
+        </div>
+
+        <div id="input-display" class="input-box">---</div>
+
+        <div class="numpad">
+            <button class="num-btn" onclick="press(7)">7</button><button class="num-btn" onclick="press(8)">8</button><button class="num-btn" onclick="press(9)">9</button>
+            <button class="num-btn" onclick="press(4)">4</button><button class="num-btn" onclick="press(5)">5</button><button class="num-btn" onclick="press(6)">6</button>
+            <button class="num-btn" onclick="press(1)">1</button><button class="num-btn" onclick="press(2)">2</button><button class="num-btn" onclick="press(3)">3</button>
+            <button class="num-btn del-btn" onclick="del()">DEL</button><button class="num-btn" onclick="press(0)">0</button><button class="num-btn enter-btn" onclick="apply()">ENTER</button>
+        </div>
     </div>
 
-    <div class="input-display" id="input-val">---</div>
-
-    <div class="keypad">
-        <button class="key" onclick="press(7)"></button><button class="key" onclick="press(8)"></button><button class="key" onclick="press(9)"></button>
-        <button class="key" onclick="press(4)"></button><button class="key" onclick="press(5)"></button><button class="key" onclick="press(6)"></button>
-        <button class="key" onclick="press(1)"></button><button class="key" onclick="press(2)"></button><button class="key" onclick="press(3)"></button>
-        <button class="key" onclick="del()"></button><button class="key" onclick="press(0)"></button>
-    </div>
-
-    <button class="apply-btn" onclick="apply()"></button>
-</div>
+    <div class="footer">STEVE'S GRAPHIC DESIGNS</div>
 
 <script>
     let score = 501;
-    let inputStr = "";
+    let input = "";
 
-    // FULL PROFESSIONAL OUTCHART DATA (170 down to 2)
-    const masterOuts = {
-        170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
-        158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
-        153:["T20","T19","D18"],152:["T20","T20","D16"],151:["T20","T17","D20"],150:["T20","T18","D18"],149:["T20","T19","D16"],
-        148:["T20","T16","D20"],147:["T20","T17","D18"],146:["T20","T18","D16"],145:["T20","T15","D20"],144:["T20","T20","D12"],
-        143:["T20","T17","D16"],142:["T20","T14","D20"],141:["T20","T15","D18"],140:["T20","T20","D10"],139:["T19","T14","D20"],
-        138:["T20","T18","D12"],137:["T19","T16","D16"],136:["T20","T20","D8"],135:["T20","T13","D19"],134:["T20","T14","D16"],
-        133:["T20","T19","D8"],132:["T20","T16","D12"],131:["T20","T13","D16"],130:["T20","T18","D8"],129:["T19","T16","D12"],
-        128:["T18","T14","D16"],127:["T20","T17","D8"],126:["T19","S19","D25"],125:["S25","T20","D20"],124:["T20","T16","D8"],
-        123:["T19","T16","D9"],122:["T18","T20","D4"],121:["T20","T15","D8"],120:["T20","S20","D20"],110:["T20","S10","D20"],
-        100:["T20","D20","-"],90:["T18","D18","-"],80:["T20","D10","-"],70:["T10","D20","-"],60:["S20","D20","-"],
-        50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],16:["D8","-","-"],8:["D4","-","-"],4:["D2","-","-"],2:["D1","-","-"]
+    const checkoutMap = {
+        170:["T20","T20","BULL"],167:["T20","T19","BULL"],125:["S25","T20","D20"],121:["T20","T15","D8"],100:["T20","D20","-"],
+        80:["T20","D10","-"],40:["D20","-","-"],2:["D1","-","-"]
     };
 
     function getVal(t) {
-        if (!t || t === "-") return 0;
+        if (!t || t === "-" || t === "None") return 0;
         if (t === "BULL" || t === "D25") return 50;
-        if (t === "S25") return 25;
+        if (t === "S25" || t === "25") return 25;
         if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
         if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
         if (t.startsWith("S")) return parseInt(t.substring(1));
         return parseInt(t) || 0;
     }
 
-    function update() {
-        document.getElementById('main-score').innerText = score;
-        document.getElementById('input-val').innerText = inputStr || "---";
-        
-        let path = masterOuts[score] || (score > 170 ? ["T20","T20","T20"] : ["T20","S20","D"+Math.floor((score-80)/2)]);
-        if (score <= 1) path = ["-","-","-"];
-
-        document.getElementById('d1-t').innerText = path[0];
-        let r1 = score - getVal(path[0]);
-        document.getElementById('d1-r').innerText = r1 > 0 ? r1 : (r1 === 0 ? "OUT" : "");
-
-        document.getElementById('d2-t').innerText = path[1];
-        let r2 = r1 - getVal(path[1]);
-        document.getElementById('d2-r').innerText = r1 <= 0 ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
-
-        document.getElementById('d3-t').innerText = path[2];
-        let r3 = r2 - getVal(path[2]);
-        document.getElementById('d3-r').innerText = r2 <= 0 ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
+    function getFullDataPath(s) {
+        if (s > 170) return ["T20", "T20", "T20"];
+        return checkoutMap[s] || ["T20", "T20", "T20"];
     }
 
-    function setGame(n) { score = n; inputStr = ""; update(); }
-    function press(n) { if(inputStr.length < 3) inputStr += n; update(); }
-    function del() { inputStr = ""; update(); }
+    function update() {
+        document.getElementById('main-score').innerText = score;
+        document.getElementById('input-display').innerText = input || "---";
+        const path = getFullDataPath(score);
+        let r1 = score - getVal(path[0]);
+        document.getElementById('d1-t').innerText = path[0];
+        document.getElementById('d1-r').innerText = Math.max(0, r1);
+        let r2 = (r1 <= 0) ? 0 : r1 - getVal(path[1]);
+        document.getElementById('d2-t').innerText = (r1 <= 0) ? "-" : path[1];
+        document.getElementById('d2-r').innerText = (r1 <= 0) ? "" : Math.max(0, r2);
+        let r3 = (r2 <= 0) ? 0 : r2 - getVal(path[2]);
+        document.getElementById('d3-t').innerText = (r2 <= 0) ? "-" : path[2];
+        document.getElementById('d3-r').innerText = (r2 <= 0) ? "" : Math.max(0, r3);
+    }
+
+    function setGame(n) { score = n; input = ""; update(); }
+    function press(n) { if(input.length < 3) input += n; update(); }
+    function del() { input = ""; update(); }
     function apply() {
-        let v = parseInt(inputStr);
-        if(!isNaN(v)) {
+        let v = parseInt(input);
+        if (!isNaN(v)) {
             if (score - v < 0 || score - v === 1) alert("BUST");
             else score -= v;
         }
-        inputStr = ""; update();
+        input = ""; update();
     }
     update();
 </script>
