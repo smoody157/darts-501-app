@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - PRO MASTER</title>
+    <title>DART CALCULATOR PRO</title>
     <style>
         body, html {
             margin: 0; padding: 0;
@@ -17,14 +17,21 @@
 
         .canvas { width: 100vw; height: 100vh; max-width: 430px; position: relative; }
 
-        /* Mapped to the Main Large Neon Box */
+        /* Main Score */
         #main-score {
             position: absolute; top: 22.5%; left: 50%;
             transform: translate(-50%, -50%);
             font-size: 82px; color: #fff; text-shadow: 0 0 20px #00d2ff;
         }
 
-        /* Mapped to the 3 Small Info Orbs */
+        /* Game Mode Hit-boxes (301, 501, 701) */
+        .mode-grid {
+            position: absolute; top: 31.5%; left: 15%; width: 70%; height: 5%;
+            display: flex; justify-content: space-between;
+        }
+        .mode-btn { width: 30%; background: transparent; border: none; cursor: pointer; }
+
+        /* Dart Outchart Orbs */
         .dart-grid {
             position: absolute; top: 41.5%; width: 100%;
             display: flex; justify-content: space-around;
@@ -33,14 +40,14 @@
         .target { font-size: 26px; color: #fff; display: block; font-weight: 900; }
         .remain { font-size: 16px; color: #ff007f; font-weight: 900; }
 
-        /* Mapped to the Input Line (---) */
+        /* Input Display (---) */
         .input-display {
             position: absolute; top: 52.8%; left: 50%;
             transform: translate(-50%, -50%);
             font-size: 40px; color: #00d2ff; font-weight: 900;
         }
 
-        /* Numpad Hit-Grid (Invisible) */
+        /* Numpad Hit-Grid */
         .keypad {
             position: absolute; top: 58%; left: 6%; width: 88%; height: 32%;
             display: grid; grid-template-columns: repeat(3, 1fr);
@@ -48,7 +55,7 @@
         }
         .key { background: transparent; border: none; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* Bottom "Apply Turn" Hit-Box */
+        /* Apply Turn */
         .apply-btn {
             position: absolute; bottom: 4.5%; left: 5%; width: 90%; height: 60px;
             background: transparent; border: none; cursor: pointer;
@@ -59,6 +66,12 @@
 
 <div class="canvas">
     <div id="main-score">501</div>
+
+    <div class="mode-grid">
+        <button class="mode-btn" onclick="setGame(301)"></button>
+        <button class="mode-btn" onclick="setGame(501)"></button>
+        <button class="mode-btn" onclick="setGame(701)"></button>
+    </div>
 
     <div class="dart-grid">
         <div class="dart-slot"><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
@@ -82,17 +95,25 @@
     let score = 501;
     let inputStr = "";
 
-    // The Master Outchart Logic - Professional PDC Routes
+    // FULL PROFESSIONAL OUTCHART DATA (170-2)
     const masterOuts = {
-        170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"], 161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"],
-        150: ["T20", "T18", "D18"], 140: ["T20", "T20", "D10"], 132: ["T20", "T16", "D12"], 121: ["T20", "T15", "D8"], 110: ["T20", "S10", "D20"],
-        100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"], 80: ["T20", "D10", "-"], 70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"],
-        50: ["BULL", "-", "-"], 40: ["D20", "-", "-"], 32: ["D16", "-", "-"], 16: ["D8", "-", "-"], 8: ["D4", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
+        170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
+        158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
+        153:["T20","T19","D18"],152:["T20","T20","D16"],151:["T20","T17","D20"],150:["T20","T18","D18"],149:["T20","T19","D16"],
+        148:["T20","T16","D20"],147:["T20","T17","D18"],146:["T20","T18","D16"],145:["T20","T15","D20"],144:["T20","T20","D12"],
+        143:["T20","T17","D16"],142:["T20","T14","D20"],141:["T20","T15","D18"],140:["T20","T20","D10"],139:["T19","T14","D20"],
+        138:["T20","T18","D12"],137:["T19","T16","D16"],136:["T20","T20","D8"],135:["T20","T13","D19"],134:["T20","T14","D16"],
+        133:["T20","T19","D8"],132:["T20","T16","D12"],131:["T20","T13","D16"],130:["T20","T18","D8"],129:["T19","T16","D12"],
+        128:["T18","T14","D16"],127:["T20","T17","D8"],126:["T19","S19","D25"],125:["S25","T20","D20"],124:["T20","T16","D8"],
+        123:["T19","T16","D9"],122:["T18","T20","D4"],121:["T20","T15","D8"],120:["T20","S20","D20"],110:["T20","S10","D20"],
+        100:["T20","D20","-"],90:["T18","D18","-"],80:["T20","D10","-"],70:["T10","D20","-"],60:["S20","D20","-"],
+        50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],16:["D8","-","-"],8:["D4","-","-"],4:["D2","-","-"],2:["D1","-","-"]
     };
 
     function getVal(t) {
         if (!t || t === "-") return 0;
-        if (t === "BULL") return 50;
+        if (t === "BULL" || t === "D25") return 50;
+        if (t === "S25") return 25;
         if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
         if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
         if (t.startsWith("S")) return parseInt(t.substring(1));
@@ -102,10 +123,8 @@
     function update() {
         document.getElementById('main-score').innerText = score;
         document.getElementById('input-val').innerText = inputStr || "---";
-        
-        // Auto-calculates best route or defaults to T20 for setup
-        let path = masterOuts[score] || (score > 170 ? ["T20", "T20", "T20"] : ["T20", "S20", "D" + Math.floor((score - 80) / 2)]);
-        if (score <= 1) path = ["-", "-", "-"];
+        let path = masterOuts[score] || (score > 170 ? ["T20","T20","T20"] : ["T20","S20","D"+Math.floor((score-80)/2)]);
+        if (score <= 1) path = ["-","-","-"];
 
         document.getElementById('d1-t').innerText = path[0];
         let r1 = score - getVal(path[0]);
@@ -113,13 +132,14 @@
 
         document.getElementById('d2-t').innerText = path[1];
         let r2 = r1 - getVal(path[1]);
-        document.getElementById('d2-r').innerText = (r1 <= 0) ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
+        document.getElementById('d2-r').innerText = r1 <= 0 ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
 
         document.getElementById('d3-t').innerText = path[2];
         let r3 = r2 - getVal(path[2]);
-        document.getElementById('d3-r').innerText = (r2 <= 0) ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
+        document.getElementById('d3-r').innerText = r2 <= 0 ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
     }
 
+    function setGame(n) { score = n; inputStr = ""; update(); }
     function press(n) { if(inputStr.length < 3) inputStr += n; update(); }
     function del() { inputStr = ""; update(); }
     function apply() {
