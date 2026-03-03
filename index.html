@@ -76,7 +76,7 @@
     /* Top label */
     #scoreRemaining {
       position: absolute;
-      top: 170px;
+      top: 156px;
       width: 430px;
       text-align: center;
       font-size: 14px;
@@ -92,7 +92,7 @@
 
     /* SCORE */
     #score {
-      top: 178px;
+      top: 185px;
       font-size: 96px;
       letter-spacing: 1px;
     }
@@ -101,13 +101,13 @@
     #modes {
       position: absolute;
       left: 86px;
-      top: 288px;
+      top: 282px;
       width: 258px;
       height: 50px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      z-index: 30;
+      z-index: 12;
     }
 
     .modeBtn {
@@ -116,11 +116,20 @@
       background: rgba(0,0,0,0.0);
       border-radius: 14px;
       cursor: pointer;
-      color: rgba(255, 214, 120, 0.95);
+
+      /* gradient text (blue -> gold) */
+      background-image: linear-gradient(90deg, rgba(120,220,255,1) 0%, rgba(255,214,120,1) 55%, rgba(120,220,255,1) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+
       font-weight: 900;
       font-size: 18px;
       letter-spacing: 1px;
-      text-shadow: 0 0 10px rgba(255, 180, 0, 0.18);
+
+      text-shadow:
+        0 0 8px rgba(0,210,255,0.18),
+        0 0 14px rgba(255,180,0,0.14);
     }
 
     .modeBtn::before {
@@ -128,18 +137,22 @@
       position: absolute;
       inset: 0;
       border-radius: 14px;
-      border: 2px solid rgba(121, 220, 255, 0.55);
+      padding: 2px; /* border thickness */
+      background: linear-gradient(90deg, rgba(120,220,255,0.75) 0%, rgba(255,214,120,0.75) 55%, rgba(120,220,255,0.75) 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
       box-shadow:
-        0 0 10px rgba(0, 210, 255, 0.18),
-        0 0 20px rgba(255, 79, 161, 0.08);
+        0 0 10px rgba(0,210,255,0.18),
+        0 0 20px rgba(255,180,0,0.10);
       pointer-events: none;
     }
 
     .modeBtn.active::before {
-      border-color: rgba(121, 220, 255, 0.85);
+      background: linear-gradient(90deg, rgba(120,220,255,0.95) 0%, rgba(255,214,120,0.95) 55%, rgba(120,220,255,0.95) 100%);
       box-shadow:
-        0 0 12px rgba(0, 210, 255, 0.35),
-        0 0 24px rgba(255, 79, 161, 0.16);
+        0 0 14px rgba(0,210,255,0.35),
+        0 0 26px rgba(255,180,0,0.18);
     }
 
     .modeBtn:active {
@@ -155,8 +168,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding-top: 16px;
+      justify-content: flex-start;
+      padding-top: 18px;
       pointer-events: none;
     }
     #box1 { left: 26px; }
@@ -171,20 +184,28 @@
 
     .dart-label {
       position: absolute;
-      top: 10px;
+      bottom: 10px;
       left: 0;
       width: 100%;
       text-align: center;
       font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.6px;
-      color: rgba(255,255,255,0.58);
-      text-shadow: 0 0 10px rgba(0,0,0,0.75);
+      letter-spacing: 0.8px;
       text-transform: uppercase;
       pointer-events: none;
     }
 
-    /* INPUT */
+    
+    .neon-label {
+      background: linear-gradient(180deg, rgba(120,220,255,1) 0%, rgba(255,79,161,1) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 10px rgba(0,210,255,0.14),
+        0 0 16px rgba(255,79,161,0.10);
+    }
+/* INPUT */
     #input {
       top: 466px;
       font-size: 50px;
@@ -236,8 +257,8 @@
     .donate-hit::before {
       content: "";
       position: absolute;
-      inset: 0px;                 /* fill the whole key like DEL */
-      border-radius: 18px;
+      inset: 6px;
+      border-radius: 14px;
       border: 3px solid rgba(255, 0, 127, 0.55);
       box-shadow:
         0 0 12px rgba(255, 0, 127, 0.22),
@@ -250,7 +271,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;            /* slightly bigger */
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: 0.7px;
       color: #ff3a8b;
@@ -262,6 +283,7 @@
       text-align: center;
       padding: 0 6px;
       line-height: 1.05;
+      transform: translate(0px, 2px);
     }
 
     #tag {
@@ -291,16 +313,16 @@
         </div>
 
         <div class="dart-box" id="box1">
-          <div class="dart-label">Dart 1</div>
           <div id="d1" class="neon dart-val">-</div>
+          <div id="lbl1" class="dart-label neon-label">Dart 1</div>
         </div>
         <div class="dart-box" id="box2">
-          <div class="dart-label">Dart 2</div>
           <div id="d2" class="neon dart-val">-</div>
+          <div id="lbl2" class="dart-label neon-label">Dart 2</div>
         </div>
         <div class="dart-box" id="box3">
-          <div class="dart-label">Dart 3</div>
           <div id="d3" class="neon dart-val">-</div>
+          <div id="lbl3" class="dart-label neon-label">Dart 3</div>
         </div>
 
         <div id="input" class="neon">---</div>
@@ -328,7 +350,7 @@
 
         <button id="apply" class="hit" onclick="APP.apply()" aria-label="Apply Turn"></button>
 
-        <div id="tag">REV: v4-align + modes-live + donate-fixed</div>
+        <div id="tag">REV: v5-modes-gradient + dart-swap + label-gradient</div>
       </div>
     </div>
   </div>
