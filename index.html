@@ -8,10 +8,10 @@
         :root {
             --neon-blue: #00d2ff;
             --neon-pink: #ff007f;
-            --border: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
         }
 
-        /* STAGNANT ORIENTATION LOCK */
+        /* ORIENTATION LOCK - STAGNANT UPRIGHT */
         @media screen and (orientation: landscape) {
             #rotation-overlay { display: flex !important; }
         }
@@ -21,11 +21,10 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000; color: #fff; z-index: 9999;
             justify-content: center; align-items: center;
-            font-weight: bold; text-align: center; padding: 20px;
+            font-weight: bold; text-align: center;
         }
 
         body { 
-            /* LINKED TO YOUR REPO ASSETS */
             background: url('background.png') no-repeat center center fixed;
             background-size: cover;
             background-color: #05070a; 
@@ -39,76 +38,62 @@
             overflow: hidden;
         }
 
-        /* LOGO STYLING */
         .logo-container { margin-bottom: 10px; }
-        .logo-img { max-width: 250px; height: auto; }
-        .logo-fallback {
-            font-size: 32px; font-weight: 900;
-            background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        .logo-img { max-width: 280px; height: auto; }
 
         .deck {
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8); /* Darker floor for high contrast */
             backdrop-filter: blur(15px);
             border: 1px solid var(--border);
             border-radius: 30px;
             padding: 25px;
-            width: 90%; max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            width: 92%; max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,1);
         }
 
         .score-panel {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 20px;
             border: 1px solid var(--border);
         }
 
-        .label-blue { color: var(--neon-blue); font-size: 10px; font-weight: bold; letter-spacing: 2px; }
-
         .main-score {
             font-size: 90px; font-weight: 900; line-height: 1;
-            margin: 10px 0; text-shadow: 0 0 25px rgba(255,255,255,0.2);
+            margin: 10px 0; text-shadow: 0 0 30px rgba(255,255,255,0.4);
         }
 
-        /* GAME SELECTION */
         .mode-buttons { display: flex; justify-content: center; gap: 10px; }
         .mode-btn {
             background: rgba(255,255,255,0.1);
-            border: 1px solid #444; color: #fff;
+            border: 1px solid #555; color: #fff;
             padding: 8px 18px; border-radius: 10px;
             font-size: 14px; font-weight: 800; cursor: pointer;
         }
         .mode-btn.active { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.2); }
 
-        /* DART CARDS */
-        .dart-grid { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .dart-grid { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
         .orb {
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             border: 1px solid var(--border);
-            border-radius: 20px; padding: 15px 5px; width: 32%;
+            border-radius: 18px; padding: 15px 5px; width: 32%;
         }
-        .target { font-size: 24px; font-weight: bold; display: block; margin-bottom: 5px; }
+        .label-blue { color: var(--neon-blue); font-size: 9px; font-weight: bold; letter-spacing: 2px; }
+        .target { font-size: 24px; font-weight: bold; color: #fff; display: block; margin-top: 5px; }
         .remain { font-size: 20px; color: var(--neon-pink); font-weight: 900; }
 
-        /* INPUT DISPLAY */
         .input-box {
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,1);
             border: 1px solid var(--neon-blue);
-            border-radius: 15px; padding: 15px;
+            border-radius: 12px; padding: 15px;
             font-size: 32px; color: var(--neon-blue);
             margin-bottom: 20px; font-weight: 900;
         }
 
-        /* NUMPAD */
         .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .num-btn {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.1);
             border: 1px solid var(--border);
             color: #fff; padding: 18px; font-size: 22px;
             border-radius: 12px; font-weight: bold;
@@ -123,7 +108,7 @@
             text-transform: uppercase; letter-spacing: 2px;
         }
 
-        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.5; margin-top: 20px; font-weight: bold; }
+        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.6; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -131,9 +116,9 @@
     <div id="rotation-overlay">PLEASE ROTATE DEVICE UPRIGHT</div>
 
     <div class="logo-container">
-        <img src="logo.png" alt="DART CALCULATOR" class="logo-img" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
-        <div id="text-logo" class="logo-fallback" style="display:none;">DART CALCULATOR</div>
-        <div style="font-size: 10px; color: #ffae00; letter-spacing: 2px; font-weight: bold;">LIMITED EDITION</div>
+        <img src="logo.png" alt="DART CALCULATOR" class="logo-img" onerror="this.style.display='none'; document.getElementById('txt-logo').style.display='block';">
+        <div id="txt-logo" style="display:none; font-size: 32px; font-weight: 900; color: var(--neon-blue);">DART CALCULATOR</div>
+        <div style="font-size: 10px; color: #ffae00; letter-spacing: 2px; font-weight: bold; margin-top: -5px;">LIMITED EDITION</div>
     </div>
 
     <div class="deck">
@@ -149,17 +134,17 @@
 
         <div class="dart-grid">
             <div class="orb">
-                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 1</div>
+                <div class="label-blue">DART 1</div>
                 <span class="target" id="d1-t">T20</span>
                 <span class="remain" id="d1-r">641</span>
             </div>
             <div class="orb">
-                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 2</div>
+                <div class="label-blue">DART 2</div>
                 <span class="target" id="d2-t">T20</span>
                 <span class="remain" id="d2-r">581</span>
             </div>
             <div class="orb">
-                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 3</div>
+                <div class="label-blue">DART 3</div>
                 <span class="target" id="d3-t">T20</span>
                 <span class="remain" id="d3-r">521</span>
             </div>
@@ -182,16 +167,14 @@
     let score = 701;
     let input = "";
 
-    // Professional Strategy Table (T20 defaults for high scores)
     const strategy = {
-        "170": ["T20", "T20", "BULL"], "160": ["T20", "T20", "D20"], 
+        "170": ["T20", "T20", "BULL"], "160": ["T20", "T20", "D20"],
         "136": ["T20", "T20", "D8"], "100": ["T20", "D20", "nah"],
         "40": ["D20", "nah", "nah"], "16": ["D8", "nah", "nah"], "2": ["D1", "nah", "nah"]
     };
 
     function setGame(n) {
-        score = n;
-        input = "";
+        score = n; input = "";
         document.getElementById('btn301').classList.toggle('active', n === 301);
         document.getElementById('btn501').classList.toggle('active', n === 501);
         document.getElementById('btn701').classList.toggle('active', n === 701);
