@@ -2,166 +2,184 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=430, user-scalable=no">
-    <title>DART PRO MASTER - TOTAL BUILD</title>
+    <meta name="viewport" content="width=430, height=932, initial-scale=1.0, user-scalable=no">
+    <title>DART PRO - FINAL WIRE</title>
     <style>
+        /* FIXED ENGINE SETTINGS */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html {
             margin: 0; padding: 0;
             width: 430px; height: 932px;
             background: #000;
             overflow: hidden;
-            display: flex; justify-content: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .canvas {
+        /* THE CANVAS: HARD-WIRED TO IMG_7543.png */
+        #app-canvas {
             width: 430px; height: 932px;
-            /* WIRED DIRECTLY TO YOUR GITHUB REPO RAW IMAGE */
-            background: url('https://raw.githubusercontent.com/smoody157/darts-501-app/main/IMG_7543.png') no-repeat;
-            background-size: 430px 932px;
+            background-image: url('IMG_7543.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
             position: relative;
+            z-index: 1;
         }
 
+        /* Score Display - Top Neon Frame */
         #main-score {
-            position: absolute; top: 185px; left: 0; width: 430px;
-            text-align: center; font-size: 90px; color: #fff;
+            position: absolute; top: 180px; left: 0; width: 430px;
+            text-align: center; font-size: 88px; color: #fff;
             font-family: 'Arial Black', sans-serif;
-            text-shadow: 0 0 20px #00d2ff;
+            text-shadow: 0 0 20px #00d2ff, 0 0 40px #00d2ff;
+            pointer-events: none;
         }
 
-        .mode-hit { position: absolute; top: 295px; width: 80px; height: 40px; cursor: pointer; }
-        #m301 { left: 80px; }
-        #m501 { left: 175px; }
-        #m701 { left: 270px; }
+        /* Mode Selectors - 301, 501, 701 */
+        .hit-mode { position: absolute; top: 292px; width: 85px; height: 45px; cursor: pointer; }
+        #btn-301 { left: 80px; }
+        #btn-501 { left: 172px; }
+        #btn-701 { left: 265px; }
 
-        .orb { position: absolute; width: 100px; text-align: center; top: 385px; }
-        #orb1 { left: 40px; }
-        #orb2 { left: 165px; }
-        #orb3 { left: 290px; }
-        .target { font-size: 34px; color: #fff; display: block; font-weight: 900; }
-        .rem { font-size: 14px; color: #ff007f; font-weight: 900; }
+        /* Outchart Circles */
+        .orb-box { position: absolute; width: 100px; text-align: center; top: 382px; pointer-events: none; }
+        #box1 { left: 42px; }
+        #box2 { left: 165px; }
+        #box3 { left: 288px; }
+        .val-target { font-size: 32px; color: #fff; display: block; font-weight: 900; line-height: 1.1; }
+        .val-rem { font-size: 15px; color: #ff007f; font-weight: 900; }
 
-        #input-val {
-            position: absolute; top: 495px; width: 430px;
-            text-align: center; font-size: 45px; color: #00d2ff; font-weight: 900;
+        /* Input Dash */
+        #input-display {
+            position: absolute; top: 490px; width: 430px;
+            text-align: center; font-size: 48px; color: #00d2ff; font-weight: 900;
+            pointer-events: none;
         }
 
-        .keys {
-            position: absolute; top: 550px; left: 40px; width: 350px; height: 260px;
+        /* The Grid - Numpad */
+        .numpad-grid {
+            position: absolute; top: 550px; left: 40px;
+            width: 350px; height: 265px;
             display: grid; grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, 1fr);
         }
-        .k { background: transparent; border: none; cursor: pointer; }
+        .key-btn { background: transparent; border: none; outline: none; cursor: pointer; }
 
-        .apply-btn {
-            position: absolute; bottom: 40px; left: 40px; width: 350px; height: 80px;
+        /* Apply Bar */
+        .apply-hit {
+            position: absolute; bottom: 42px; left: 40px;
+            width: 350px; height: 75px;
             background: transparent; border: none; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div class="canvas">
+<div id="app-canvas">
     <div id="main-score">501</div>
     
-    <div class="mode-hit" id="m301" onclick="set(301)"></div>
-    <div class="mode-hit" id="m501" onclick="set(501)"></div>
-    <div class="mode-hit" id="m701" onclick="set(701)"></div>
+    <div class="hit-mode" id="btn-301" onclick="resetGame(301)"></div>
+    <div class="hit-mode" id="btn-501" onclick="resetGame(501)"></div>
+    <div class="hit-mode" id="btn-701" onclick="resetGame(701)"></div>
 
-    <div class="orb" id="orb1"><span class="target" id="t1">-</span><span class="rem" id="r1"></span></div>
-    <div class="orb" id="orb2"><span class="target" id="t2">-</span><span class="rem" id="r2"></span></div>
-    <div class="orb" id="orb3"><span class="target" id="t3">-</span><span class="rem" id="r3"></span></div>
+    <div class="orb-box" id="box1"><span class="val-target" id="t1">-</span><span class="val-rem" id="r1"></span></div>
+    <div class="orb-box" id="box2"><span class="val-target" id="t2">-</span><span class="val-rem" id="r2"></span></div>
+    <div class="orb-box" id="box3"><span class="val-target" id="t3">-</span><span class="val-rem" id="r3"></span></div>
 
-    <div id="input-val">---</div>
+    <div id="input-display">---</div>
 
-    <div class="keys">
-        <button class="k" onclick="p(7)"></button><button class="k" onclick="p(8)"></button><button class="k" onclick="p(9)"></button>
-        <button class="k" onclick="p(4)"></button><button class="k" onclick="p(5)"></button><button class="k" onclick="p(6)"></button>
-        <button class="k" onclick="p(1)"></button><button class="k" onclick="p(2)"></button><button class="k" onclick="p(3)"></button>
-        <button class="k" onclick="d()"></button><button class="k" onclick="p(0)"></button>
+    <div class="numpad-grid">
+        <button class="key-btn" onclick="addNum(7)"></button><button class="key-btn" onclick="addNum(8)"></button><button class="key-btn" onclick="addNum(9)"></button>
+        <button class="key-btn" onclick="addNum(4)"></button><button class="key-btn" onclick="addNum(5)"></button><button class="key-btn" onclick="addNum(6)"></button>
+        <button class="key-btn" onclick="addNum(1)"></button><button class="key-btn" onclick="addNum(2)"></button><button class="key-btn" onclick="addNum(3)"></button>
+        <button class="key-btn" onclick="clearIn()"></button><button class="key-btn" onclick="addNum(0)"></button>
     </div>
 
-    <button class="apply-btn" onclick="apply()"></button>
+    <button class="apply-hit" onclick="confirmScore()"></button>
 </div>
 
 <script>
-    let score = 501;
-    let input = "";
+    let currentScore = 501;
+    let currentInput = "";
     let lastSpoken = null;
 
-    // THE MASSIVE MASTER OUTCHART DATABASE
-    const db = {
-        170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
-        158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
-        153:["T20","T19","D18"],152:["T20","T20","D16"],151:["T20","T17","D20"],150:["T20","T18","D18"],149:["T20","T19","D16"],
-        148:["T20","T16","D20"],147:["T20","T17","D18"],146:["T20","T18","D16"],145:["T20","T15","D20"],144:["T20","T20","D12"],
-        143:["T20","T17","D16"],142:["T20","T14","D20"],141:["T20","T15","D18"],140:["T20","T20","D10"],130:["T20","T18","D8"],
-        121:["T20","T15","D8"],110:["T20","S10","D20"],100:["T20","D20","-"],90:["T18","D18","-"],80:["T20","D10","-"],
-        70:["T10","D20","-"],60:["S20","D20","-"],50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],
-        20:["D10","-","-"],10:["D5","-","-"],4:["D2","-","-"],2:["D1","-","-"]
+    // THE MASSIVE OUTCHART BRAIN
+    const outchart = {
+        170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"], 161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"],
+        158: ["T20", "T20", "D19"], 157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"], 154: ["T20", "T18", "D20"],
+        153: ["T20", "T19", "D18"], 152: ["T20", "T20", "D16"], 151: ["T20", "T17", "D20"], 150: ["T20", "T18", "D18"], 149: ["T20", "T19", "D16"],
+        148: ["T20", "T16", "D20"], 147: ["T20", "T17", "D18"], 146: ["T20", "T18", "D16"], 145: ["T20", "T15", "D20"], 144: ["T20", "T20", "D12"],
+        143: ["T20", "T17", "D16"], 142: ["T20", "T14", "D20"], 141: ["T20", "T15", "D18"], 140: ["T20", "T20", "D10"], 130: ["T20", "T18", "D8"],
+        121: ["T20", "T15", "D8"], 110: ["T20", "S10", "D20"], 100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"], 80: ["T20", "D10", "-"],
+        70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"], 50: ["BULL", "-", "-"], 40: ["D20", "-", "-"], 32: ["D16", "-", "-"],
+        20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
     };
 
-    function speak(path) {
+    function voiceCaller(path) {
         if (!path || path[0] === "-") return;
-        let phrase = path.filter(x => x !== "-").map(x => {
+        let p = path.filter(x => x !== "-").map(x => {
             if (x === "BULL") return "Double Bull";
             if (x.startsWith("T")) return "Triple " + x.substring(1);
             if (x.startsWith("D")) return "Double " + x.substring(1);
             if (x.startsWith("S")) return "Single " + x.substring(1);
             return x;
         }).join(", ");
-        const utterance = new SpeechSynthesisUtterance(phrase);
+        const utterance = new SpeechSynthesisUtterance(p);
         utterance.rate = 0.85;
         window.speechSynthesis.speak(utterance);
     }
 
-    function val(t) {
-        if (!t || t === "-") return 0;
-        if (t === "BULL") return 50;
-        if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
-        if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
-        if (t.startsWith("S")) return parseInt(t.substring(1));
+    function getVal(s) {
+        if (!s || s === "-") return 0;
+        if (s === "BULL") return 50;
+        if (s.startsWith("T")) return parseInt(s.substring(1)) * 3;
+        if (s.startsWith("D")) return parseInt(s.substring(1)) * 2;
+        if (s.startsWith("S")) return parseInt(s.substring(1));
         return 0;
     }
 
-    function update() {
-        document.getElementById('main-score').innerText = score;
-        document.getElementById('input-val').innerText = input || "---";
+    function render() {
+        document.getElementById('main-score').innerText = currentScore;
+        document.getElementById('input-display').innerText = currentInput || "---";
         
-        let path = db[score] || (score > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((score - 80) / 2)]);
-        if (score <= 1) path = ["-", "-", "-"];
+        let path = outchart[currentScore] || (currentScore > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((currentScore - 80) / 2)]);
+        if (currentScore <= 1) path = ["-", "-", "-"];
 
         document.getElementById('t1').innerText = path[0];
-        let r1_val = score - val(path[0]);
-        document.getElementById('r1').innerText = r1_val > 0 ? r1_val : (r1_val === 0 ? "OUT" : "");
+        let r1 = currentScore - getVal(path[0]);
+        document.getElementById('r1').innerText = r1 > 0 ? r1 : (r1 === 0 ? "OUT" : "");
 
         document.getElementById('t2').innerText = path[1];
-        let r2_val = r1_val - val(path[1]);
-        document.getElementById('r2').innerText = r1_val <= 0 ? "" : (r2_val > 0 ? r2_val : (r2_val === 0 ? "OUT" : ""));
+        let r2 = r1 - getVal(path[1]);
+        document.getElementById('r2').innerText = r1 <= 0 ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
 
         document.getElementById('t3').innerText = path[2];
-        let r3_val = r2_val - val(path[2]);
-        document.getElementById('r3').innerText = r2_val <= 0 ? "" : (r3_val > 0 ? r3_val : (r3_val === 0 ? "OUT" : ""));
+        let r3 = r2 - getVal(path[2]);
+        document.getElementById('r3').innerText = r2 <= 0 ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
 
-        if (score <= 170 && score > 1 && score !== lastSpoken) {
-            speak(path);
-            lastSpoken = score;
+        if (currentScore <= 170 && currentScore > 1 && currentScore !== lastSpoken) {
+            voiceCaller(path);
+            lastSpoken = currentScore;
         }
     }
 
-    function set(n) { score = n; input = ""; lastSpoken = null; update(); }
-    function p(n) { if(input.length < 3) input += n; update(); }
-    function d() { input = ""; update(); }
-    function apply() {
-        let v = parseInt(input);
-        if(!isNaN(v)) {
-            if (score - v < 0 || score - v === 1) {
+    function resetGame(n) { currentScore = n; currentInput = ""; lastSpoken = null; render(); }
+    function addNum(n) { if(currentInput.length < 3) currentInput += n; render(); }
+    function clearIn() { currentInput = ""; render(); }
+    function confirmScore() {
+        let val = parseInt(currentInput);
+        if(!isNaN(val)) {
+            if (currentScore - val < 0 || currentScore - val === 1) {
                 window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
             } else {
-                score -= v;
+                currentScore -= val;
             }
         }
-        input = ""; update();
+        currentInput = ""; render();
     }
-    update();
+    
+    // Initial Render
+    render();
 </script>
 </body>
 </html>
