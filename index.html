@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - DATA MASTER</title>
+    <title>DART CALCULATOR</title>
     <style>
         :root {
             --neon-blue: #00d2ff;
             --neon-pink: #ff007f;
+            --neon-green: #39ff14;
             --border: rgba(255, 255, 255, 0.2);
         }
 
         body { 
-            background: url('https://raw.githubusercontent.com/nightgamesdesign/Dart-Calculator/main/IMG_7390.jpeg') no-repeat center center fixed;
-            background-size: cover;
             background-color: #05070a; 
             color: #fff; 
             font-family: system-ui, sans-serif;
@@ -21,107 +20,75 @@
             margin: 0; padding: 0; 
             height: 100vh; width: 100vw;
             display: flex; flex-direction: column;
-            justify-content: space-evenly; 
             align-items: center;
             overflow: hidden;
         }
 
-        .logo-container { display: flex; flex-direction: column; align-items: center; }
-        .logo-main { 
-            font-size: 42px; font-weight: 900; 
-            background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            line-height: 0.85;
+        .header-logo {
+            width: 100%;
+            max-width: 320px;
+            margin-top: 15px;
+            height: auto;
         }
-        .logo-sub { color: #ffae00; font-size: 12px; font-weight: bold; letter-spacing: 4px; margin-top: 5px; }
 
         .deck {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(25px);
+            background: rgba(20, 20, 25, 0.95);
             border: 1px solid var(--border);
-            border-radius: 35px;
-            padding: 22px;
-            width: 90%; max-width: 400px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            border-radius: 20px;
+            padding: 12px;
+            width: 94%; max-width: 380px;
+            margin-top: 5px;
         }
 
-        .score-panel {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px; padding: 12px; margin-bottom: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .main-score {
-            font-size: 85px; font-weight: 900; line-height: 1;
-            margin: 5px 0; text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
-        }
-
-        .mode-buttons { display: flex; justify-content: center; gap: 8px; }
+        .main-score { font-size: 75px; font-weight: 900; margin: 0; color: #fff; line-height: 1.1; }
+        
+        .mode-buttons { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; }
         .mode-btn {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid #444; color: #fff;
-            padding: 8px 16px; border-radius: 10px;
-            font-size: 14px; font-weight: 800; cursor: pointer;
+            background: #222; border: 1px solid #444; color: #fff;
+            padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold;
         }
         .mode-btn.active { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.2); }
 
-        .dart-grid { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
-        .orb {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            border-radius: 15px; padding: 14px 2px; width: 32%;
-        }
-        .label-blue { color: var(--neon-blue); font-size: 9px; font-weight: 800; letter-spacing: 1px; }
-        .target { font-size: 24px; font-weight: 900; color: #fff; display: block; margin-top: 4px; }
-        .remain { font-size: 18px; color: var(--neon-pink); font-weight: 900; }
+        .dart-grid { display: flex; justify-content: center; gap: 5px; margin-bottom: 8px; }
+        .orb { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 8px 2px; width: 32%; }
+        .label-blue { color: var(--neon-blue); font-size: 9px; font-weight: bold; text-transform: uppercase; }
+        .target { font-size: 22px; font-weight: 900; display: block; }
+        .remain { font-size: 15px; color: var(--neon-pink); font-weight: 900; }
 
         .input-box {
-            background: #000; border: 1px solid var(--neon-blue);
-            border-radius: 12px; padding: 12px; font-size: 30px;
-            color: var(--neon-blue); margin-bottom: 12px; font-weight: 900;
+            background: #000; border: 2px solid var(--neon-blue);
+            border-radius: 10px; padding: 10px; font-size: 32px;
+            color: var(--neon-blue); font-weight: 900; margin-bottom: 8px;
         }
 
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .num-btn {
-            background: rgba(255,255,255,0.08); border: 1px solid var(--border);
-            color: #fff; padding: 18px; font-size: 22px; border-radius: 12px; font-weight: bold;
+            background: #1a1a1a; border: 1px solid var(--border);
+            color: #fff; padding: 18px; font-size: 24px; border-radius: 10px; font-weight: bold;
         }
+        .enter-btn { background: var(--neon-green); color: #000; font-size: 18px; font-weight: 900; }
+        .del-btn { color: var(--neon-pink); }
 
-        .apply {
-            grid-column: span 3;
-            background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
-            color: #000; font-weight: 900; border: none; padding: 18px;
-            border-radius: 12px; text-transform: uppercase; letter-spacing: 2px;
-        }
-
-        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.5; margin-top: 10px; font-weight: 800; }
+        .footer { font-size: 9px; margin-top: 10px; opacity: 0.5; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="logo-container">
-        <div class="logo-main">DART<br>CALCULATOR</div>
-        <div class="logo-sub">LIMITED EDITION</div>
-    </div>
+    <img src="https://raw.githubusercontent.com/smoody157/darts-501-app/main/7F737C26-56A1-497B-A4A2-CCD6141E7B8C.png" alt="Logo" class="header-logo">
 
     <div class="deck">
-        <div class="score-panel">
-            <div class="label-blue">SCORE REMAINING</div>
-            <div id="main-score" class="main-score">501</div>
-            <div class="mode-buttons">
-                <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
-                <button class="mode-btn active" id="btn501" onclick="setGame(501)">501</button>
-                <button class="mode-btn" id="btn701" onclick="setGame(701)">701</button>
-            </div>
+        <div class="mode-buttons">
+            <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
+            <button class="mode-btn active" id="btn501" onclick="setGame(501)">501</button>
+            <button class="mode-btn" id="btn701" onclick="setGame(701)">701</button>
         </div>
 
+        <div id="main-score" class="main-score">501</div>
+
         <div class="dart-grid">
-            <div class="orb"><div class="label-blue">DART 1</div><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
-            <div class="orb"><div class="label-blue">DART 2</div><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
-            <div class="orb"><div class="label-blue">DART 3</div><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
+            <div class="orb"><div class="label-blue">Dart 1</div><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
+            <div class="orb"><div class="label-blue">Dart 2</div><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
+            <div class="orb"><div class="label-blue">Dart 3</div><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
         </div>
 
         <div id="input-display" class="input-box">---</div>
@@ -130,8 +97,7 @@
             <button class="num-btn" onclick="press(7)">7</button><button class="num-btn" onclick="press(8)">8</button><button class="num-btn" onclick="press(9)">9</button>
             <button class="num-btn" onclick="press(4)">4</button><button class="num-btn" onclick="press(5)">5</button><button class="num-btn" onclick="press(6)">6</button>
             <button class="num-btn" onclick="press(1)">1</button><button class="num-btn" onclick="press(2)">2</button><button class="num-btn" onclick="press(3)">3</button>
-            <button class="num-btn" onclick="del()" style="color: var(--neon-pink)">DEL</button><button class="num-btn" onclick="press(0)">0</button>
-            <button onclick="apply()" class="apply">APPLY TURN</button>
+            <button class="num-btn del-btn" onclick="del()">DEL</button><button class="num-btn" onclick="press(0)">0</button><button class="num-btn enter-btn" onclick="apply()">ENTER</button>
         </div>
     </div>
 
@@ -141,8 +107,7 @@
     let score = 501;
     let input = "";
 
-    // REVEALED DATA TABLE: EVERY OUT FROM 170 DOWN TO 2
-    const checkoutTable = {
+    const checkouts = {
         170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"],
         161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"], 158: ["T20", "T20", "D19"],
         157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"],
@@ -151,94 +116,50 @@
         148: ["T20", "T16", "D20"], 147: ["T20", "T17", "D18"], 146: ["T20", "T18", "D16"],
         145: ["T20", "T15", "D20"], 144: ["T20", "T20", "D12"], 143: ["T20", "T17", "D16"],
         142: ["T20", "T14", "D20"], 141: ["T20", "T15", "D18"], 140: ["T20", "T20", "D10"],
-        139: ["T19", "T14", "D20"], 138: ["T20", "T18", "D12"], 137: ["T19", "T16", "D16"],
-        136: ["T20", "T20", "D8"], 135: ["T20", "T13", "D19"], 134: ["T20", "T14", "D16"],
-        133: ["T20", "T19", "D8"], 132: ["T20", "T16", "D12"], 131: ["T20", "T13", "D16"],
-        130: ["T20", "T18", "D8"], 129: ["T19", "T16", "D12"], 128: ["T18", "T14", "D16"],
-        127: ["T20", "T17", "D8"], 126: ["T19", "S19", "D25"], 125: ["BULL", "T20", "D15"],
-        124: ["T20", "D11", "D25"], 123: ["T19", "T16", "D9"], 122: ["T18", "T20", "D4"],
-        121: ["T20", "T15", "D8"], 120: ["T20", "S20", "D20"], 119: ["T19", "S12", "D25"],
-        118: ["T20", "S18", "D20"], 117: ["T20", "S17", "D20"], 116: ["T20", "S16", "D20"],
-        115: ["T20", "S15", "D20"], 114: ["T20", "S14", "D20"], 113: ["T20", "S13", "D20"],
-        112: ["T20", "S12", "D20"], 111: ["T20", "S11", "D20"], 110: ["T20", "S10", "D20"],
-        109: ["T19", "S12", "D20"], 108: ["T20", "S16", "D16"], 107: ["T19", "S10", "D20"],
-        106: ["T20", "S10", "D18"], 105: ["T19", "S16", "D16"], 104: ["T18", "S10", "D20"],
-        103: ["T19", "S10", "D18"], 102: ["T20", "S10", "D16"], 101: ["T17", "S10", "D20"],
-        100: ["T20", "D20", "-"], 99: ["T19", "S10", "D16"], 98: ["T20", "D19", "-"],
-        97: ["T19", "D20", "-"], 96: ["T20", "D18", "-"], 95: ["T19", "D19", "-"],
-        94: ["T18", "D20", "-"], 93: ["T19", "D18", "-"], 92: ["T20", "D16", "-"],
-        91: ["T17", "D20", "-"], 90: ["T18", "D18", "-"], 89: ["T19", "D16", "-"],
-        88: ["T16", "D20", "-"], 87: ["T17", "D18", "-"], 86: ["T18", "D16", "-"],
-        85: ["T15", "D20", "-"], 84: ["T16", "D18", "-"], 83: ["T17", "D16", "-"],
-        82: ["T14", "D20", "-"], 81: ["T15", "D18", "-"], 80: ["T20", "D10", "-"],
-        79: ["T13", "D20", "-"], 78: ["T14", "D18", "-"], 77: ["T15", "D16", "-"],
-        76: ["T20", "D8", "-"], 75: ["T17", "D12", "-"], 74: ["T14", "D16", "-"],
-        73: ["T19", "D8", "-"], 72: ["T16", "D12", "-"], 71: ["T13", "D16", "-"],
-        70: ["T10", "D20", "-"], 69: ["T15", "D12", "-"], 68: ["T16", "D10", "-"],
-        67: ["T17", "D8", "-"], 66: ["T10", "D18", "-"], 65: ["T15", "D10", "-"],
-        64: ["D16", "D16", "-"], 63: ["T13", "D12", "-"], 62: ["T10", "D16", "-"],
-        61: ["T15", "D8", "-"], 60: ["S20", "D20", "-"], 59: ["S19", "D20", "-"],
-        58: ["S18", "D20", "-"], 57: ["S17", "D20", "-"], 56: ["S16", "D20", "-"],
-        55: ["S15", "D20", "-"], 54: ["S14", "D20", "-"], 53: ["S13", "D20", "-"],
-        52: ["S12", "D20", "-"], 51: ["S11", "D20", "-"], 50: ["D25", "-", "-"],
-        49: ["S9", "D20", "-"], 48: ["S16", "D16", "-"], 47: ["S7", "D20", "-"],
-        46: ["S6", "D20", "-"], 45: ["S5", "D20", "-"], 44: ["S12", "D16", "-"],
-        43: ["S3", "D20", "-"], 42: ["S10", "D16", "-"], 41: ["S9", "D16", "-"],
-        40: ["D20", "-", "-"], 38: ["D19", "-", "-"], 36: ["D18", "-", "-"],
-        34: ["D17", "-", "-"], 32: ["D16", "-", "-"], 30: ["D15", "-", "-"],
-        28: ["D14", "-", "-"], 26: ["D13", "-", "-"], 24: ["D12", "-", "-"],
-        22: ["D11", "-", "-"], 20: ["D10", "-", "-"], 18: ["D9", "-", "-"],
-        16: ["D8", "-", "-"], 14: ["D7", "-", "-"], 12: ["D6", "-", "-"],
-        10: ["D5", "-", "-"], 8: ["D4", "-", "-"], 6: ["D3", "-", "-"],
-        4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
+        130: ["T20", "T20", "D5"], 121: ["T20", "T15", "D8"], 100: ["T20", "D20", "-"],
+        90: ["T18", "D18", "-"], 80: ["T20", "D10", "-"], 60: ["S20", "D20", "-"],
+        40: ["D20", "-", "-"], 32: ["D16", "-", "-"], 16: ["D8", "-", "-"], 8: ["D4", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
     };
 
     function getVal(t) {
         if (t === "-" || t === "Bust") return 0;
-        if (t === "BULL" || t === "D25") return 50;
+        if (t === "BULL") return 50;
         if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
         if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
         if (t.startsWith("S")) return parseInt(t.substring(1));
         return parseInt(t) || 0;
     }
 
-    function getOut(s) {
-        // FOR EVERY SCORE ABOVE 170: REDUCE BY T20
+    function getPath(s) {
+        // High Score Logic: Reduce by T20
         if (s > 170 || [169, 168, 166, 165, 163, 162, 159].includes(s)) return ["T20", "T20", "T20"];
-        
-        // IF SCORE IS ODD BELOW 40, WE MUST HIT A SINGLE TO REACH A DOUBLE
+        if (checkouts[s]) return checkouts[s];
+        // Dynamic Checkout for everything else
+        if (s <= 40 && s % 2 === 0) return ["D" + (s/2), "-", "-"];
+        if (s <= 60 && s > 40) return ["S" + (s-40), "D20", "-"];
         if (s < 40 && s % 2 !== 0) return ["S1", "D" + ((s-1)/2), "-"];
-
-        // RETURN HARD-CODED CHECKOUT FROM TABLE
-        return checkoutTable[s] || ["T20", "T20", "T20"];
+        return ["T20", "T20", "T20"];
     }
 
     function update() {
         document.getElementById('main-score').innerText = score;
         document.getElementById('input-display').innerText = input || "---";
-        const plan = getOut(score);
+        const path = getPath(score);
         
-        const d1 = plan[0], r1 = Math.max(0, score - getVal(d1));
-        document.getElementById('d1-t').innerText = d1;
+        let s1 = path[0], r1 = score - getVal(s1);
+        document.getElementById('d1-t').innerText = s1;
         document.getElementById('d1-r').innerText = r1;
 
-        const d2 = (r1 <= 0) ? "-" : plan[1], r2 = Math.max(0, r1 - getVal(d2));
-        document.getElementById('d2-t').innerText = d2;
+        let s2 = (r1 <= 0) ? "-" : path[1], r2 = r1 - getVal(s2);
+        document.getElementById('d2-t').innerText = s2;
         document.getElementById('d2-r').innerText = (r1 <= 0) ? "" : r2;
 
-        const d3 = (r2 <= 0) ? "-" : plan[2], r3 = Math.max(0, r2 - getVal(d3));
-        document.getElementById('d3-t').innerText = d3;
+        let s3 = (r2 <= 0) ? "-" : path[2], r3 = r2 - getVal(s3);
+        document.getElementById('d3-t').innerText = s3;
         document.getElementById('d3-r').innerText = (r2 <= 0) ? "" : r3;
     }
 
-    function setGame(n) {
-        score = n; input = "";
-        document.getElementById('btn301').classList.toggle('active', n === 301);
-        document.getElementById('btn501').classList.toggle('active', n === 501);
-        document.getElementById('btn701').classList.toggle('active', n === 701);
-        update();
-    }
-
+    function setGame(n) { score = n; input = ""; update(); }
     function press(n) { if(input.length < 3) input += n; update(); }
     function del() { input = ""; update(); }
     function apply() {
