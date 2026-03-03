@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - MASTER BUILD</title>
+    <title>DART CALCULATOR</title>
     <style>
         :root {
             --neon-blue: #00d2ff;
@@ -12,192 +12,233 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
+        /* STAGNANT ORIENTATION LOCK */
+        @media screen and (orientation: landscape) {
+            #rotation-overlay { display: flex !important; }
+        }
+
+        #rotation-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            color: #fff;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* PERFECT CENTERING LOGIC */
         body { 
             background: radial-gradient(circle at center, #1a1f2c 0%, #05070a 100%);
             color: #fff; 
-            font-family: 'Orbitron', sans-serif; /* Fallback to sans-serif if not loaded */
             font-family: system-ui, -apple-system, sans-serif;
             text-align: center; 
             margin: 0; 
-            padding: 20px; 
+            padding: 0; 
             height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: center; /* Vertical Center */
+            align-items: center;     /* Horizontal Center */
+            overflow: hidden;
+        }
+
+        .logo-text {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
         .deck {
             background: var(--glass);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border);
             border-radius: 30px;
-            padding: 40px 20px;
-            max-width: 500px;
-            margin: 0 auto;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            padding: 25px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         }
 
-        .title {
-            font-size: 14px;
-            letter-spacing: 8px;
-            color: var(--neon-blue);
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        /* Score Display */
-        .score-container {
-            margin-bottom: 40px;
-        }
-
-        .score-label {
-            font-size: 10px;
-            letter-spacing: 3px;
-            opacity: 0.6;
+        /* SCORE PANEL WITH 501/701 BUTTONS */
+        .score-panel {
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
         }
 
         .main-score {
-            font-size: 110px;
+            font-size: 80px;
             font-weight: 900;
             line-height: 1;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+            margin: 10px 0;
+            text-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
 
-        /* Dart Orbs */
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mode-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: #888;
+            padding: 5px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            border-color: var(--neon-blue);
+            color: #fff;
+            background: rgba(0, 210, 255, 0.1);
+        }
+
         .dart-grid {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
+            gap: 8px;
+            margin-bottom: 20px;
         }
 
         .orb {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.5);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 15px;
-            width: 90px;
+            padding: 12px 5px;
+            width: 100px;
         }
 
-        .target {
-            font-size: 24px;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-            color: #fff;
-        }
+        .target { font-size: 20px; font-weight: bold; color: #fff; display: block; margin-bottom: 5px; }
+        .remain { font-size: 18px; color: var(--neon-pink); font-weight: 900; }
 
-        .remain {
-            font-size: 16px;
-            color: var(--neon-pink);
-            font-weight: bold;
-        }
-
-        /* Controls */
         .input-box {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             border: 1px solid var(--neon-blue);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 12px;
             font-size: 32px;
-            margin-bottom: 20px;
             color: var(--neon-blue);
-            min-height: 40px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
-        button {
+        .num-btn {
             background: var(--glass);
             border: 1px solid var(--border);
             color: #fff;
-            padding: 20px;
-            font-size: 22px;
+            padding: 15px;
+            font-size: 20px;
             border-radius: 12px;
-            cursor: pointer;
-        }
-
-        button:active {
-            background: var(--neon-blue);
-            color: #000;
+            font-weight: bold;
         }
 
         .apply {
             grid-column: span 3;
             background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
             color: #000;
-            font-weight: bold;
+            font-weight: 900;
             border: none;
+            padding: 18px;
+            border-radius: 12px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .footer {
-            margin-top: 40px;
-            font-size: 9px;
-            letter-spacing: 2px;
-            opacity: 0.3;
-        }
+        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.4; margin-top: 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div class="deck">
-        <div class="title">DART CALCULATOR</div>
+    <div id="rotation-overlay">PLEASE ROTATE DEVICE UPRIGHT</div>
 
-        <div class="score-container">
-            <div class="score-label">REMAINING</div>
-            <div class="main-score" id="main-score">701</div>
+    <div class="logo-text">DART<br>CALCULATOR</div>
+    <div style="font-size: 10px; color: #ffae00; letter-spacing: 2px; font-weight: bold; margin-bottom: 15px;">LIMITED EDITION</div>
+
+    <div class="deck">
+        <div class="score-panel">
+            <div style="color: var(--neon-blue); font-size: 10px; font-weight: bold; letter-spacing: 2px;">SCORE REMAINING</div>
+            <div id="main-score" class="main-score">701</div>
+            <div class="mode-buttons">
+                <button class="mode-btn" id="btn501" onclick="setGame(501)">501</button>
+                <button class="mode-btn active" id="btn701" onclick="setGame(701)">701</button>
+            </div>
         </div>
 
         <div class="dart-grid">
             <div class="orb">
-                <span class="score-label" style="font-size: 8px">D1</span>
+                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 1</div>
                 <span class="target" id="d1-t">T20</span>
                 <span class="remain" id="d1-r">641</span>
             </div>
             <div class="orb">
-                <span class="score-label" style="font-size: 8px">D2</span>
+                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 2</div>
                 <span class="target" id="d2-t">T20</span>
                 <span class="remain" id="d2-r">581</span>
             </div>
             <div class="orb">
-                <span class="score-label" style="font-size: 8px">D3</span>
+                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 3</div>
                 <span class="target" id="d3-t">T20</span>
                 <span class="remain" id="d3-r">521</span>
             </div>
         </div>
 
-        <div class="input-box" id="input-display">---</div>
+        <div id="input-display" class="input-box">---</div>
 
         <div class="numpad">
-            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-            <button onclick="del()">DEL</button><button onclick="press(0)">0</button><button onclick="apply()" class="apply">APPLY TURN</button>
+            <button class="num-btn" onclick="press(7)">7</button><button class="num-btn" onclick="press(8)">8</button><button class="num-btn" onclick="press(9)">9</button>
+            <button class="num-btn" onclick="press(4)">4</button><button class="num-btn" onclick="press(5)">5</button><button class="num-btn" onclick="press(6)">6</button>
+            <button class="num-btn" onclick="press(1)">1</button><button class="num-btn" onclick="press(2)">2</button><button class="num-btn" onclick="press(3)">3</button>
+            <button class="num-btn" onclick="del()" style="color: var(--neon-pink)">DEL</button><button class="num-btn" onclick="press(0)">0</button>
+            <button onclick="apply()" class="apply">APPLY TURN</button>
         </div>
 
-        <div class="footer">DESIGNED BY STEVE'S GRAPHIC DESIGNS // MASTER BUILD</div>
+        <div class="footer">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
     </div>
 
 <script>
     let score = 701;
     let input = "";
 
-    // Comprehensive Strategy Table from SUGGESTED501OUTS.xlsm
     const strategy = {
+        "136": ["T20", "T20", "D8"],
         "170": ["T20", "T20", "BULL"],
         "160": ["T20", "T20", "D20"],
-        "136": ["T20", "T20", "D8"],
         "100": ["T20", "D20", "nah"],
         "40": ["D20", "nah", "nah"],
         "16": ["D8", "nah", "nah"],
         "2": ["D1", "nah", "nah"]
     };
+
+    function setGame(n) {
+        score = n;
+        input = "";
+        document.getElementById('btn501').classList.toggle('active', n === 501);
+        document.getElementById('btn701').classList.toggle('active', n === 701);
+        update();
+    }
 
     function getPoints(t) {
         if (t === "nah") return 0;
@@ -210,24 +251,17 @@
     function update() {
         document.getElementById('main-score').innerText = score;
         document.getElementById('input-display').innerText = input || "---";
-
         let plan = score > 170 ? ["T20", "T20", "T20"] : (strategy[score] || ["T20", "T20", "T20"]);
-
-        // Dart 1
-        let d1t = plan[0];
-        let d1r = Math.max(0, score - getPoints(d1t));
+        
+        let d1t = plan[0], d1r = Math.max(0, score - getPoints(d1t));
         document.getElementById('d1-t').innerText = d1t;
         document.getElementById('d1-r').innerText = d1r;
 
-        // Dart 2
-        let d2t = (d1r <= 0) ? "nah" : plan[1];
-        let d2r = Math.max(0, d1r - getPoints(d2t));
+        let d2t = (d1r <= 0) ? "nah" : plan[1], d2r = Math.max(0, d1r - getPoints(d2t));
         document.getElementById('d2-t').innerText = d2t;
         document.getElementById('d2-r').innerText = (d1r <= 0) ? "" : d2r;
 
-        // Dart 3
-        let d3t = (d2r <= 0) ? "nah" : plan[2];
-        let d3r = Math.max(0, d2r - getPoints(d3t));
+        let d3t = (d2r <= 0) ? "nah" : plan[2], d3r = Math.max(0, d2r - getPoints(d3t));
         document.getElementById('d3-t').innerText = d3t;
         document.getElementById('d3-r').innerText = (d2r <= 0) ? "" : d3r;
     }
@@ -244,7 +278,6 @@
         input = "";
         update();
     }
-
     update();
 </script>
 </body>
