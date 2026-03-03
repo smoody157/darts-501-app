@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART PRO MASTER</title>
-
     <style>
-        /* --- SECTION 1: THE SKIN (STYLING & MASKING) --- */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        /* SECTION 1: THE SKIN */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
         
-        body, html { 
-            margin: 0; padding: 0; width: 430px; height: 932px; 
-            background: #000; overflow: hidden; display: flex; justify-content: center; 
-        }
-
         #app-shell {
             width: 430px; height: 932px;
             background-image: url('IMG_7543.png');
@@ -21,18 +15,14 @@
             position: relative;
         }
 
-        /* 1.1: BLACKOUT MASKS 
-           These cover the non-functional "501", "125", etc. numbers in the image.
-        */
-        .mask { position: absolute; background: #0b0b1a; z-index: 1; border-radius: 10px; }
-        #mask-main { top: 215px; left: 100px; width: 230px; height: 100px; }
-        #mask-o1 { top: 460px; left: 60px; width: 70px; height: 35px; }
-        #mask-o2 { top: 460px; left: 185px; width: 70px; height: 35px; }
-        #mask-o3 { top: 460px; left: 310px; width: 70px; height: 35px; }
+        /* BLACKOUT MASKS: Covering stationary numbers in your background image */
+        .mask { position: absolute; background: #0b0b1a; z-index: 1; }
+        #mask-main { top: 220px; left: 100px; width: 230px; height: 110px; } /* Blocks "501" */
+        #mask-o1 { top: 462px; left: 62px; width: 65px; height: 35px; }   /* Blocks "78" */
+        #mask-o2 { top: 462px; left: 187px; width: 65px; height: 35px; }  /* Blocks "18" */
+        #mask-o3 { top: 462px; left: 312px; width: 65px; height: 35px; }  /* Blocks "50" */
 
-        /* 1.2: NEON GRADIENT RENDERING 
-           Replicating the professional style of your background image.
-        */
+        /* ACTIVE NUMBERS: Styled to match the neon graphic */
         .neon-gradient {
             background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
             -webkit-background-clip: text;
@@ -43,19 +33,15 @@
         }
 
         #score-display {
-            position: absolute; top: 195px; width: 430px;
-            text-align: center; font-size: 110px;
+            position: absolute; top: 200px; width: 430px;
+            text-align: center; font-size: 115px;
             filter: drop-shadow(0 0 15px rgba(0,210,255,0.8));
         }
 
         .orb-label { position: absolute; width: 105px; text-align: center; top: 412px; z-index: 2; }
         #orb-1 { left: 40px; } #orb-2 { left: 164px; } #orb-3 { left: 288px; }
-        
         .target-val { font-size: 32px; display: block; }
-        .rem-val { 
-            position: absolute; top: 55px; width: 105px; left: 0;
-            font-size: 18px; color: #ff007f; font-weight: 900; font-family: sans-serif;
-        }
+        .rem-val { position: absolute; top: 58px; width: 105px; left: 0; font-size: 18px; color: #ff007f; font-weight: 900; }
 
         #input-readout {
             position: absolute; top: 512px; width: 430px;
@@ -65,13 +51,10 @@
             z-index: 2;
         }
 
-        /* 1.3: ACTIVATION HIT-BOXES */
-        .hit-zone { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 10; }
+        /* BUTTON ACTIVATION: Invisible hit-boxes over background buttons */
+        .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 10; }
         .mode-hit { top: 310px; width: 85px; height: 50px; }
-        .grid {
-            position: absolute; top: 575px; left: 45px; width: 340px; height: 260px;
-            display: grid; grid-template-columns: repeat(3, 1fr);
-        }
+        .grid { position: absolute; top: 575px; left: 45px; width: 340px; height: 260px; display: grid; grid-template-columns: repeat(3, 1fr); }
         .apply-bar { bottom: 45px; left: 45px; width: 340px; height: 85px; }
     </style>
 </head>
@@ -79,9 +62,7 @@
 
 <div id="app-shell">
     <div class="mask" id="mask-main"></div>
-    <div class="mask" id="mask-o1"></div>
-    <div class="mask" id="mask-o2"></div>
-    <div class="mask" id="mask-o3"></div>
+    <div class="mask" id="mask-o1"></div><div class="mask" id="mask-o2"></div><div class="mask" id="mask-o3"></div>
 
     <div id="score-display" class="neon-gradient">501</div>
     
@@ -91,83 +72,59 @@
 
     <div id="input-readout">---</div>
 
-    <button class="hit-zone mode-hit" style="left:82px" onclick="APP.reset(301)"></button>
-    <button class="hit-zone mode-hit" style="left:174px" onclick="APP.reset(501)"></button>
-    <button class="hit-zone mode-hit" style="left:266px" onclick="APP.reset(701)"></button>
+    <button class="hit mode-hit" style="left:82px" onclick="APP.reset(301)"></button>
+    <button class="hit mode-hit" style="left:174px" onclick="APP.reset(501)"></button>
+    <button class="hit mode-hit" style="left:266px" onclick="APP.reset(701)"></button>
 
     <div class="grid">
-        <button class="hit-zone" onclick="APP.tap(7)"></button><button class="hit-zone" onclick="APP.tap(8)"></button><button class="hit-zone" onclick="APP.tap(9)"></button>
-        <button class="hit-zone" onclick="APP.tap(4)"></button><button class="hit-zone" onclick="APP.tap(5)"></button><button class="hit-zone" onclick="APP.tap(6)"></button>
-        <button class="hit-zone" onclick="APP.tap(1)"></button><button class="hit-zone" onclick="APP.tap(2)"></button><button class="hit-zone" onclick="APP.tap(3)"></button>
-        <button class="hit-zone" onclick="APP.del()"></button><button class="hit-zone" onclick="APP.tap(0)"></button>
+        <button class="hit" onclick="APP.tap(7)"></button><button class="hit" onclick="APP.tap(8)"></button><button class="hit" onclick="APP.tap(9)"></button>
+        <button class="hit" onclick="APP.tap(4)"></button><button class="hit" onclick="APP.tap(5)"></button><button class="hit" onclick="APP.tap(6)"></button>
+        <button class="hit" onclick="APP.tap(1)"></button><button class="hit" onclick="APP.tap(2)"></button><button class="hit" onclick="APP.tap(3)"></button>
+        <button class="hit" onclick="APP.del()"></button><button class="hit" onclick="APP.tap(0)"></button>
     </div>
 
-    <button class="hit-zone apply-bar" onclick="APP.go()"></button>
+    <button class="hit apply-bar" onclick="APP.go()"></button>
 </div>
 
 <script>
-/* --- SECTION 3: THE BRAIN (LOGIC & THE OATS) --- */
+/* SECTION 3: THE BRAIN */
 const OATS = {
-    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 161:["T20","T17","DB"], 160:["T20","T20","D20"],
-    158:["T20","T20","D19"], 157:["T20","T19","D20"], 156:["T20","T20","D18"], 155:["T20","T19","D19"], 154:["T20","T18","D20"],
-    153:["T20","T19","D18"], 152:["T20","T20","D16"], 151:["T20","T17","D20"], 150:["T20","T18","D18"], 149:["T20","T19","D16"],
-    148:["T20","S16","D20"], 147:["T20","S17","D20"], 146:["T20","S18","D20"], 145:["T20","S15","D20"], 144:["T20","T20","D12"],
-    140:["T20","T20","D10"], 130:["T20","S20","DB"], 125:["DB","T20","D20"], 110:["T20","S10","D20"], 100:["T20","D20","-"], 
-    90:["T18","D18","-"], 80:["T20","D10","-"], 40:["D20","-","-"], 32:["D16","-","-"], 2:["D1","-","-"]
-    // EDITOR'S NOTE: Add any specific custom Outs here following the pattern.
+    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 160:["T20","T20","D20"],
+    121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
 };
 
 const APP = {
-    score: 501,
-    input: "",
-    lastVoiced: null,
-
-    // 3.1: Voice Engine
+    score: 501, input: "", last: null,
     voice: function(path) {
         if (!path || path[0] === "-") return;
-        let msg = path.filter(x => x !== "-").join(", ").replace(/T/g, "Triple ").replace(/D(\d+)/g, "Double $1").replace(/DB/g, "Double Bull").replace(/S/g, "Single ");
+        let msg = path.filter(x => x !== "-").join(", ").replace(/T/g, "Triple ").replace(/D(\d+)/g, "Double $1").replace(/DB/g, "Double Bull");
         window.speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
     },
-
-    // 3.2: Math Engine
     getVal: function(s) {
         if (!s || s === "-") return 0; if (s === "DB") return 50;
         let n = parseInt(s.substring(1)); return s[0] === "T" ? n * 3 : (s[0] === "D" ? n * 2 : n);
     },
-
-    // 3.3: Render Engine
     draw: function() {
         document.getElementById('score-display').innerText = this.score;
         document.getElementById('input-readout').innerText = this.input || "---";
-
         let path = OATS[this.score] || (this.score > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((this.score-80)/2)]);
         if (this.score <= 1) path = ["-","-","-"];
-
         document.getElementById('v1').innerText = path[0];
         let r1 = this.score - this.getVal(path[0]); document.getElementById('r1').innerText = r1 > 0 ? r1 : "";
         document.getElementById('v2').innerText = path[1];
         let r2 = r1 - this.getVal(path[1]); document.getElementById('r2').innerText = r2 > 0 ? r2 : "";
         document.getElementById('v3').innerText = path[2];
-
-        if (this.score <= 170 && this.score > 1 && this.score !== this.lastVoiced) {
-            this.voice(path); this.lastVoiced = this.score;
-        }
+        if (this.score <= 170 && this.score > 1 && this.score !== this.last) { this.voice(path); this.last = this.score; }
     },
-
-    // 3.4: Interface Control
-    reset: function(n) { this.score = n; this.input = ""; this.lastVoiced = null; this.draw(); },
+    reset: function(n) { this.score = n; this.input = ""; this.last = null; this.draw(); },
     tap: function(n) { if (this.input.length < 3) this.input += n; this.draw(); },
     del: function() { this.input = ""; this.draw(); },
     go: function() {
         let v = parseInt(this.input);
-        if (!isNaN(v)) {
-            if (this.score - v < 0 || this.score - v === 1) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
-            else this.score -= v;
-        }
+        if (!isNaN(v)) { if (this.score - v < 0 || this.score - v === 1) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust")); else this.score -= v; }
         this.input = ""; this.draw();
     }
 };
-
 APP.draw();
 </script>
 </body>
