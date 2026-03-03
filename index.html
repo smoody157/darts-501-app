@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR</title>
+    <title>DART CALCULATOR - MASTER BUILD</title>
     <style>
         :root {
             --neon-blue: #00d2ff;
             --neon-pink: #ff007f;
-            --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
         }
 
@@ -16,172 +15,133 @@
         @media screen and (orientation: landscape) {
             #rotation-overlay { display: flex !important; }
         }
-
         #rotation-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            color: #fff;
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            text-align: center;
-            padding: 20px;
+            background: #000; color: #fff; z-index: 9999;
+            justify-content: center; align-items: center;
+            font-weight: bold; text-align: center; padding: 20px;
         }
 
-        /* PERFECT CENTERING LOGIC */
         body { 
-            background: radial-gradient(circle at center, #1a1f2c 0%, #05070a 100%);
+            /* LINKED TO YOUR REPO ASSETS */
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #05070a; 
             color: #fff; 
             font-family: system-ui, -apple-system, sans-serif;
             text-align: center; 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Vertical Center */
-            align-items: center;     /* Horizontal Center */
+            margin: 0; padding: 0; 
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             overflow: hidden;
         }
 
-        .logo-text {
-            font-size: 36px;
-            font-weight: 900;
+        /* LOGO STYLING */
+        .logo-container { margin-bottom: 10px; }
+        .logo-img { max-width: 250px; height: auto; }
+        .logo-fallback {
+            font-size: 32px; font-weight: 900;
             background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
             letter-spacing: 2px;
-            line-height: 1;
-            margin-bottom: 5px;
         }
 
         .deck {
-            background: var(--glass);
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border);
             border-radius: 30px;
             padding: 25px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            width: 90%; max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
         }
 
-        /* SCORE PANEL WITH 501/701 BUTTONS */
         .score-panel {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             border-radius: 20px;
-            padding: 15px;
+            padding: 20px;
             margin-bottom: 20px;
             border: 1px solid var(--border);
         }
+
+        .label-blue { color: var(--neon-blue); font-size: 10px; font-weight: bold; letter-spacing: 2px; }
 
         .main-score {
-            font-size: 80px;
-            font-weight: 900;
-            line-height: 1;
-            margin: 10px 0;
-            text-shadow: 0 0 15px rgba(255,255,255,0.2);
+            font-size: 90px; font-weight: 900; line-height: 1;
+            margin: 10px 0; text-shadow: 0 0 25px rgba(255,255,255,0.2);
         }
 
-        .mode-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
+        /* GAME SELECTION */
+        .mode-buttons { display: flex; justify-content: center; gap: 10px; }
         .mode-btn {
             background: rgba(255,255,255,0.1);
-            border: 1px solid #444;
-            color: #888;
-            padding: 5px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
+            border: 1px solid #444; color: #fff;
+            padding: 8px 18px; border-radius: 10px;
+            font-size: 14px; font-weight: 800; cursor: pointer;
         }
+        .mode-btn.active { border-color: var(--neon-blue); background: rgba(0, 210, 255, 0.2); }
 
-        .mode-btn.active {
-            border-color: var(--neon-blue);
-            color: #fff;
-            background: rgba(0, 210, 255, 0.1);
-        }
-
-        .dart-grid {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
+        /* DART CARDS */
+        .dart-grid { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .orb {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 12px 5px;
-            width: 100px;
+            border-radius: 20px; padding: 15px 5px; width: 32%;
         }
+        .target { font-size: 24px; font-weight: bold; display: block; margin-bottom: 5px; }
+        .remain { font-size: 20px; color: var(--neon-pink); font-weight: 900; }
 
-        .target { font-size: 20px; font-weight: bold; color: #fff; display: block; margin-bottom: 5px; }
-        .remain { font-size: 18px; color: var(--neon-pink); font-weight: 900; }
-
+        /* INPUT DISPLAY */
         .input-box {
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.9);
             border: 1px solid var(--neon-blue);
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 32px;
-            color: var(--neon-blue);
-            margin-bottom: 15px;
-            font-weight: bold;
+            border-radius: 15px; padding: 15px;
+            font-size: 32px; color: var(--neon-blue);
+            margin-bottom: 20px; font-weight: 900;
         }
 
-        .numpad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
+        /* NUMPAD */
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .num-btn {
-            background: var(--glass);
+            background: rgba(255,255,255,0.08);
             border: 1px solid var(--border);
-            color: #fff;
-            padding: 15px;
-            font-size: 20px;
-            border-radius: 12px;
-            font-weight: bold;
+            color: #fff; padding: 18px; font-size: 22px;
+            border-radius: 12px; font-weight: bold;
         }
+        .num-btn:active { background: var(--neon-blue); color: #000; }
 
         .apply {
             grid-column: span 3;
             background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
-            color: #000;
-            font-weight: 900;
-            border: none;
-            padding: 18px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: #000; font-weight: 900; border: none;
+            padding: 20px; border-radius: 12px;
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.4; margin-top: 15px; text-transform: uppercase; }
+        .footer { font-size: 9px; letter-spacing: 2px; opacity: 0.5; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="rotation-overlay">PLEASE ROTATE DEVICE UPRIGHT</div>
 
-    <div class="logo-text">DART<br>CALCULATOR</div>
-    <div style="font-size: 10px; color: #ffae00; letter-spacing: 2px; font-weight: bold; margin-bottom: 15px;">LIMITED EDITION</div>
+    <div class="logo-container">
+        <img src="logo.png" alt="DART CALCULATOR" class="logo-img" onerror="this.style.display='none'; document.getElementById('text-logo').style.display='block';">
+        <div id="text-logo" class="logo-fallback" style="display:none;">DART CALCULATOR</div>
+        <div style="font-size: 10px; color: #ffae00; letter-spacing: 2px; font-weight: bold;">LIMITED EDITION</div>
+    </div>
 
     <div class="deck">
         <div class="score-panel">
-            <div style="color: var(--neon-blue); font-size: 10px; font-weight: bold; letter-spacing: 2px;">SCORE REMAINING</div>
+            <div class="label-blue">SCORE REMAINING</div>
             <div id="main-score" class="main-score">701</div>
             <div class="mode-buttons">
+                <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
                 <button class="mode-btn" id="btn501" onclick="setGame(501)">501</button>
                 <button class="mode-btn active" id="btn701" onclick="setGame(701)">701</button>
             </div>
@@ -189,17 +149,17 @@
 
         <div class="dart-grid">
             <div class="orb">
-                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 1</div>
+                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 1</div>
                 <span class="target" id="d1-t">T20</span>
                 <span class="remain" id="d1-r">641</span>
             </div>
             <div class="orb">
-                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 2</div>
+                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 2</div>
                 <span class="target" id="d2-t">T20</span>
                 <span class="remain" id="d2-r">581</span>
             </div>
             <div class="orb">
-                <div style="font-size: 8px; color: var(--neon-blue); margin-bottom: 5px;">DART 3</div>
+                <div class="label-blue" style="font-size: 8px; margin-bottom: 5px;">DART 3</div>
                 <span class="target" id="d3-t">T20</span>
                 <span class="remain" id="d3-r">521</span>
             </div>
@@ -222,19 +182,17 @@
     let score = 701;
     let input = "";
 
+    // Professional Strategy Table (T20 defaults for high scores)
     const strategy = {
-        "136": ["T20", "T20", "D8"],
-        "170": ["T20", "T20", "BULL"],
-        "160": ["T20", "T20", "D20"],
-        "100": ["T20", "D20", "nah"],
-        "40": ["D20", "nah", "nah"],
-        "16": ["D8", "nah", "nah"],
-        "2": ["D1", "nah", "nah"]
+        "170": ["T20", "T20", "BULL"], "160": ["T20", "T20", "D20"], 
+        "136": ["T20", "T20", "D8"], "100": ["T20", "D20", "nah"],
+        "40": ["D20", "nah", "nah"], "16": ["D8", "nah", "nah"], "2": ["D1", "nah", "nah"]
     };
 
     function setGame(n) {
         score = n;
         input = "";
+        document.getElementById('btn301').classList.toggle('active', n === 301);
         document.getElementById('btn501').classList.toggle('active', n === 501);
         document.getElementById('btn701').classList.toggle('active', n === 701);
         update();
