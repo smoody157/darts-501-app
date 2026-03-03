@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, user-scalable=no">
-    <title>DART PRO - FIXED WIRE</title>
+    <title>DART PRO DIGITAL MASTER</title>
     <style>
-        /* LOCKING THE CANVAS TO THE IMAGE DIMENSIONS */
+        /* FIXED PIXEL CANVAS */
         body, html {
             margin: 0; padding: 0;
-            width: 430px; height: 932px; /* Fixed Pro Max Resolution */
+            width: 430px; height: 932px;
             background: #000;
             overflow: hidden;
+            display: flex; justify-content: center;
         }
 
         .canvas {
@@ -20,47 +21,48 @@
             position: relative;
         }
 
-        /* SCORE DISPLAY - BOLTED TO TOP NEON BOX */
+        /* MAIN SCORE - BOLTED TO NEON FRAME */
         #main-score {
-            position: absolute; top: 160px; left: 0; width: 430px;
-            text-align: center; font-size: 90px; color: #fff;
+            position: absolute; top: 185px; left: 0; width: 430px;
+            text-align: center; font-size: 85px; color: #fff;
             font-family: 'Arial Black', sans-serif;
-            text-shadow: 0 0 20px #00d2ff;
+            text-shadow: 0 0 15px #00d2ff;
         }
 
-        /* GAME MODES - WIRED TO TOP BUTTONS */
-        .mode-hitbox { position: absolute; top: 285px; width: 80px; height: 40px; cursor: pointer; }
-        #m301 { left: 75px; }
-        #m501 { left: 175px; }
-        #m701 { left: 275px; }
+        /* GAME MODES - BOLTED TO 301/501/701 BUTTONS */
+        .mode-hitbox { position: absolute; top: 295px; width: 75px; height: 35px; cursor: pointer; }
+        #m301 { left: 85px; }
+        #m501 { left: 178px; }
+        #m701 { left: 270px; }
 
-        /* OUTCHART ORBS - WIRED TO THE 3 CIRCLES */
-        .orb { position: absolute; width: 100px; text-align: center; top: 375px; }
-        #orb1 { left: 35px; }
-        #orb2 { left: 165px; }
+        /* TARGET ORBS - BOLTED TO THE 3 CIRCLES */
+        .orb { position: absolute; width: 90px; text-align: center; top: 385px; }
+        #orb1 { left: 45px; }
+        #orb2 { left: 170px; }
         #orb3 { left: 295px; }
-        .target { font-size: 28px; color: #fff; display: block; font-weight: bold; }
-        .remain { font-size: 14px; color: #ff007f; }
+        .target { font-size: 32px; color: #fff; display: block; font-weight: 900; }
+        .remain { font-size: 14px; color: #ff007f; font-weight: 900; }
 
-        /* INPUT DISPLAY - WIRED TO THE DASH LINE */
+        /* INPUT AREA - BOLTED TO DASH LINE */
         #input-val {
-            position: absolute; top: 485px; width: 430px;
-            text-align: center; font-size: 45px; color: #00d2ff;
+            position: absolute; top: 495px; width: 430px;
+            text-align: center; font-size: 42px; color: #00d2ff; font-weight: 900;
         }
 
-        /* NUMPAD - FIXED GRID OVER GRAPHIC KEYS */
+        /* NUMPAD - BOLTED TO IMAGE KEYS */
         .keypad {
-            position: absolute; top: 540px; left: 35px;
-            width: 360px; height: 280px;
+            position: absolute; top: 550px; left: 40px;
+            width: 350px; height: 260px;
             display: grid; grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, 1fr);
         }
-        .key { background: transparent; border: none; outline: none; }
+        .key { background: transparent; border: none; cursor: pointer; }
 
-        /* APPLY BUTTON - WIRED TO BOTTOM BAR */
+        /* APPLY - BOLTED TO BOTTOM BAR */
         .apply-btn {
-            position: absolute; bottom: 35px; left: 35px;
-            width: 360px; height: 70px;
-            background: transparent; border: none;
+            position: absolute; bottom: 40px; left: 40px;
+            width: 350px; height: 75px;
+            background: transparent; border: none; cursor: pointer;
         }
     </style>
 </head>
@@ -93,8 +95,8 @@
     let score = 501;
     let inputStr = "";
 
-    // EMBEDDED MASTER OUTCHART (Every Professional Route 170-2)
-    const masterOuts = {
+    // FULL PROFESSIONAL OUTCHART DATABASE
+    const outDB = {
         170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"], 161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"],
         158: ["T20", "T20", "D19"], 157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"], 154: ["T20", "T18", "D20"],
         153: ["T20", "T19", "D18"], 152: ["T20", "T20", "D16"], 151: ["T20", "T17", "D20"], 150: ["T20", "T18", "D18"], 149: ["T20", "T19", "D16"],
@@ -107,9 +109,27 @@
         118: ["T20", "S18", "D20"], 117: ["T20", "S17", "D20"], 116: ["T20", "S16", "D20"], 115: ["T20", "S15", "D20"], 114: ["T20", "S14", "D20"],
         113: ["T20", "S13", "D20"], 112: ["T20", "T12", "D8"], 111: ["T20", "S19", "D16"], 110: ["T20", "S10", "D20"], 109: ["T20", "S9", "D20"],
         108: ["T20", "S16", "D16"], 107: ["T19", "S10", "D20"], 106: ["T20", "S10", "D18"], 105: ["T19", "S16", "D16"], 104: ["T18", "S10", "D16"],
-        103: ["T20", "S3", "D20"], 102: ["T20", "S10", "D16"], 101: ["T17", "S10", "D20"], 100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"],
-        80: ["T20", "D10", "-"], 70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"], 50: ["BULL", "-", "-"], 40: ["D20", "-", "-"],
-        32: ["D16", "-", "-"], 20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
+        103: ["T20", "S3", "D20"], 102: ["T20", "S10", "D16"], 101: ["T17", "S10", "D20"], 100: ["T20", "D20", "-"], 99: ["T19", "S10", "D16"],
+        98: ["T20", "D19", "-"], 97: ["T19", "D20", "-"], 96: ["T20", "D18", "-"], 95: ["T19", "D19", "-"], 94: ["T18", "D20", "-"],
+        93: ["T19", "D18", "-"], 92: ["T20", "D16", "-"], 91: ["T17", "D20", "-"], 90: ["T18", "D18", "-"], 89: ["T19", "D16", "-"],
+        88: ["T16", "D20", "-"], 87: ["T17", "D18", "-"], 86: ["T18", "D16", "-"], 85: ["T15", "D20", "-"], 84: ["T20", "D12", "-"],
+        83: ["T17", "D16", "-"], 82: ["T14", "D20", "-"], 81: ["T15", "D18", "-"], 80: ["T20", "D10", "-"], 79: ["T13", "D20", "-"],
+        78: ["T14", "D18", "-"], 77: ["T15", "D16", "-"], 76: ["T20", "D8", "-"], 75: ["T17", "D12", "-"], 74: ["T14", "D16", "-"],
+        73: ["T19", "D8", "-"], 72: ["T16", "D12", "-"], 71: ["T13", "D16", "-"], 70: ["T10", "D20", "-"], 69: ["T15", "D12", "-"],
+        68: ["T20", "D4", "-"], 67: ["T17", "D8", "-"], 66: ["T14", "D12", "-"], 65: ["T19", "D4", "-"], 64: ["D16", "D16", "-"],
+        63: ["T13", "D12", "-"], 62: ["T10", "D16", "-"], 61: ["T15", "D8", "-"], 60: ["S20", "D20", "-"], 59: ["S19", "D20", "-"],
+        58: ["S18", "D20", "-"], 57: ["S17", "D20", "-"], 56: ["S16", "D20", "-"], 55: ["S15", "D20", "-"], 54: ["S14", "D20", "-"],
+        53: ["S13", "D20", "-"], 52: ["T12", "D8", "-"], 51: ["S19", "D16", "-"], 50: ["BULL", "-", "-"], 49: ["S17", "D16", "-"],
+        48: ["S16", "D16", "-"], 47: ["S15", "D16", "-"], 46: ["S14", "D16", "-"], 45: ["S13", "D16", "-"], 44: ["S12", "D16", "-"],
+        43: ["S11", "D16", "-"], 42: ["S10", "D16", "-"], 41: ["S9", "D16", "-"], 40: ["D20", "-", "-"], 39: ["S7", "D16", "-"],
+        38: ["D19", "-", "-"], 37: ["S5", "D16", "-"], 36: ["D18", "-", "-"], 35: ["S3", "D16", "-"], 34: ["D17", "-", "-"],
+        33: ["S1", "D16", "-"], 32: ["D16", "-", "-"], 31: ["S15", "D8", "-"], 30: ["D15", "-", "-"], 29: ["S13", "D8", "-"],
+        28: ["D14", "-", "-"], 27: ["S11", "D8", "-"], 26: ["D13", "-", "-"], 25: ["S9", "D8", "-"], 24: ["D12", "-", "-"],
+        23: ["S7", "D8", "-"], 22: ["D11", "-", "-"], 21: ["S5", "D8", "-"], 20: ["D10", "-", "-"], 19: ["S3", "D8", "-"],
+        18: ["D9", "-", "-"], 17: ["S1", "D8", "-"], 16: ["D8", "-", "-"], 15: ["S7", "D4", "-"], 14: ["D7", "-", "-"],
+        13: ["S5", "D4", "-"], 12: ["D6", "-", "-"], 11: ["S3", "D4", "-"], 10: ["D5", "-", "-"], 9: ["S1", "D4", "-"],
+        8: ["D4", "-", "-"], 7: ["S3", "D2", "-"], 6: ["D3", "-", "-"], 5: ["S1", "D2", "-"], 4: ["D2", "-", "-"],
+        3: ["S1", "D1", "-"], 2: ["D1", "-", "-"]
     };
 
     function getVal(t) {
@@ -126,8 +146,8 @@
         document.getElementById('main-score').innerText = score;
         document.getElementById('input-val').innerText = inputStr || "---";
         
-        let path = masterOuts[score] || (score > 170 ? ["T20","T20","T20"] : ["T20","S20","D"+Math.floor((score-80)/2)]);
-        if (score <= 1) path = ["-","-","-"];
+        let path = outDB[score] || (score > 170 ? ["T20", "T20", "T20"] : ["T20", "S20", "D" + Math.floor((score - 80) / 2)]);
+        if (score <= 1) path = ["-", "-", "-"];
 
         document.getElementById('d1-t').innerText = path[0];
         let r1 = score - getVal(path[0]);
