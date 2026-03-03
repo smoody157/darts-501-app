@@ -15,13 +15,12 @@
 
         .canvas {
             width: 430px; height: 932px;
-            /* Wired directly to your repo image */
-            background: url('IMG_7543.png') no-repeat;
+            /* WIRED DIRECTLY TO YOUR GITHUB REPO RAW IMAGE */
+            background: url('https://raw.githubusercontent.com/smoody157/darts-501-app/main/IMG_7543.png') no-repeat;
             background-size: 430px 932px;
             position: relative;
         }
 
-        /* Digital Score - Wired to Top Neon Box */
         #main-score {
             position: absolute; top: 185px; left: 0; width: 430px;
             text-align: center; font-size: 90px; color: #fff;
@@ -29,13 +28,11 @@
             text-shadow: 0 0 20px #00d2ff;
         }
 
-        /* Mode Toggles - Wired to 301/501/701 graphics */
         .mode-hit { position: absolute; top: 295px; width: 80px; height: 40px; cursor: pointer; }
         #m301 { left: 80px; }
         #m501 { left: 175px; }
         #m701 { left: 270px; }
 
-        /* The 3 Target Orbs - Wired to your circle graphics */
         .orb { position: absolute; width: 100px; text-align: center; top: 385px; }
         #orb1 { left: 40px; }
         #orb2 { left: 165px; }
@@ -43,20 +40,17 @@
         .target { font-size: 34px; color: #fff; display: block; font-weight: 900; }
         .rem { font-size: 14px; color: #ff007f; font-weight: 900; }
 
-        /* Input Display - Wired to the (---) line */
         #input-val {
             position: absolute; top: 495px; width: 430px;
             text-align: center; font-size: 45px; color: #00d2ff; font-weight: 900;
         }
 
-        /* Keypad - Fixed over your drawn numbers */
         .keys {
             position: absolute; top: 550px; left: 40px; width: 350px; height: 260px;
             display: grid; grid-template-columns: repeat(3, 1fr);
         }
         .k { background: transparent; border: none; cursor: pointer; }
 
-        /* Apply Button - Wired to Bottom Neon Bar */
         .apply-btn {
             position: absolute; bottom: 40px; left: 40px; width: 350px; height: 80px;
             background: transparent; border: none; cursor: pointer;
@@ -93,7 +87,7 @@
     let input = "";
     let lastSpoken = null;
 
-    // THE MASSIVE MASTER OUTCHART DATABASE (Exhaustive 170-2)
+    // THE MASSIVE MASTER OUTCHART DATABASE
     const db = {
         170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
         158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
@@ -103,7 +97,6 @@
         121:["T20","T15","D8"],110:["T20","S10","D20"],100:["T20","D20","-"],90:["T18","D18","-"],80:["T20","D10","-"],
         70:["T10","D20","-"],60:["S20","D20","-"],50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],
         20:["D10","-","-"],10:["D5","-","-"],4:["D2","-","-"],2:["D1","-","-"]
-        // [Manual database continues for all finish points]
     };
 
     function speak(path) {
