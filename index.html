@@ -3,42 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART PRO MASTER</title>
-
     <style>
-        /* --- SECTION 1: THE SKIN --- */
+        /* SECTION 1: THE SKIN */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
         
-        body, html { 
-            margin: 0; padding: 0; width: 430px; height: 932px; 
-            background: #000; overflow: hidden; display: flex; justify-content: center; 
-        }
-
         #app-shell {
             width: 430px; height: 932px;
-            background-image: url('IMG_7543.png'); /* Steve: Keep filename exact */
+            background-image: url('IMG_7543.png');
             background-size: 100% 100%;
             position: relative;
         }
 
-        /* 1.1: PHYSICAL BLACKOUT MASKS 
-           These sit over the stationary image numbers and the top status bar.
-        */
-        .blackout-patch { position: absolute; background: #0b0b1a; z-index: 5; }
-        
-        /* New: Hides phone status bar (Battery, Time, etc.) */
-        #patch-status-bar { top: 0; left: 0; width: 430px; height: 110px; z-index: 25; }
+        /* SURGICAL BLACKOUT PATCHES */
+        .mask { position: absolute; background: #0b0b1a; z-index: 5; }
+        #mask-status { top: 0; left: 0; width: 430px; height: 105px; z-index: 30; } /* Battery/Clock */
+        #mask-score { top: 255px; left: 145px; width: 140px; height: 75px; border-radius: 10px; }
+        #mask-d1 { top: 468px; left: 75px; width: 40px; height: 25px; }
+        #mask-d2 { top: 468px; left: 198px; width: 40px; height: 25px; }
+        #mask-d3 { top: 468px; left: 323px; width: 40px; height: 25px; }
+        #mask-in { top: 525px; left: 140px; width: 150px; height: 40px; }
 
-        #patch-main-score { top: 215px; left: 100px; width: 230px; height: 110px; border-radius: 15px; }
-        #patch-dart-1 { top: 462px; left: 62px; width: 65px; height: 40px; border-radius: 5px; }
-        #patch-dart-2 { top: 462px; left: 187px; width: 65px; height: 40px; border-radius: 5px; }
-        #patch-dart-3 { top: 462px; left: 312px; width: 65px; height: 40px; border-radius: 5px; }
-        #patch-input { top: 510px; left: 100px; width: 230px; height: 65px; border-radius: 10px; }
-
-        /* 1.2: NEON GRADIENT & REPOSITIONING 
-           Active numbers are shrunk and aligned to fit exactly inside the frames.
-        */
-        .active-display {
+        /* NEON ALIGNMENT */
+        .neon-active {
             background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -49,111 +36,99 @@
             text-align: center;
         }
 
-        #main-score-readout { top: 195px; width: 430px; font-size: 115px; filter: drop-shadow(0 0 15px rgba(0,210,255,0.8)); }
-
-        .orb-value { width: 105px; z-index: 10; text-align: center; font-size: 32px; }
-        #v1-active { top: 412px; left: 40px; }
-        #v2-active { top: 412px; left: 164px; }
-        #v3-active { top: 412px; left: 288px; }
-
-        .orb-rem { position: absolute; font-size: 18px; color: #ff007f; font-weight: 900; z-index: 10; width: 105px; text-align: center; font-family: sans-serif; }
-        #r1-active { top: 470px; left: 40px; }
-        #r2-active { top: 470px; left: 164px; }
-        #r3-active { top: 470px; left: 288px; }
-
-        #display-input-active { top: 512px; width: 430px; font-size: 58px; color: #72d6ff; text-shadow: 0 0 20px #00d2ff; }
-
-        /* 1.3: INDUSTRIAL HIT-BOXES 
-           Precise triggers mapped to background buttons.
-        */
-        .hit-box { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 20; }
+        #score-val { top: 228px; width: 430px; font-size: 90px; filter: drop-shadow(0 0 12px rgba(0,210,255,0.8)); }
         
-        .mode-btn { top: 310px; width: 85px; height: 50px; }
-        
-        .key-grid {
-            position: absolute; top: 575px; left: 45px; width: 340px; height: 260px;
-            display: grid; grid-template-columns: repeat(3, 1fr);
-        }
+        .dart-box { width: 105px; z-index: 10; text-align: center; font-size: 26px; }
+        #v1 { top: 422px; left: 40px; } #v2 { top: 422px; left: 164px; } #v3 { top: 422px; left: 288px; }
 
-        .apply-btn { bottom: 45px; left: 45px; width: 340px; height: 85px; border-radius: 20px; }
+        .rem-box { position: absolute; font-size: 15px; color: #ff007f; font-weight: 900; z-index: 10; width: 105px; text-align: center; }
+        #r1 { top: 472px; left: 40px; } #r2 { top: 472px; left: 164px; } #r3 { top: 472px; left: 288px; }
+
+        #input-val { top: 518px; width: 430px; font-size: 50px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+
+        /* BUTTON HIT-BOXES */
+        .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
+        .mode-hit { top: 375px; width: 55px; height: 35px; }
+        .grid { position: absolute; top: 625px; left: 52px; width: 325px; height: 235px; display: grid; grid-template-columns: repeat(3, 1fr); }
+        .apply-hit { bottom: 35px; left: 50px; width: 330px; height: 60px; }
     </style>
 </head>
 <body>
 
 <div id="app-shell">
-    <div class="blackout-patch" id="patch-status-bar"></div>
-    <div class="blackout-patch" id="patch-main-score"></div>
-    <div class="blackout-patch" id="patch-dart-1"></div>
-    <div class="blackout-patch" id="patch-dart-2"></div>
-    <div class="blackout-patch" id="patch-dart-3"></div>
-    <div class="blackout-patch" id="patch-input"></div>
+    <div class="mask" id="mask-status"></div>
+    <div class="mask" id="mask-score"></div>
+    <div class="mask" id="mask-d1"></div><div class="mask" id="mask-d2"></div><div class="mask" id="mask-d3"></div>
+    <div class="mask" id="mask-in"></div>
 
-    <div id="main-score-readout" class="active-display">501</div>
-    
-    <div id="v1-active" class="active-display orb-value">-</div><div id="r1-active" class="orb-rem"></div>
-    <div id="v2-active" class="active-display orb-value">-</div><div id="r2-active" class="orb-rem"></div>
-    <div id="v3-active" class="active-display orb-value">-</div><div id="r3-active" class="orb-rem"></div>
+    <div id="score-val" class="neon-active">501</div>
+    <div id="v1" class="neon-active dart-box">-</div><div id="r1" class="rem-box"></div>
+    <div id="v2" class="neon-active dart-box">-</div><div id="r2" class="rem-box"></div>
+    <div id="v3" class="neon-active dart-box">-</div><div id="r3" class="rem-box"></div>
+    <div id="input-val" class="neon-active">---</div>
 
-    <div id="display-input-active" class="active-display">---</div>
+    <button class="hit mode-hit" style="left:128px" onclick="APP.reset(301)"></button>
+    <button class="hit mode-hit" style="left:188px" onclick="APP.reset(501)"></button>
+    <button class="hit mode-hit" style="left:248px" onclick="APP.reset(701)"></button>
 
-    <button class="hit-box mode-btn" style="left:82px" onclick="APP.reset(301)"></button>
-    <button class="hit-box mode-btn" style="left:174px" onclick="APP.reset(501)"></button>
-    <button class="hit-box mode-btn" style="left:266px" onclick="APP.reset(701)"></button>
-
-    <div class="key-grid">
-        <button class="hit-box" style="position:relative" onclick="APP.tap(7)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(8)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(9)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(4)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(5)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(6)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(1)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(2)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(3)"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.del()"></button>
-        <button class="hit-box" style="position:relative" onclick="APP.tap(0)"></button>
+    <div class="grid">
+        <button class="hit" style="position:relative" onclick="APP.num(7)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(8)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(9)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(4)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(5)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(6)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(1)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(2)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(3)"></button>
+        <button class="hit" style="position:relative" onclick="APP.del()"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(0)"></button>
     </div>
-
-    <button class="hit-box apply-btn" onclick="APP.apply()"></button>
+    <button class="hit apply-hit" onclick="APP.go()"></button>
 </div>
 
 <script>
+/* SECTION 3: THE BRAIN */
 const OATS = {
-    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 160:["T20","T20","D20"],
-    121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
+    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 161:["T20","T17","DB"], 160:["T20","T20","D20"],
+    150:["T20","T18","D18"], 140:["T20","T20","D10"], 121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
 };
 
 const APP = {
     score: 501, input: "", voiced: null,
-    speak: function(path) {
-        if (!path || path[0] === "-") return;
-        let msg = path.filter(x => x !== "-").join(", ").replace(/T/g, "Triple ").replace(/D(\d+)/g, "Double $1").replace(/DB/g, "Double Bull");
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
+    speak: function(m) {
+        if (!m) return;
+        const u = new SpeechSynthesisUtterance(m); u.rate = 0.9;
+        window.speechSynthesis.speak(u);
     },
-    getVal: function(s) {
+    getV: function(s) {
         if (!s || s === "-") return 0; if (s === "DB") return 50;
         let n = parseInt(s.substring(1)); return s[0] === "T" ? n * 3 : (s[0] === "D" ? n * 2 : n);
     },
     draw: function() {
-        document.getElementById('main-score-readout').innerText = this.score;
-        document.getElementById('display-input-active').innerText = this.input || "---";
-        let path = OATS[this.score] || (this.score > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((this.score-80)/2)]);
-        if (this.score <= 1) path = ["-","-","-"];
-        
-        document.getElementById('v1-active').innerText = path[0];
-        let r1 = this.score - this.getVal(path[0]); document.getElementById('r1-active').innerText = r1 > 0 ? r1 : "";
-        document.getElementById('v2-active').innerText = path[1];
-        let r2 = r1 - this.getVal(path[1]); document.getElementById('r2-active').innerText = r2 > 0 ? r2 : "";
-        document.getElementById('v3-active').innerText = path[2];
-        
-        if (this.score <= 170 && this.score > 1 && this.score !== this.voiced) { this.speak(path); this.voiced = this.score; }
+        document.getElementById('score-val').innerText = this.score;
+        document.getElementById('input-val').innerText = this.input || "---";
+        let p = OATS[this.score] || (this.score > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((this.score-80)/2)]);
+        if (this.score <= 1) p = ["-","-","-"];
+        document.getElementById('v1').innerText = p[0];
+        let r1 = this.score - this.getV(p[0]); document.getElementById('r1').innerText = r1 > 0 ? r1 : "";
+        document.getElementById('v2').innerText = p[1];
+        let r2 = r1 - this.getV(p[1]); document.getElementById('r2').innerText = r2 > 0 ? r2 : "";
+        document.getElementById('v3').innerText = p[2];
+        if (this.score <= 170 && this.score > 1 && this.score !== this.voiced) {
+            let msg = p.filter(x => x !== "-").join(", ").replace(/T/g,"Triple ").replace(/D(\d+)/g,"Double $1").replace(/DB/g,"Double Bull");
+            this.speak(msg); this.voiced = this.score;
+        }
     },
     reset: function(n) { this.score = n; this.input = ""; this.voiced = null; this.draw(); },
-    tap: function(n) { if (this.input.length < 3) this.input += n; this.draw(); },
+    num: function(n) { if (this.input.length < 3) this.input += n; this.draw(); },
     del: function() { this.input = ""; this.draw(); },
-    apply: function() {
+    go: function() {
         let v = parseInt(this.input);
-        if (!isNaN(v)) { if (this.score - v < 0 || this.score - v === 1) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust")); else this.score -= v; }
+        if (!isNaN(v)) { 
+            if (this.score - v < 0 || this.score - v === 1) this.speak("Bust");
+            else this.score -= v; 
+        }
         this.input = ""; this.draw();
     }
 };
