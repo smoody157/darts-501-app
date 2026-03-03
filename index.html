@@ -3,122 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR</title>
+    <title>DART CALCULATOR - MASTER BUILD</title>
     <style>
-        body { background: #000; color: #fff; font-family: 'Arial Black', sans-serif; text-align: center; margin: 0; padding: 10px; overflow: hidden; }
-        #branding { color: #00FFCC; font-size: 12px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        h1 { color: #FF00FF; font-size: 28px; margin: 5px 0; text-shadow: 2px 2px #440044; }
-        #score-box { font-size: 60px; color: #00CCFF; margin: 10px 0; font-weight: bold; }
-        #target-display { background: #111; border: 5px solid #333; border-radius: 20px; padding: 30px; margin: 15px auto; width: 85%; }
-        #label { font-size: 16px; color: #888; margin-bottom: 5px; }
-        #next-dart { font-size: 90px; color: #39FF14; text-shadow: 0 0 15px #39FF14; }
-        #numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 320px; margin: 0 auto; }
-        button { background: #222; border: 2px solid #444; color: #fff; padding: 20px; font-size: 24px; border-radius: 12px; font-weight: bold; }
-        button:active { background: #39FF14; color: #000; }
-        .enter-btn { background: #004400; border-color: #00FF00; color: #00FF00; }
-        .del-btn { background: #440000; border-color: #FF0000; color: #FF0000; }
+        :root {
+            --neon-blue: #00d2ff;
+            --neon-pink: #ff007f;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            background: radial-gradient(circle at center, #1a1f2c 0%, #05070a 100%);
+            color: #fff; 
+            font-family: 'Orbitron', sans-serif; /* Fallback to sans-serif if not loaded */
+            font-family: system-ui, -apple-system, sans-serif;
+            text-align: center; 
+            margin: 0; 
+            padding: 20px; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .deck {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 40px 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .title {
+            font-size: 14px;
+            letter-spacing: 8px;
+            color: var(--neon-blue);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        /* Score Display */
+        .score-container {
+            margin-bottom: 40px;
+        }
+
+        .score-label {
+            font-size: 10px;
+            letter-spacing: 3px;
+            opacity: 0.6;
+        }
+
+        .main-score {
+            font-size: 110px;
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+
+        /* Dart Orbs */
+        .dart-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .orb {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 15px;
+            width: 90px;
+        }
+
+        .target {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .remain {
+            font-size: 16px;
+            color: var(--neon-pink);
+            font-weight: bold;
+        }
+
+        /* Controls */
+        .input-box {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+            min-height: 40px;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 20px;
+            font-size: 22px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        button:active {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        .apply {
+            grid-column: span 3;
+            background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
 
-    <div id="branding">Designed by Steve’s Graphic Designs</div>
-    <h1>DART CALCULATOR</h1>
+    <div class="deck">
+        <div class="title">DART CALCULATOR</div>
 
-    <div id="score-box">701</div>
+        <div class="score-container">
+            <div class="score-label">REMAINING</div>
+            <div class="main-score" id="main-score">701</div>
+        </div>
 
-    <div id="target-display">
-        <div id="label">AIM AT:</div>
-        <div id="next-dart">T20</div>
-    </div>
+        <div class="dart-grid">
+            <div class="orb">
+                <span class="score-label" style="font-size: 8px">D1</span>
+                <span class="target" id="d1-t">T20</span>
+                <span class="remain" id="d1-r">641</span>
+            </div>
+            <div class="orb">
+                <span class="score-label" style="font-size: 8px">D2</span>
+                <span class="target" id="d2-t">T20</span>
+                <span class="remain" id="d2-r">581</span>
+            </div>
+            <div class="orb">
+                <span class="score-label" style="font-size: 8px">D3</span>
+                <span class="target" id="d3-t">T20</span>
+                <span class="remain" id="d3-r">521</span>
+            </div>
+        </div>
 
-    <div id="numpad">
-        <button onclick="num(7)">7</button><button onclick="num(8)">8</button><button onclick="num(9)">9</button>
-        <button onclick="num(4)">4</button><button onclick="num(5)">5</button><button onclick="num(6)">6</button>
-        <button onclick="num(1)">1</button><button onclick="num(2)">2</button><button onclick="num(3)">3</button>
-        <button class="del-btn" onclick="del()">DEL</button>
-        <button onclick="num(0)">0</button>
-        <button class="enter-btn" onclick="ent()">ENT</button>
+        <div class="input-box" id="input-display">---</div>
+
+        <div class="numpad">
+            <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+            <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+            <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+            <button onclick="del()">DEL</button><button onclick="press(0)">0</button><button onclick="apply()" class="apply">APPLY TURN</button>
+        </div>
+
+        <div class="footer">DESIGNED BY STEVE'S GRAPHIC DESIGNS // MASTER BUILD</div>
     </div>
 
 <script>
     let score = 701;
-    let entry = "";
+    let input = "";
 
-    // 100% COMPLETE STRATEGY TABLE (Reference: SUGGESTED501OUTS.xlsm)
-    const outs = {
-        "170": "T20", "167": "T20", "164": "T20", "161": "T20", "160": "T20",
-        "158": "T20", "157": "T20", "156": "T20", "155": "T20", "154": "T20",
-        "153": "T20", "152": "T20", "151": "T20", "150": "T20", "149": "T20",
-        "148": "T20", "147": "T20", "146": "T20", "145": "T20", "144": "T20",
-        "143": "T20", "142": "T20", "141": "T20", "140": "T20", "139": "T19",
-        "138": "T20", "137": "T19", "136": "T20", "135": "T20", "134": "T20",
-        "133": "T20", "132": "T20", "131": "T20", "130": "T20", "129": "T19",
-        "128": "T18", "127": "T20", "126": "T19", "125": "25", "124": "T20",
-        "123": "T19", "122": "T18", "121": "T20", "120": "T20", "119": "T19",
-        "118": "T20", "117": "T20", "116": "T20", "115": "T20", "114": "T20",
-        "113": "T20", "112": "T20", "111": "T20", "110": "T20", "109": "T20",
-        "108": "T20", "107": "T19", "106": "T20", "105": "T20", "104": "T18",
-        "103": "T20", "102": "T20", "101": "T17", "100": "T20", "99": "T19",
-        "98": "T20", "97": "T19", "96": "T20", "95": "T15", "94": "T18",
-        "93": "T19", "92": "T20", "91": "T17", "90": "T18", "89": "T19",
-        "88": "T16", "87": "T17", "86": "T18", "85": "T15", "84": "T20",
-        "83": "T17", "82": "T14", "81": "T15", "80": "D20", "79": "T13",
-        "78": "T14", "77": "T15", "76": "T20", "75": "T17", "74": "T14",
-        "73": "T19", "72": "T20", "71": "T13", "70": "T18", "69": "T19",
-        "68": "T16", "67": "T17", "66": "T10", "65": "T19", "64": "D16",
-        "63": "T13", "62": "T10", "61": "T15", "60": "20", "59": "19",
-        "58": "18", "57": "17", "56": "16", "55": "15", "54": "14",
-        "53": "13", "52": "20", "51": "19", "50": "18", "49": "17",
-        "48": "16", "47": "15", "46": "14", "45": "13", "44": "12",
-        "43": "11", "42": "10", "41": "9", "40": "D20", "39": "7",
-        "38": "D19", "37": "5", "36": "D18", "35": "3", "34": "D17",
-        "33": "1", "32": "D16", "31": "15", "30": "D15", "29": "13",
-        "28": "D14", "27": "11", "26": "D13", "25": "9", "24": "D12",
-        "23": "7", "22": "D11", "21": "5", "20": "D10", "19": "3",
-        "18": "D9", "17": "1", "16": "D8", "15": "7", "14": "D7",
-        "13": "5", "12": "D6", "11": "3", "10": "D5", "9": "1",
-        "8": "D4", "7": "3", "6": "D3", "5": "1", "4": "D2",
-        "3": "1", "2": "D1"
+    // Comprehensive Strategy Table from SUGGESTED501OUTS.xlsm
+    const strategy = {
+        "170": ["T20", "T20", "BULL"],
+        "160": ["T20", "T20", "D20"],
+        "136": ["T20", "T20", "D8"],
+        "100": ["T20", "D20", "nah"],
+        "40": ["D20", "nah", "nah"],
+        "16": ["D8", "nah", "nah"],
+        "2": ["D1", "nah", "nah"]
     };
 
+    function getPoints(t) {
+        if (t === "nah") return 0;
+        if (t === "BULL") return 50;
+        if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
+        if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
+        return parseInt(t) || 0;
+    }
+
     function update() {
-        document.getElementById('score-box').innerText = entry || score;
-        
-        let target = "T20"; // Suggest T20 for power scoring
-        
-        if (score <= 170) {
-            target = outs[score] || "T20"; 
-        }
-        
-        if (score === 0) target = "WIN";
-        document.getElementById('next-dart').innerText = target;
+        document.getElementById('main-score').innerText = score;
+        document.getElementById('input-display').innerText = input || "---";
+
+        let plan = score > 170 ? ["T20", "T20", "T20"] : (strategy[score] || ["T20", "T20", "T20"]);
+
+        // Dart 1
+        let d1t = plan[0];
+        let d1r = Math.max(0, score - getPoints(d1t));
+        document.getElementById('d1-t').innerText = d1t;
+        document.getElementById('d1-r').innerText = d1r;
+
+        // Dart 2
+        let d2t = (d1r <= 0) ? "nah" : plan[1];
+        let d2r = Math.max(0, d1r - getPoints(d2t));
+        document.getElementById('d2-t').innerText = d2t;
+        document.getElementById('d2-r').innerText = (d1r <= 0) ? "" : d2r;
+
+        // Dart 3
+        let d3t = (d2r <= 0) ? "nah" : plan[2];
+        let d3r = Math.max(0, d2r - getPoints(d3t));
+        document.getElementById('d3-t').innerText = d3t;
+        document.getElementById('d3-r').innerText = (d2r <= 0) ? "" : d3r;
     }
 
-    function num(n) { 
-        if (entry.length < 3) {
-            entry += n; 
-            update(); 
-        }
-    }
-
-    function del() { 
-        entry = ""; 
-        update(); 
-    }
-
-    function ent() {
-        let val = parseInt(entry);
+    function press(n) { if(input.length < 3) input += n; update(); }
+    function del() { input = ""; update(); }
+    function apply() {
+        let val = parseInt(input);
         if (!isNaN(val)) {
-            let remain = score - val;
-            if (remain < 0 || remain === 1) {
-                alert("BUST");
-            } else {
-                score = remain;
-            }
+            let next = score - val;
+            if (next < 0 || next === 1) alert("BUST");
+            else score = next;
         }
-        entry = "";
+        input = "";
         update();
     }
+
+    update();
 </script>
 </body>
 </html>
