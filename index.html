@@ -3,50 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART PRO MASTER - BUILD 78</title>
+    <title>DART PRO MASTER</title>
 
     <style>
-        /* --- SECTION 1: THE SKIN (CSS) --- */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            outline: none; 
-        }
+        /* --- SECTION 1: THE SKIN --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
         
         body, html { 
-            margin: 0; padding: 0; 
-            width: 430px; height: 932px; 
-            background: #000; 
-            overflow: hidden; 
-            display: flex; justify-content: center; 
+            margin: 0; padding: 0; width: 430px; height: 932px; 
+            background: #000; overflow: hidden; display: flex; justify-content: center; 
         }
 
         #app-shell {
             width: 430px; height: 932px;
-            background-image: url('IMG_7543.png'); /* Steve: Ensure filename is exact */
+            background-image: url('IMG_7543.png'); /* Steve: Keep filename exact */
             background-size: 100% 100%;
             position: relative;
         }
 
-        /* 1.1: PHYSICAL BLACKOUT PATCHES 
-           These sit directly over the numbers in your background image.
+        /* 1.1: PHYSICAL BLACKOUT MASKS 
+           These sit over the stationary image numbers and the top status bar.
         */
-        .blackout-patch { 
-            position: absolute; 
-            background: #0b0b1a; /* Matches your background depth */
-            z-index: 5; 
-            border-radius: 10px;
-        }
+        .blackout-patch { position: absolute; background: #0b0b1a; z-index: 5; }
         
-        #mask-score-main { top: 215px; left: 100px; width: 230px; height: 110px; } 
-        #mask-orb-1 { top: 462px; left: 62px; width: 70px; height: 40px; }   
-        #mask-orb-2 { top: 462px; left: 187px; width: 70px; height: 40px; }  
-        #mask-orb-3 { top: 462px; left: 312px; width: 70px; height: 40px; }
-        #mask-input-line { top: 510px; left: 100px; width: 230px; height: 65px; }
+        /* New: Hides phone status bar (Battery, Time, etc.) */
+        #patch-status-bar { top: 0; left: 0; width: 430px; height: 110px; z-index: 25; }
 
-        /* 1.2: ACTIVE NEON REPOSITIONING 
-           Numbers are shrunk and aligned to fit exactly inside the frames.
+        #patch-main-score { top: 215px; left: 100px; width: 230px; height: 110px; border-radius: 15px; }
+        #patch-dart-1 { top: 462px; left: 62px; width: 65px; height: 40px; border-radius: 5px; }
+        #patch-dart-2 { top: 462px; left: 187px; width: 65px; height: 40px; border-radius: 5px; }
+        #patch-dart-3 { top: 462px; left: 312px; width: 65px; height: 40px; border-radius: 5px; }
+        #patch-input { top: 510px; left: 100px; width: 230px; height: 65px; border-radius: 10px; }
+
+        /* 1.2: NEON GRADIENT & REPOSITIONING 
+           Active numbers are shrunk and aligned to fit exactly inside the frames.
         */
         .active-display {
             background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
@@ -59,61 +49,44 @@
             text-align: center;
         }
 
-        #main-score-readout { 
-            top: 200px; width: 430px; font-size: 112px; 
-            filter: drop-shadow(0 0 15px rgba(0,210,255,0.8)); 
-        }
+        #main-score-readout { top: 195px; width: 430px; font-size: 115px; filter: drop-shadow(0 0 15px rgba(0,210,255,0.8)); }
 
         .orb-value { width: 105px; z-index: 10; text-align: center; font-size: 32px; }
         #v1-active { top: 412px; left: 40px; }
         #v2-active { top: 412px; left: 164px; }
         #v3-active { top: 412px; left: 288px; }
 
-        .orb-rem { 
-            position: absolute; font-size: 18px; color: #ff007f; 
-            font-weight: 900; z-index: 10; width: 105px; 
-            text-align: center; font-family: sans-serif; 
-        }
-        #r1-active { top: 472px; left: 40px; }
-        #r2-active { top: 472px; left: 164px; }
-        #r3-active { top: 472px; left: 288px; }
+        .orb-rem { position: absolute; font-size: 18px; color: #ff007f; font-weight: 900; z-index: 10; width: 105px; text-align: center; font-family: sans-serif; }
+        #r1-active { top: 470px; left: 40px; }
+        #r2-active { top: 470px; left: 164px; }
+        #r3-active { top: 470px; left: 288px; }
 
-        #input-readout-active { 
-            top: 512px; width: 430px; font-size: 58px; 
-            color: #72d6ff; text-shadow: 0 0 20px #00d2ff; 
-        }
+        #display-input-active { top: 512px; width: 430px; font-size: 58px; color: #72d6ff; text-shadow: 0 0 20px #00d2ff; }
 
         /* 1.3: INDUSTRIAL HIT-BOXES 
-           Every button on the background is now a functional trigger.
+           Precise triggers mapped to background buttons.
         */
         .hit-box { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 20; }
         
-        /* Game Modes (301, 501, 701) */
-        .btn-mode { top: 310px; width: 85px; height: 50px; }
+        .mode-btn { top: 310px; width: 85px; height: 50px; }
         
-        /* Keypad Grid (0-9, DEL) */
-        .keypad-grid {
-            position: absolute; top: 575px; left: 45px; 
-            width: 340px; height: 260px;
+        .key-grid {
+            position: absolute; top: 575px; left: 45px; width: 340px; height: 260px;
             display: grid; grid-template-columns: repeat(3, 1fr);
         }
 
-        /* Apply Turn Bar */
-        .apply-turn-trigger { 
-            bottom: 45px; left: 45px; 
-            width: 340px; height: 85px; 
-            border-radius: 20px; 
-        }
+        .apply-btn { bottom: 45px; left: 45px; width: 340px; height: 85px; border-radius: 20px; }
     </style>
 </head>
 <body>
 
 <div id="app-shell">
-    <div class="blackout-patch" id="mask-score-main"></div>
-    <div class="blackout-patch" id="mask-orb-1"></div>
-    <div class="blackout-patch" id="mask-orb-2"></div>
-    <div class="blackout-patch" id="mask-orb-3"></div>
-    <div class="blackout-patch" id="mask-input-line"></div>
+    <div class="blackout-patch" id="patch-status-bar"></div>
+    <div class="blackout-patch" id="patch-main-score"></div>
+    <div class="blackout-patch" id="patch-dart-1"></div>
+    <div class="blackout-patch" id="patch-dart-2"></div>
+    <div class="blackout-patch" id="patch-dart-3"></div>
+    <div class="blackout-patch" id="patch-input"></div>
 
     <div id="main-score-readout" class="active-display">501</div>
     
@@ -121,13 +94,13 @@
     <div id="v2-active" class="active-display orb-value">-</div><div id="r2-active" class="orb-rem"></div>
     <div id="v3-active" class="active-display orb-value">-</div><div id="r3-active" class="orb-rem"></div>
 
-    <div id="input-readout-active" class="active-display">---</div>
+    <div id="display-input-active" class="active-display">---</div>
 
-    <button class="hit-box btn-mode" style="left:82px" onclick="APP.reset(301)"></button>
-    <button class="hit-box btn-mode" style="left:174px" onclick="APP.reset(501)"></button>
-    <button class="hit-box btn-mode" style="left:266px" onclick="APP.reset(701)"></button>
+    <button class="hit-box mode-btn" style="left:82px" onclick="APP.reset(301)"></button>
+    <button class="hit-box mode-btn" style="left:174px" onclick="APP.reset(501)"></button>
+    <button class="hit-box mode-btn" style="left:266px" onclick="APP.reset(701)"></button>
 
-    <div class="keypad-grid">
+    <div class="key-grid">
         <button class="hit-box" style="position:relative" onclick="APP.tap(7)"></button>
         <button class="hit-box" style="position:relative" onclick="APP.tap(8)"></button>
         <button class="hit-box" style="position:relative" onclick="APP.tap(9)"></button>
@@ -141,98 +114,49 @@
         <button class="hit-box" style="position:relative" onclick="APP.tap(0)"></button>
     </div>
 
-    <button class="hit-box apply-turn-trigger" onclick="APP.apply()"></button>
+    <button class="hit-box apply-btn" onclick="APP.apply()"></button>
 </div>
 
 <script>
-/**
- * THE OATS LIBRARY: MASSIVE PROFESSIONAL OUTCHART DATABASE
- * Embedded to ensure immediate voice response.
- */
 const OATS = {
-    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 161:["T20","T17","DB"], 160:["T20","T20","D20"],
-    158:["T20","T20","D19"], 157:["T20","T19","D20"], 156:["T20","T20","D18"], 155:["T20","T19","D19"], 154:["T20","T18","D20"],
-    153:["T20","T19","D18"], 152:["T20","T20","D16"], 151:["T20","T17","D20"], 150:["T20","T18","D18"], 149:["T20","T19","D16"],
-    148:["T20","S16","D20"], 147:["T20","S17","D20"], 146:["T20","S18","D20"], 145:["T20","S15","D20"], 144:["T20","T20","D12"],
-    143:["T20","S17","D16"], 142:["T20","S14","D20"], 141:["T20","S15","D18"], 140:["T20","T20","D10"], 139:["T19","T14","DB"],
-    138:["T20","T18","D12"], 137:["T19","S16","D16"], 136:["T20","T20","D8"], 135:["T20","T15","D15"], 134:["T20","T14","D16"],
-    130:["T20","S20","DB"], 125:["DB","T20","D20"], 121:["T20","T11","D14"], 110:["T20","S10","D20"], 100:["T20","D20","-"], 
-    90:["T18","D18","-"], 80:["T20","D10","-"], 70:["T10","D20","-"], 60:["S20","D20","-"], 50:["DB","-","-"],
-    40:["D20","-","-"], 32:["D16","-","-"], 20:["D10","-","-"], 16:["D8","-","-"], 8:["D4","-","-"], 4:["D2","-","-"], 2:["D1","-","-"]
+    170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 160:["T20","T20","D20"],
+    121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
 };
 
 const APP = {
-    current: 501,
-    buffer: "",
-    voiced: null,
-
-    // 3.1: AUTOMATED VOICE ENGINE
+    score: 501, input: "", voiced: null,
     speak: function(path) {
         if (!path || path[0] === "-") return;
-        let msg = path.filter(x => x !== "-").join(", ")
-            .replace(/T/g, "Triple ")
-            .replace(/D(\d+)/g, "Double $1")
-            .replace(/DB/g, "Double Bull")
-            .replace(/S/g, "Single ");
-        
-        const utterance = new SpeechSynthesisUtterance(msg);
-        utterance.rate = 0.9;
-        window.speechSynthesis.speak(utterance);
+        let msg = path.filter(x => x !== "-").join(", ").replace(/T/g, "Triple ").replace(/D(\d+)/g, "Double $1").replace(/DB/g, "Double Bull");
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(msg));
     },
-
-    // 3.2: VALUE CALCULATOR
     getVal: function(s) {
         if (!s || s === "-") return 0; if (s === "DB") return 50;
-        let n = parseInt(s.substring(1)); 
-        if (s[0] === "T") return n * 3;
-        if (s[0] === "D") return n * 2;
-        return n;
+        let n = parseInt(s.substring(1)); return s[0] === "T" ? n * 3 : (s[0] === "D" ? n * 2 : n);
     },
-
-    // 3.3: DYNAMIC RENDER ENGINE (REPOSITIONED & ALIGNED)
     draw: function() {
-        document.getElementById('main-score-readout').innerText = this.current;
-        document.getElementById('input-readout-active').innerText = this.buffer || "---";
-
-        let path = OATS[this.current] || (this.current > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((this.current-80)/2)]);
-        if (this.current <= 1) path = ["-","-","-"];
-
+        document.getElementById('main-score-readout').innerText = this.score;
+        document.getElementById('display-input-active').innerText = this.input || "---";
+        let path = OATS[this.score] || (this.score > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((this.score-80)/2)]);
+        if (this.score <= 1) path = ["-","-","-"];
+        
         document.getElementById('v1-active').innerText = path[0];
-        let r1 = this.current - this.getVal(path[0]); 
-        document.getElementById('r1-active').innerText = r1 > 0 ? r1 : "";
-        
+        let r1 = this.score - this.getVal(path[0]); document.getElementById('r1-active').innerText = r1 > 0 ? r1 : "";
         document.getElementById('v2-active').innerText = path[1];
-        let r2 = r1 - this.getVal(path[1]); 
-        document.getElementById('r2-active').innerText = r2 > 0 ? r2 : "";
-        
+        let r2 = r1 - this.getVal(path[1]); document.getElementById('r2-active').innerText = r2 > 0 ? r2 : "";
         document.getElementById('v3-active').innerText = path[2];
-
-        // Trigger Voice Call for Finishes
-        if (this.current <= 170 && this.current > 1 && this.current !== this.voiced) {
-            this.speak(path);
-            this.voiced = this.current;
-        }
+        
+        if (this.score <= 170 && this.score > 1 && this.score !== this.voiced) { this.speak(path); this.voiced = this.score; }
     },
-
-    // 3.4: ACTIVATED CONTROLS
-    reset: function(n) { this.current = n; this.buffer = ""; this.voiced = null; this.draw(); },
-    tap: function(n) { if (this.buffer.length < 3) this.buffer += n; this.draw(); },
-    del: function() { this.buffer = ""; this.draw(); },
+    reset: function(n) { this.score = n; this.input = ""; this.voiced = null; this.draw(); },
+    tap: function(n) { if (this.input.length < 3) this.input += n; this.draw(); },
+    del: function() { this.input = ""; this.draw(); },
     apply: function() {
-        let val = parseInt(this.buffer);
-        if (!isNaN(val)) {
-            if (this.current - val < 0 || this.current - val === 1) {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
-            } else {
-                this.current -= val;
-            }
-        }
-        this.buffer = "";
-        this.draw();
+        let v = parseInt(this.input);
+        if (!isNaN(v)) { if (this.score - v < 0 || this.score - v === 1) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust")); else this.score -= v; }
+        this.input = ""; this.draw();
     }
 };
-
-// INITIALIZE BUILD 78
 APP.draw();
 </script>
 </body>
