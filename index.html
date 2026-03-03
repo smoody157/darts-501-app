@@ -8,7 +8,7 @@
         body, html {
             margin: 0; padding: 0;
             width: 100vw; height: 100vh;
-            /* LINKED DIRECTLY TO YOUR REPO FILE */
+            /* Using your specific repo image as the template */
             background: #000 url('https://raw.githubusercontent.com/smoody157/darts-501-app/main/7F737C26-56A1-497B-A4A2-CCD6141E7B8C.png') no-repeat center center;
             background-size: 100% 100%;
             font-family: 'Arial Black', sans-serif;
@@ -25,14 +25,14 @@
             font-size: 82px; color: #fff; text-shadow: 0 0 20px #00d2ff;
         }
 
-        /* Mode Toggles (Top boxes) */
+        /* Mode Toggles (Invisible hit-boxes over 301, 501, 701) */
         .mode-grid {
             position: absolute; top: 31.5%; left: 15%; width: 70%; height: 5%;
             display: flex; justify-content: space-between;
         }
         .mode-btn { width: 30%; background: transparent; border: none; cursor: pointer; }
 
-        /* Professional Outchart Display */
+        /* Outchart Display Orbs */
         .dart-grid {
             position: absolute; top: 41.5%; width: 100%;
             display: flex; justify-content: space-around;
@@ -48,7 +48,7 @@
             font-size: 40px; color: #00d2ff; font-weight: 900;
         }
 
-        /* Numpad (Invisible keys over your image) */
+        /* Numpad Hit-Grid (Invisible keys) */
         .keypad {
             position: absolute; top: 58%; left: 6%; width: 88%; height: 32%;
             display: grid; grid-template-columns: repeat(3, 1fr);
@@ -91,11 +91,16 @@
     let score = 501;
     let inputStr = "";
 
-    // Professional Outchart Data
+    // The Master Professional Outchart (170-2)
     const masterOuts = {
         170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
-        150:["T20","T18","D18"],140:["T20","T20","D10"],121:["T20","T15","D8"],100:["T20","D20","-"],80:["T20","D10","-"],
-        60:["S20","D20","-"],50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],16:["D8","-","-"],8:["D4","-","-"],4:["D2","-","-"],2:["D1","-","-"]
+        158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
+        153:["T20","T19","D18"],152:["T20","T20","D16"],151:["T20","T17","D20"],150:["T20","T18","D18"],149:["T20","T19","D16"],
+        148:["T20","T16","D20"],147:["T20","T17","D18"],146:["T20","T18","D16"],145:["T20","T15","D20"],144:["T20","T20","D12"],
+        143:["T20","T17","D16"],142:["T20","T14","D20"],141:["T20","T15","D18"],140:["T20","T20","D10"],130:["T20","T20","D5"],
+        121:["T20","T15","D8"],110:["T20","S10","D20"],100:["T20","D20","-"],90:["T18","D18","-"],80:["T20","D10","-"],
+        70:["T10","D20","-"],60:["S20","D20","-"],50:["BULL","-","-"],40:["D20","-","-"],32:["D16","-","-"],
+        16:["D8","-","-"],8:["D4","-","-"],4:["D2","-","-"],2:["D1","-","-"]
     };
 
     function getVal(t) {
