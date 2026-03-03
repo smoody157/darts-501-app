@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - VERIFIED CLOUD</title>
+    <title>DART CALCULATOR - MASTER</title>
     <style>
         :root {
             --neon-blue: #00d2ff;
@@ -12,28 +12,22 @@
         }
 
         body { 
-            /* VERIFIED REPO PATH */
-            background: url('https://raw.githubusercontent.com/nightgamesdesign/Dart-Calculator/main/background.png') no-repeat center center fixed;
+            /* HARD-CODED TO YOUR EXACT FILE: IMG_7390.jpeg */
+            background: url('https://raw.githubusercontent.com/nightgamesdesign/Dart-Calculator/main/IMG_7390.jpeg') no-repeat center center fixed;
             background-size: cover;
             background-color: #05070a; 
             color: #fff; 
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, sans-serif;
             text-align: center; 
             margin: 0; padding: 0; 
             height: 100vh; width: 100vw;
-            display: flex; 
-            flex-direction: column;
-            justify-content: space-evenly; /* PERFECT VERTICAL SPACING */
+            display: flex; flex-direction: column;
+            justify-content: space-evenly; 
             align-items: center;
             overflow: hidden;
         }
 
-        .logo-container { 
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .logo-container { display: flex; flex-direction: column; align-items: center; }
         .logo-main { 
             font-size: 42px; font-weight: 900; 
             background: linear-gradient(to bottom, #00d2ff, #3a7bd5);
@@ -46,7 +40,7 @@
         .logo-sub { color: #ffae00; font-size: 12px; font-weight: bold; letter-spacing: 4px; margin-top: 5px; }
 
         .deck {
-            background: rgba(0, 0, 0, 0.82);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(25px);
             border: 1px solid var(--border);
             border-radius: 35px;
@@ -117,46 +111,27 @@
     <div class="deck">
         <div class="score-panel">
             <div class="label-blue">SCORE REMAINING</div>
-            <div id="main-score" class="main-score">701</div>
+            <div id="main-score" class="main-score">501</div>
             <div class="mode-buttons">
                 <button class="mode-btn" id="btn301" onclick="setGame(301)">301</button>
-                <button class="mode-btn" id="btn501" onclick="setGame(501)">501</button>
-                <button class="mode-btn active" id="btn701" onclick="setGame(701)">701</button>
+                <button class="mode-btn active" id="btn501" onclick="setGame(501)">501</button>
+                <button class="mode-btn" id="btn701" onclick="setGame(701)">701</button>
             </div>
         </div>
 
         <div class="dart-grid">
-            <div class="orb">
-                <div class="label-blue">DART 1</div>
-                <span class="target" id="d1-t">T20</span>
-                <span class="remain" id="d1-r">641</span>
-            </div>
-            <div class="orb">
-                <div class="label-blue">DART 2</div>
-                <span class="target" id="d2-t">T20</span>
-                <span class="remain" id="d2-r">581</span>
-            </div>
-            <div class="orb">
-                <div class="label-blue">DART 3</div>
-                <span class="target" id="d3-t">T20</span>
-                <span class="remain" id="d3-r">521</span>
-            </div>
+            <div class="orb"><div class="label-blue">DART 1</div><span class="target" id="d1-t">-</span><span class="remain" id="d1-r"></span></div>
+            <div class="orb"><div class="label-blue">DART 2</div><span class="target" id="d2-t">-</span><span class="remain" id="d2-r"></span></div>
+            <div class="orb"><div class="label-blue">DART 3</div><span class="target" id="d3-t">-</span><span class="remain" id="d3-r"></span></div>
         </div>
 
         <div id="input-display" class="input-box">---</div>
 
         <div class="numpad">
-            <button class="num-btn" onclick="press(7)">7</button>
-            <button class="num-btn" onclick="press(8)">8</button>
-            <button class="num-btn" onclick="press(9)">9</button>
-            <button class="num-btn" onclick="press(4)">4</button>
-            <button class="num-btn" onclick="press(5)">5</button>
-            <button class="num-btn" onclick="press(6)">6</button>
-            <button class="num-btn" onclick="press(1)">1</button>
-            <button class="num-btn" onclick="press(2)">2</button>
-            <button class="num-btn" onclick="press(3)">3</button>
-            <button class="num-btn" onclick="del()" style="color: var(--neon-pink)">DEL</button>
-            <button class="num-btn" onclick="press(0)">0</button>
+            <button class="num-btn" onclick="press(7)">7</button><button class="num-btn" onclick="press(8)">8</button><button class="num-btn" onclick="press(9)">9</button>
+            <button class="num-btn" onclick="press(4)">4</button><button class="num-btn" onclick="press(5)">5</button><button class="num-btn" onclick="press(6)">6</button>
+            <button class="num-btn" onclick="press(1)">1</button><button class="num-btn" onclick="press(2)">2</button><button class="num-btn" onclick="press(3)">3</button>
+            <button class="num-btn" onclick="del()" style="color: var(--neon-pink)">DEL</button><button class="num-btn" onclick="press(0)">0</button>
             <button onclick="apply()" class="apply">APPLY TURN</button>
         </div>
     </div>
@@ -164,38 +139,46 @@
     <div class="footer">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
 <script>
-    let score = 701;
+    let score = 501;
     let input = "";
 
-    const checkouts = { "131": ["T20", "T13", "D16"], "170": ["T20", "T20", "BULL"], "2": ["D1", "nah", "nah"] };
+    function getOut(s) {
+        if (s > 170 || [169, 168, 166, 165, 163, 162, 159].includes(s)) return ["T20", "T20", "T20"];
+        const table = {
+            170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"],
+            161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"], 158: ["T20", "T20", "D19"],
+            141: ["T20", "T15", "D18"], 121: ["T20", "T15", "D8"], 100: ["T20", "D20", "-"],
+            80: ["T20", "D10", "-"], 60: ["S20", "D20", "-"], 40: ["D20", "-", "-"],
+            32: ["D16", "-", "-"], 16: ["D8", "-", "-"]
+        };
+        if (table[s]) return table[s];
+        if (s <= 40 && s % 2 === 0) return ["D" + (s/2), "-", "-"];
+        if (s <= 60) return ["S" + (s-40), "D20", "-"];
+        return ["T20", "T20", "T20"];
+    }
 
-    function getPoints(t) {
-        if (t === "nah") return 0;
+    function getVal(t) {
+        if (t === "-" || t === "Bust") return 0;
         if (t === "BULL") return 50;
         if (t.startsWith("T")) return parseInt(t.substring(1)) * 3;
         if (t.startsWith("D")) return parseInt(t.substring(1)) * 2;
+        if (t.startsWith("S")) return parseInt(t.substring(1));
         return parseInt(t) || 0;
-    }
-
-    function calculateOut(s) {
-        if (s <= 40 && s % 2 === 0) return ["D" + (s / 2), "nah", "nah"];
-        if (s <= 60) return [(s - 32), "D16", "nah"];
-        return ["T20", "T20", "T20"];
     }
 
     function update() {
         document.getElementById('main-score').innerText = score;
         document.getElementById('input-display').innerText = input || "---";
-        let plan = score > 170 ? ["T20", "T20", "T20"] : (checkouts[score] || calculateOut(score));
-        let d1t = plan[0], d1r = Math.max(0, score - getPoints(d1t));
-        document.getElementById('d1-t').innerText = d1t;
-        document.getElementById('d1-r').innerText = d1r;
-        let d2t = (d1r <= 0) ? "nah" : plan[1], d2r = Math.max(0, d1r - getPoints(d2t));
-        document.getElementById('d2-t').innerText = d2t;
-        document.getElementById('d2-r').innerText = (d1r <= 0) ? "" : d2r;
-        let d3t = (d2r <= 0) ? "nah" : plan[2], d3r = Math.max(0, d2r - getPoints(d3t));
-        document.getElementById('d3-t').innerText = d3t;
-        document.getElementById('d3-r').innerText = (d2r <= 0) ? "" : d3r;
+        const plan = getOut(score);
+        const d1 = plan[0], r1 = Math.max(0, score - getVal(d1));
+        document.getElementById('d1-t').innerText = d1;
+        document.getElementById('d1-r').innerText = r1;
+        const d2 = (r1 <= 0) ? "-" : plan[1], r2 = Math.max(0, r1 - getVal(d2));
+        document.getElementById('d2-t').innerText = d2;
+        document.getElementById('d2-r').innerText = (r1 <= 0) ? "" : r2;
+        const d3 = (r2 <= 0) ? "-" : plan[2], r3 = Math.max(0, r2 - getVal(d3));
+        document.getElementById('d3-t').innerText = d3;
+        document.getElementById('d3-r').innerText = (r2 <= 0) ? "" : r3;
     }
 
     function setGame(n) {
@@ -209,11 +192,10 @@
     function press(n) { if(input.length < 3) input += n; update(); }
     function del() { input = ""; update(); }
     function apply() {
-        let val = parseInt(input);
-        if (!isNaN(val)) {
-            let next = score - val;
-            if (next < 0 || next === 1) alert("BUST");
-            else score = next;
+        let v = parseInt(input);
+        if (!isNaN(v)) {
+            if (score - v < 0 || score - v === 1) alert("BUST");
+            else score -= v;
         }
         input = ""; update();
     }
