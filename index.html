@@ -1,325 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Dart Calculator</title>
-
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-    html, body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      background: #000;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
-    /* Fullscreen stage */
-    #stage {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      background: #000;
-    }
-
-    /* Fixed design canvas */
-    #app-shell {
-      width: 430px;
-      height: 932px;
-      position: relative;
-      background-image: url('IMG_7543.jpeg');
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      isolation: isolate;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-
-    /* --- MASKS (blend into background) ---
-       The original masks were too small / too dark and caused obvious blocks.
-       These are sized to fully cover baked-in numbers on the background, with feathering.
-    */
-    .mask {
-      position: absolute;
-      background: rgba(8, 8, 18, 0.86);
-      z-index: 5;
-      border-radius: 14px;
-      box-shadow: 0 0 18px rgba(8,8,18,0.9);
-      pointer-events: none;
-    }
-
-    /* FIX: remove the status-bar mask entirely (it creates a big ugly black bar on real phones) */
-    /* #mask-status intentionally removed */
-
-    /* Main score background number (covers the baked "125") */
-    #mask-main-score {
-      top: 200px;
-      left: 70px;
-      width: 290px;
-      height: 160px;
-      border-radius: 22px;
-      box-shadow: 0 0 26px rgba(8,8,18,0.95);
-    }
-
-    /* Dart suggestion baked remnants under each dart box */
-    .dart-mask {
-      width: 120px;
-      height: 40px;
-      border-radius: 14px;
-      box-shadow: 0 0 18px rgba(8,8,18,0.9);
-    }
-    #mask-d1 { top: 460px; left: 35px; }
-    #mask-d2 { top: 460px; left: 155px; }
-    #mask-d3 { top: 460px; left: 275px; }
-
-    /* Input area baked remnants */
-    #mask-input {
-      top: 500px;
-      left: 35px;
-      width: 360px;
-      height: 90px;
-      border-radius: 18px;
-      box-shadow: 0 0 24px rgba(8,8,18,0.95);
-    }
-
-    /* --- NEON TEXT --- */
-    .neon-active {
-      background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-family: 'Arial Black', Arial, sans-serif;
-      font-weight: 900;
-      z-index: 10;
-      position: absolute;
-      text-align: center;
-      pointer-events: none; /* don't block taps */
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-    }
-
-    #score-val {
-      top: 232px;
-      width: 430px;
-      font-size: 92px;
-      filter: drop-shadow(0 0 10px rgba(0,210,255,0.8));
-      letter-spacing: 1px;
-    }
-
-    .dart-txt { width: 105px; text-align: center; font-size: 25px; }
-    #v1 { top: 424px; left: 40px; }
-    #v2 { top: 424px; left: 164px; }
-    #v3 { top: 424px; left: 288px; }
-
-    .rem-txt {
-      position: absolute;
-      font-size: 14px;
-      color: #ff007f;
-      font-weight: 900;
-      z-index: 15;
-      width: 105px;
-      text-align: center;
-      pointer-events: none;
-    }
-    #r1 { top: 472px; left: 40px; }
-    #r2 { top: 472px; left: 164px; }
-    #r3 { top: 472px; left: 288px; }
-
-    #input-val {
-      top: 515px;
-      width: 430px;
-      font-size: 52px;
-      color: #72d6ff;
-      text-shadow: 0 0 15px #00d2ff;
-      pointer-events: none;
-    }
-
-    #build-tag {
-      position: absolute;
-      bottom: 8px;
-      right: 15px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color: rgba(255,255,255,0.4);
-      font-size: 10px;
-      z-index: 40;
-      pointer-events: none;
-    }
-
-    /* --- CONTROLS --- */
-    .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
-
-    .mode-hit { top: 375px; width: 60px; height: 40px; }
-
-    .grid {
-      position: absolute;
-      top: 620px;
-      left: 50px;
-      width: 330px;
-      height: 240px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      z-index: 25;
-    }
-
-    .grid .hit {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 18px;
-    }
-
-    .apply-hit { bottom: 30px; left: 50px; width: 330px; height: 70px; }
-
-    .hit:active { background: rgba(255,255,255,0.04); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=430, height=932, initial-scale=1.0, user-scalable=no">
+    <title>DART PRO CALCULATOR</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
+        #canvas {
+            width: 430px; height: 932px;
+            background-image: url('IMG_7543.png');
+            background-size: 100% 100%;
+            position: relative;
+        }
+        /* Overlays aligned to your image graphics */
+        #score-display { position: absolute; top: 185px; width: 100%; text-align: center; font-size: 95px; color: #fff; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 20px #00d2ff; }
+        .orb { position: absolute; width: 105px; text-align: center; top: 390px; }
+        #o1 { left: 40px; } #o2 { left: 165px; } #o3 { left: 290px; }
+        .dart-target { font-size: 34px; color: #fff; display: block; font-weight: 900; }
+        .remainder { font-size: 14px; color: #ff007f; font-weight: 900; }
+        #input-view { position: absolute; top: 500px; width: 100%; text-align: center; font-size: 48px; color: #00d2ff; font-weight: 900; }
+        
+        /* Hit-Box Grids */
+        .mode-btn { position: absolute; top: 300px; width: 80px; height: 45px; cursor: pointer; }
+        .key { background: transparent; border: none; cursor: pointer; }
+        .keypad { position: absolute; top: 560px; left: 40px; width: 350px; height: 260px; display: grid; grid-template-columns: repeat(3, 1fr); }
+        .apply { position: absolute; bottom: 40px; left: 40px; width: 350px; height: 80px; background: transparent; border: none; cursor: pointer; }
+    </style>
 </head>
-
 <body>
-  <div id="stage">
-    <div id="app-shell">
-      <!-- Masks (NO status-bar mask) -->
-      <div class="mask" id="mask-main-score"></div>
-      <div class="mask dart-mask" id="mask-d1"></div>
-      <div class="mask dart-mask" id="mask-d2"></div>
-      <div class="mask dart-mask" id="mask-d3"></div>
-      <div class="mask" id="mask-input"></div>
+<div id="canvas">
+    <div id="score-display">701</div>
+    <div class="mode-btn" style="left:82px" onclick="resetGame(301)"></div>
+    <div class="mode-btn" style="left:175px" onclick="resetGame(501)"></div>
+    <div class="mode-btn" style="left:268px" onclick="resetGame(701)"></div>
+    
+    <div class="orb" id="o1"><span class="dart-target" id="t1">-</span><span class="remainder" id="r1"></span></div>
+    <div class="orb" id="o2"><span class="dart-target" id="t2">-</span><span class="remainder" id="r2"></span></div>
+    <div class="orb" id="o3"><span class="dart-target" id="t3">-</span><span class="remainder" id="r3"></span></div>
 
-      <!-- Text -->
-      <div id="score-val" class="neon-active">501</div>
-      <div id="v1" class="neon-active dart-txt">-</div><div id="r1" class="rem-txt"></div>
-      <div id="v2" class="neon-active dart-txt">-</div><div id="r2" class="rem-txt"></div>
-      <div id="v3" class="neon-active dart-txt">-</div><div id="r3" class="rem-txt"></div>
-      <div id="input-val" class="neon-active">---</div>
+    <div id="input-view">---</div>
 
-      <div id="build-tag">REV: 89 (mask/scale fix)</div>
-
-      <!-- Mode buttons -->
-      <button class="hit mode-hit" style="left:125px" onclick="APP.set(301)" aria-label="Set to 301"></button>
-      <button class="hit mode-hit" style="left:185px" onclick="APP.set(501)" aria-label="Set to 501"></button>
-      <button class="hit mode-hit" style="left:245px" onclick="APP.set(701)" aria-label="Set to 701"></button>
-
-      <!-- Keypad -->
-      <div class="grid" aria-label="Keypad">
-        <button class="hit" onclick="APP.key(7)" aria-label="7"></button>
-        <button class="hit" onclick="APP.key(8)" aria-label="8"></button>
-        <button class="hit" onclick="APP.key(9)" aria-label="9"></button>
-
-        <button class="hit" onclick="APP.key(4)" aria-label="4"></button>
-        <button class="hit" onclick="APP.key(5)" aria-label="5"></button>
-        <button class="hit" onclick="APP.key(6)" aria-label="6"></button>
-
-        <button class="hit" onclick="APP.key(1)" aria-label="1"></button>
-        <button class="hit" onclick="APP.key(2)" aria-label="2"></button>
-        <button class="hit" onclick="APP.key(3)" aria-label="3"></button>
-
-        <button class="hit" onclick="APP.clr()" aria-label="Delete / Clear"></button>
-        <button class="hit" onclick="APP.key(0)" aria-label="0"></button>
-        <div></div>
-      </div>
-
-      <button class="hit apply-hit" onclick="APP.apply()" aria-label="Apply turn"></button>
+    <div class="keypad">
+        <button class="key" onclick="press(7)"></button><button class="key" onclick="press(8)"></button><button class="key" onclick="press(9)"></button>
+        <button class="key" onclick="press(4)"></button><button class="key" onclick="press(5)"></button><button class="key" onclick="press(6)"></button>
+        <button class="key" onclick="press(1)"></button><button class="key" onclick="press(2)"></button><button class="key" onclick="press(3)"></button>
+        <button class="key" onclick="del()"></button><button class="key" onclick="press(0)"></button>
     </div>
-  </div>
+    <button class="apply" onclick="calculate()"></button>
+</div>
 
 <script>
-/* Brain */
-const OATS = {
-  170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 160:["T20","T20","D20"],
-  100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"], 2:["D1","-","-"]
-};
-
-const APP = {
-  s: 501, i: "", v: null,
-
-  speak(m) {
-    if (!m) return;
-    try {
-      const u = new SpeechSynthesisUtterance(m);
-      u.rate = 0.85;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    } catch (e) {}
-  },
-
-  get(x) {
-    if (!x || x === "-") return 0;
-    if (x === "DB") return 50;
-    const n = parseInt(x.substring(1), 10);
-    if (Number.isNaN(n)) return 0;
-    return x[0] === "T" ? n * 3 : (x[0] === "D" ? n * 2 : n);
-  },
-
-  draw() {
-    document.getElementById('score-val').innerText = this.s;
-    document.getElementById('input-val').innerText = this.i || "---";
-
-    let p = OATS[this.s] || (this.s > 170
-      ? ["-","-","-"]
-      : ["T20","S20","D" + Math.max(1, Math.floor((this.s - 80) / 2))]);
-
-    if (this.s <= 1) p = ["-","-","-"];
-
-    document.getElementById('v1').innerText = p[0];
-    const r1 = this.s - this.get(p[0]);
-    document.getElementById('r1').innerText = r1 > 0 ? r1 : "";
-
-    document.getElementById('v2').innerText = p[1];
-    const r2 = r1 - this.get(p[1]);
-    document.getElementById('r2').innerText = r2 > 0 ? r2 : "";
-
-    document.getElementById('v3').innerText = p[2];
-    document.getElementById('r3').innerText = "";
-
-    if (this.s <= 170 && this.s > 1 && this.s !== this.v) {
-      const msg = p
-        .filter(y => y !== "-")
-        .join(", ")
-        .replace(/T/g,"Triple ")
-        .replace(/D(\d+)/g,"Double $1")
-        .replace(/DB/g,"Double Bull");
-      this.speak(msg);
-      this.v = this.s;
+    let score = 701; let input = ""; let lastCall = null;
+    
+    // Manual DB (Outchart Brain)
+    const outDB = { 
+        170:["T20","T20","DB"], 167:["T20","T19","DB"], 164:["T20","T18","DB"], 161:["T20","T17","DB"], 160:["T20","T20","D20"],
+        125:["DB","T20","D20"], 121:["T20","T11","D14"], 100:["T20","D20","-"], 50:["DB","-","-"], 40:["D20","-","-"] 
+    };
+    
+    function voiceCall(path) {
+        if (!path || path[0] === "-") return;
+        let text = path.filter(x => x !== "-").join(", ")
+            .replace(/T/g, "Triple ")
+            .replace(/D(\d+)/g, "Double $1")
+            .replace(/DB/g, "Double Bull");
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
     }
-  },
 
-  set(n) { this.s = n; this.i = ""; this.v = null; this.draw(); },
-  key(n) { if (this.i.length < 3) this.i += String(n); this.draw(); },
-  clr() { this.i = ""; this.draw(); },
-
-  apply() {
-    const v = parseInt(this.i, 10);
-    if (!Number.isNaN(v)) {
-      if (this.s - v < 0 || this.s - v === 1) this.speak("Bust");
-      else this.s -= v;
+    function getVal(s) {
+        if(!s || s==="-") return 0; if(s==="DB") return 50;
+        let n = parseInt(s.substring(1)); return s[0]==="T" ? n*3 : (s[0]==="D" ? n*2 : n);
     }
-    this.i = ""; this.draw();
-  }
-};
 
-/* Fit: use zoom when possible (keeps iOS from black-boxing), otherwise fall back to transform */
-function fit() {
-  const shell = document.getElementById('app-shell');
-  const scale = Math.min(window.innerWidth / 430, window.innerHeight / 932);
+    function render() {
+        document.getElementById('score-display').innerText = score;
+        document.getElementById('input-view').innerText = input || "---";
+        
+        let path = outDB[score] || (score > 170 ? ["-","-","-"] : ["T20", "S20", "D"+Math.floor((score-80)/2)]);
+        if(score <= 1) path = ["-","-","-"];
+        
+        document.getElementById('t1').innerText = path[0];
+        let r1 = score - getVal(path[0]); document.getElementById('r1').innerText = r1 > 0 ? r1 : "";
+        document.getElementById('t2').innerText = path[1];
+        let r2 = r1 - getVal(path[1]); document.getElementById('r2').innerText = r2 > 0 ? r2 : "";
+        document.getElementById('t3').innerText = path[2];
 
-  const supportsZoom = CSS && CSS.supports && CSS.supports('zoom', '1');
-  if (supportsZoom) {
-    shell.style.zoom = String(scale);
-    shell.style.transform = '';
-  } else {
-    shell.style.zoom = '';
-    shell.style.transformOrigin = 'top left';
-    shell.style.transform = `scale(${scale})`;
-  }
-}
+        // Voice Activation Logic
+        if(score <= 170 && score > 1 && score !== lastCall) { 
+            voiceCall(path); 
+            lastCall = score; 
+        }
+    }
 
-window.addEventListener('resize', fit, { passive: true });
-fit();
-APP.draw();
+    function resetGame(n) { score = n; input = ""; lastCall = null; render(); }
+    function press(n) { if(input.length < 3) input += n; render(); }
+    function del() { input = ""; render(); }
+    function calculate() {
+        let v = parseInt(input);
+        if(!isNaN(v)) { 
+            if(score - v < 0 || score - v === 1) {
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
+            } else {
+                score -= v;
+            }
+        }
+        input = ""; render();
+    }
+    render();
 </script>
 </body>
 </html>
