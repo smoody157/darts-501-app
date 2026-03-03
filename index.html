@@ -9,21 +9,21 @@
         
         #app-shell {
             width: 430px; height: 932px;
+            /* LINKING DIRECTLY TO YOUR REPO ASSET */
             background-image: url('IMG_7543.png');
             background-size: 100% 100%;
             position: relative;
         }
 
-        /* THE FIVE SURGICAL PATCHES - BLENDED #080812 */
+        /* THE FIVE BLACKOUT PATCHES - BLENDED TO #080812 */
         .mask { position: absolute; background: #080812; z-index: 5; }
-        
-        #p1-status { top: 0; left: 0; width: 430px; height: 92px; z-index: 30; } /* PATCH 1: Status Bar */
-        #p2-main   { top: 255px; left: 145px; width: 140px; height: 78px; border-radius: 10px; } /* PATCH 2: Main Score */
-        #p3-darts  { top: 468px; left: 78px; width: 50px; height: 25px; } /* PATCH 3: Dart 1 Slot */
-        #p4-darts  { top: 468px; left: 203px; width: 50px; height: 25px; } /* PATCH 4: Dart 2 Slot */
-        #p5-darts  { top: 468px; left: 328px; width: 50px; height: 25px; } /* PATCH 5: Dart 3 Slot */
+        #p1-status { top: 0; left: 0; width: 430px; height: 92px; z-index: 30; } 
+        #p2-score  { top: 255px; left: 145px; width: 140px; height: 78px; border-radius: 10px; }
+        #p3-d1     { top: 468px; left: 78px; width: 50px; height: 25px; }
+        #p4-d2     { top: 468px; left: 203px; width: 50px; height: 25px; }
+        #p5-d3     { top: 468px; left: 328px; width: 50px; height: 25px; }
 
-        /* ACTIVE NEON - POSITIONED ON PATCHES */
+        /* NEON CALCULATOR READOUTS */
         .neon {
             background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
             -webkit-background-clip: text;
@@ -35,63 +35,66 @@
             text-align: center;
         }
 
-        #score-val { top: 232px; width: 430px; font-size: 92px; }
-        .dart-txt { width: 105px; font-size: 25px; }
-        #v1 { top: 424px; left: 40px; } #v2 { top: 424px; left: 164px; } #v3 { top: 424px; left: 288px; }
-        #input-val { top: 515px; width: 430px; font-size: 52px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+        #main-score { top: 232px; width: 430px; font-size: 92px; }
+        #input-read { top: 515px; width: 430px; font-size: 52px; color: #72d6ff; text-shadow: 0 0 15px #00d2ff; }
+        
+        /* VERSION TAG */
+        #rev { position: absolute; bottom: 8px; right: 15px; font-family: monospace; color: rgba(255,255,255,0.3); font-size: 10px; z-index: 40; }
 
-        /* TOUCH LAYER */
+        /* HIT-BOXES MAPPED TO YOUR BACKGROUND BUTTONS */
         .hit { position: absolute; cursor: pointer; background: transparent; border: none; z-index: 25; }
-        .mode-hit { top: 375px; width: 60px; height: 40px; }
-        .grid { position: absolute; top: 620px; left: 50px; width: 330px; height: 240px; display: grid; grid-template-columns: repeat(3, 1fr); }
-        .apply-hit { bottom: 30px; left: 50px; width: 330px; height: 70px; }
+        .mode { top: 375px; width: 60px; height: 40px; }
+        .keypad { position: absolute; top: 620px; left: 50px; width: 330px; height: 240px; display: grid; grid-template-columns: repeat(3, 1fr); }
+        .apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
     </style>
 </head>
 <body>
 <div id="app-shell">
     <div class="mask" id="p1-status"></div>
-    <div class="mask" id="p2-main"></div>
-    <div class="mask" id="p3-darts"></div>
-    <div class="mask" id="p4-darts"></div>
-    <div class="mask" id="p5-darts"></div>
+    <div class="mask" id="p2-score"></div>
+    <div class="mask" id="p3-d1"></div><div class="mask" id="p4-d2"></div><div class="mask" id="p5-d3"></div>
 
-    <div id="score-val" class="neon">501</div>
-    <div id="v1" class="neon dart-txt">-</div>
-    <div id="v2" class="neon dart-txt">-</div>
-    <div id="v3" class="neon dart-txt">-</div>
-    <div id="input-val" class="neon">---</div>
+    <div id="main-score" class="neon">501</div>
+    <div id="input-read" class="neon">---</div>
+    <div id="rev">REV: 89</div>
 
-    <button class="hit mode-hit" style="left:125px" onclick="APP.set(301)"></button>
-    <button class="hit mode-hit" style="left:185px" onclick="APP.set(501)"></button>
-    <button class="hit mode-hit" style="left:245px" onclick="APP.set(701)"></button>
-    <div class="grid">
-        <button class="hit" style="position:relative" onclick="APP.key(7)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(8)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(9)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(4)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(5)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(6)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(1)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(2)"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(3)"></button>
-        <button class="hit" style="position:relative" onclick="APP.clr()"></button>
-        <button class="hit" style="position:relative" onclick="APP.key(0)"></button>
+    <button class="hit mode" style="left:125px" onclick="APP.reset(301)"></button>
+    <button class="hit mode" style="left:185px" onclick="APP.reset(501)"></button>
+    <button class="hit mode" style="left:245px" onclick="APP.reset(701)"></button>
+
+    <div class="keypad">
+        <button class="hit" style="position:relative" onclick="APP.num(7)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(8)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(9)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(4)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(5)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(6)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(1)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(2)"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(3)"></button>
+        <button class="hit" style="position:relative" onclick="APP.del()"></button>
+        <button class="hit" style="position:relative" onclick="APP.num(0)"></button>
     </div>
-    <button class="hit apply-hit" onclick="APP.apply()"></button>
+    <button class="hit apply" onclick="APP.run()"></button>
 </div>
+
 <script>
 const APP = {
-    s: 501, i: "",
-    draw: function() {
-        document.getElementById('score-val').innerText = this.s;
-        document.getElementById('input-val').innerText = this.i || "---";
+    total: 501, entry: "",
+    update: function() {
+        document.getElementById('main-score').innerText = this.total;
+        document.getElementById('input-read').innerText = this.entry || "---";
     },
-    set: function(n) { this.s = n; this.i = ""; this.draw(); },
-    key: function(n) { if (this.i.length < 3) this.i += n; this.draw(); },
-    clr: function() { this.i = ""; this.draw(); },
-    apply: function() { let v = parseInt(this.i); if (!isNaN(v)) { this.s -= v; } this.i = ""; this.draw(); }
+    reset: function(n) { this.total = n; this.entry = ""; this.update(); },
+    num: function(n) { if (this.entry.length < 3) this.entry += n; this.update(); },
+    del: function() { this.entry = ""; this.update(); },
+    run: function() { 
+        let val = parseInt(this.entry); 
+        if (!isNaN(val)) { this.total -= val; } 
+        this.entry = ""; this.update(); 
+    }
 };
-APP.draw();
+APP.update();
 </script>
 </body>
 </html>
