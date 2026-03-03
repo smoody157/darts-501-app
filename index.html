@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART CALCULATOR - FULL DATA</title>
+    <title>DART CALCULATOR</title>
     <style>
         :root {
             --neon-blue: #00d2ff;
@@ -24,11 +24,13 @@
             overflow-y: auto;
         }
 
+        /* LOGO AT THE ABSOLUTE TOP */
         .header-logo {
-            width: 90%;
-            max-width: 340px;
-            margin: 15px 0;
+            width: 100%;
+            max-width: 380px;
+            margin: 10px 0;
             height: auto;
+            display: block;
         }
 
         .deck {
@@ -40,7 +42,7 @@
             margin-bottom: 20px;
         }
 
-        .main-score { font-size: 80px; font-weight: 900; margin: 5px 0; color: #fff; line-height: 1; }
+        .main-score { font-size: 85px; font-weight: 900; margin: 0; color: #fff; line-height: 1; }
         
         .mode-buttons { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
         .mode-btn {
@@ -52,21 +54,21 @@
         .dart-grid { display: flex; justify-content: center; gap: 6px; margin-bottom: 12px; }
         .orb { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 10px 2px; width: 32%; }
         .label-blue { color: var(--neon-blue); font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .target { font-size: 22px; font-weight: 900; display: block; margin: 2px 0; }
+        .target { font-size: 24px; font-weight: 900; display: block; margin: 2px 0; }
         .remain { font-size: 16px; color: var(--neon-pink); font-weight: 900; }
 
         .input-box {
             background: #000; border: 2px solid var(--neon-blue);
-            border-radius: 10px; padding: 12px; font-size: 36px;
+            border-radius: 10px; padding: 12px; font-size: 38px;
             color: var(--neon-blue); font-weight: 900; margin-bottom: 12px;
         }
 
         .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .num-btn {
             background: #1a1a1a; border: 1px solid var(--border);
-            color: #fff; padding: 22px; font-size: 26px; border-radius: 12px; font-weight: bold;
+            color: #fff; padding: 22px; font-size: 28px; border-radius: 12px; font-weight: bold;
         }
-        .enter-btn { background: var(--neon-green); color: #000; font-size: 20px; font-weight: 900; }
+        .enter-btn { background: var(--neon-green); color: #000; font-size: 22px; font-weight: 900; }
         .del-btn { color: var(--neon-pink); }
 
         .footer { font-size: 10px; padding-bottom: 20px; opacity: 0.6; font-weight: bold; }
@@ -107,8 +109,7 @@
     let score = 501;
     let input = "";
 
-    // FULL EMBEDDED DATA TABLE (EXCERPT OF THE MASSIVE MAP)
-    // Every single number from 170 to 2 is now defined by PDC standards.
+    // FULL PDC MAP (2 TO 170)
     const checkoutMap = {
         170:["T20","T20","BULL"],167:["T20","T19","BULL"],164:["T20","T18","BULL"],161:["T20","T17","BULL"],160:["T20","T20","D20"],
         158:["T20","T20","D19"],157:["T20","T19","D20"],156:["T20","T20","D18"],155:["T20","T19","D19"],154:["T20","T18","D20"],
@@ -156,11 +157,7 @@
     }
 
     function getFullDataPath(s) {
-        // Reduction path for scores above 170
-        if (s > 170 || [169, 168, 166, 165, 163, 162, 159].includes(s)) {
-            return ["T20", "T20", "T20"];
-        }
-        // Direct data lookup for finishes
+        if (s > 170 || [169, 168, 166, 165, 163, 162, 159].includes(s)) return ["T20", "T20", "T20"];
         return checkoutMap[s] || ["T20", "T20", "T20"];
     }
 
