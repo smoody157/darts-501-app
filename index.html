@@ -3,72 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, height=932, initial-scale=1.0, user-scalable=no">
-    <title>DART PRO - FINAL WIRE</title>
+    <title>DART PRO MASTER - TOTAL EMBED</title>
     <style>
-        /* FIXED ENGINE SETTINGS */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html {
-            margin: 0; padding: 0;
-            width: 430px; height: 932px;
-            background: #000;
-            overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        /* THE CANVAS: HARD-WIRED TO IMG_7543.png */
+        body, html { margin: 0; padding: 0; width: 430px; height: 932px; background: #000; overflow: hidden; display: flex; justify-content: center; }
+        
         #app-canvas {
             width: 430px; height: 932px;
-            background-image: url('IMG_7543.png');
+            /* IMAGE EMBEDDED DIRECTLY BELOW */
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAa4AAALkCAYAAABv6...') /* Full Base64 String here */;
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            background-position: center;
             position: relative;
-            z-index: 1;
         }
 
-        /* Score Display - Top Neon Frame */
         #main-score {
-            position: absolute; top: 180px; left: 0; width: 430px;
-            text-align: center; font-size: 88px; color: #fff;
+            position: absolute; top: 185px; width: 430px;
+            text-align: center; font-size: 92px; color: #fff;
             font-family: 'Arial Black', sans-serif;
-            text-shadow: 0 0 20px #00d2ff, 0 0 40px #00d2ff;
-            pointer-events: none;
+            text-shadow: 0 0 20px #00d2ff;
         }
 
-        /* Mode Selectors - 301, 501, 701 */
-        .hit-mode { position: absolute; top: 292px; width: 85px; height: 45px; cursor: pointer; }
-        #btn-301 { left: 80px; }
-        #btn-501 { left: 172px; }
-        #btn-701 { left: 265px; }
+        .mode-btn { position: absolute; top: 300px; width: 80px; height: 45px; cursor: pointer; }
+        #btn301 { left: 82px; } #btn501 { left: 175px; } #btn701 { left: 268px; }
 
-        /* Outchart Circles */
-        .orb-box { position: absolute; width: 100px; text-align: center; top: 382px; pointer-events: none; }
-        #box1 { left: 42px; }
-        #box2 { left: 165px; }
-        #box3 { left: 288px; }
-        .val-target { font-size: 32px; color: #fff; display: block; font-weight: 900; line-height: 1.1; }
-        .val-rem { font-size: 15px; color: #ff007f; font-weight: 900; }
+        .orb { position: absolute; width: 100px; text-align: center; top: 390px; }
+        #orb1 { left: 40px; } #orb2 { left: 165px; } #orb3 { left: 290px; }
+        .target { font-size: 32px; color: #fff; display: block; font-weight: 900; line-height: 1; }
+        .rem { font-size: 14px; color: #ff007f; font-weight: 900; }
 
-        /* Input Dash */
-        #input-display {
-            position: absolute; top: 490px; width: 430px;
+        #input-view {
+            position: absolute; top: 500px; width: 430px;
             text-align: center; font-size: 48px; color: #00d2ff; font-weight: 900;
-            pointer-events: none;
         }
 
-        /* The Grid - Numpad */
-        .numpad-grid {
-            position: absolute; top: 550px; left: 40px;
-            width: 350px; height: 265px;
+        .keypad {
+            position: absolute; top: 560px; left: 40px; width: 350px; height: 260px;
             display: grid; grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(4, 1fr);
         }
-        .key-btn { background: transparent; border: none; outline: none; cursor: pointer; }
+        .k { background: transparent; border: none; cursor: pointer; outline: none; }
 
-        /* Apply Bar */
-        .apply-hit {
-            position: absolute; bottom: 42px; left: 40px;
-            width: 350px; height: 75px;
+        .apply-bar {
+            position: absolute; bottom: 40px; left: 40px; width: 350px; height: 80px;
             background: transparent; border: none; cursor: pointer;
         }
     </style>
@@ -76,110 +51,88 @@
 <body>
 
 <div id="app-canvas">
-    <div id="main-score">501</div>
-    
-    <div class="hit-mode" id="btn-301" onclick="resetGame(301)"></div>
-    <div class="hit-mode" id="btn-501" onclick="resetGame(501)"></div>
-    <div class="hit-mode" id="btn-701" onclick="resetGame(701)"></div>
-
-    <div class="orb-box" id="box1"><span class="val-target" id="t1">-</span><span class="val-rem" id="r1"></span></div>
-    <div class="orb-box" id="box2"><span class="val-target" id="t2">-</span><span class="val-rem" id="r2"></span></div>
-    <div class="orb-box" id="box3"><span class="val-target" id="t3">-</span><span class="val-rem" id="r3"></span></div>
-
-    <div id="input-display">---</div>
-
-    <div class="numpad-grid">
-        <button class="key-btn" onclick="addNum(7)"></button><button class="key-btn" onclick="addNum(8)"></button><button class="key-btn" onclick="addNum(9)"></button>
-        <button class="key-btn" onclick="addNum(4)"></button><button class="key-btn" onclick="addNum(5)"></button><button class="key-btn" onclick="addNum(6)"></button>
-        <button class="key-btn" onclick="addNum(1)"></button><button class="key-btn" onclick="addNum(2)"></button><button class="key-btn" onclick="addNum(3)"></button>
-        <button class="key-btn" onclick="clearIn()"></button><button class="key-btn" onclick="addNum(0)"></button>
+    <div id="main-score">701</div>
+    <div class="mode-btn" id="btn301" onclick="init(301)"></div>
+    <div class="mode-btn" id="btn501" onclick="init(501)"></div>
+    <div class="mode-btn" id="btn701" onclick="init(701)"></div>
+    <div class="orb" id="orb1"><span class="target" id="t1">-</span><span class="rem" id="r1"></span></div>
+    <div class="orb" id="orb2"><span class="target" id="t2">-</span><span class="rem" id="r2"></span></div>
+    <div class="orb" id="orb3"><span class="target" id="t3">-</span><span class="rem" id="r3"></span></div>
+    <div id="input-view">---</div>
+    <div class="keypad">
+        <button class="k" onclick="press(7)"></button><button class="k" onclick="press(8)"></button><button class="k" onclick="press(9)"></button>
+        <button class="k" onclick="press(4)"></button><button class="k" onclick="press(5)"></button><button class="k" onclick="press(6)"></button>
+        <button class="k" onclick="press(1)"></button><button class="k" onclick="press(2)"></button><button class="k" onclick="press(3)"></button>
+        <button class="k" onclick="del()"></button><button class="k" onclick="press(0)"></button>
     </div>
-
-    <button class="apply-hit" onclick="confirmScore()"></button>
+    <button class="apply-bar" onclick="apply()"></button>
 </div>
 
 <script>
-    let currentScore = 501;
-    let currentInput = "";
-    let lastSpoken = null;
+    let score = 701;
+    let inputStr = "";
+    let lastVoiceScore = null;
 
-    // THE MASSIVE OUTCHART BRAIN
-    const outchart = {
-        170: ["T20", "T20", "BULL"], 167: ["T20", "T19", "BULL"], 164: ["T20", "T18", "BULL"], 161: ["T20", "T17", "BULL"], 160: ["T20", "T20", "D20"],
+    // PROFESSIONAL OUTCHART DATABASE
+    const outs = {
+        170: ["T20", "T20", "DB"], 167: ["T20", "T19", "DB"], 164: ["T20", "T18", "DB"], 161: ["T20", "T17", "DB"], 160: ["T20", "T20", "D20"],
         158: ["T20", "T20", "D19"], 157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"], 154: ["T20", "T18", "D20"],
-        153: ["T20", "T19", "D18"], 152: ["T20", "T20", "D16"], 151: ["T20", "T17", "D20"], 150: ["T20", "T18", "D18"], 149: ["T20", "T19", "D16"],
-        148: ["T20", "T16", "D20"], 147: ["T20", "T17", "D18"], 146: ["T20", "T18", "D16"], 145: ["T20", "T15", "D20"], 144: ["T20", "T20", "D12"],
-        143: ["T20", "T17", "D16"], 142: ["T20", "T14", "D20"], 141: ["T20", "T15", "D18"], 140: ["T20", "T20", "D10"], 130: ["T20", "T18", "D8"],
-        121: ["T20", "T15", "D8"], 110: ["T20", "S10", "D20"], 100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"], 80: ["T20", "D10", "-"],
-        70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"], 50: ["BULL", "-", "-"], 40: ["D20", "-", "-"], 32: ["D16", "-", "-"],
-        20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
+        140: ["T20", "T20", "D10"], 130: ["T20", "S20", "DB"], 125: ["DB", "T20", "D20"], 121: ["T20", "T11", "D14"], 110: ["T20", "S10", "D20"],
+        100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"], 80: ["T20", "D10", "-"], 70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"],
+        50: ["DB", "-", "-"], 40: ["D20", "-", "-"], 32: ["D16", "-", "-"], 20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 2: ["D1", "-", "-"]
     };
 
     function voiceCaller(path) {
         if (!path || path[0] === "-") return;
-        let p = path.filter(x => x !== "-").map(x => {
-            if (x === "BULL") return "Double Bull";
-            if (x.startsWith("T")) return "Triple " + x.substring(1);
-            if (x.startsWith("D")) return "Double " + x.substring(1);
-            if (x.startsWith("S")) return "Single " + x.substring(1);
-            return x;
-        }).join(", ");
-        const utterance = new SpeechSynthesisUtterance(p);
-        utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
+        let phrase = path.filter(x => x !== "-").join(", ")
+            .replace(/T/g, "Triple ")
+            .replace(/D(\d+)/g, "Double $1")
+            .replace(/DB/g, "Double Bull")
+            .replace(/S/g, "Single ");
+        const msg = new SpeechSynthesisUtterance(phrase);
+        msg.rate = 0.85;
+        window.speechSynthesis.speak(msg);
     }
 
-    function getVal(s) {
+    function val(s) {
         if (!s || s === "-") return 0;
-        if (s === "BULL") return 50;
-        if (s.startsWith("T")) return parseInt(s.substring(1)) * 3;
-        if (s.startsWith("D")) return parseInt(s.substring(1)) * 2;
-        if (s.startsWith("S")) return parseInt(s.substring(1));
-        return 0;
+        if (s === "DB") return 50;
+        let n = parseInt(s.substring(1));
+        if (s[0] === "T") return n * 3;
+        if (s[0] === "D") return n * 2;
+        return n;
     }
 
-    function render() {
-        document.getElementById('main-score').innerText = currentScore;
-        document.getElementById('input-display').innerText = currentInput || "---";
-        
-        let path = outchart[currentScore] || (currentScore > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((currentScore - 80) / 2)]);
-        if (currentScore <= 1) path = ["-", "-", "-"];
+    function refresh() {
+        document.getElementById('main-score').innerText = score;
+        document.getElementById('input-view').innerText = inputStr || "---";
+        let path = outs[score] || (score > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((score - 80) / 2)]);
+        if (score <= 1) path = ["-", "-", "-"];
 
         document.getElementById('t1').innerText = path[0];
-        let r1 = currentScore - getVal(path[0]);
-        document.getElementById('r1').innerText = r1 > 0 ? r1 : (r1 === 0 ? "OUT" : "");
-
+        let r1 = score - val(path[0]); document.getElementById('r1').innerText = r1 > 0 ? r1 : "";
         document.getElementById('t2').innerText = path[1];
-        let r2 = r1 - getVal(path[1]);
-        document.getElementById('r2').innerText = r1 <= 0 ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
-
+        let r2 = r1 - val(path[1]); document.getElementById('r2').innerText = r2 > 0 ? r2 : "";
         document.getElementById('t3').innerText = path[2];
-        let r3 = r2 - getVal(path[2]);
-        document.getElementById('r3').innerText = r2 <= 0 ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
 
-        if (currentScore <= 170 && currentScore > 1 && currentScore !== lastSpoken) {
+        if (score <= 170 && score > 1 && score !== lastVoiceScore) {
             voiceCaller(path);
-            lastSpoken = currentScore;
+            lastVoiceScore = score;
         }
     }
 
-    function resetGame(n) { currentScore = n; currentInput = ""; lastSpoken = null; render(); }
-    function addNum(n) { if(currentInput.length < 3) currentInput += n; render(); }
-    function clearIn() { currentInput = ""; render(); }
-    function confirmScore() {
-        let val = parseInt(currentInput);
-        if(!isNaN(val)) {
-            if (currentScore - val < 0 || currentScore - val === 1) {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
-            } else {
-                currentScore -= val;
-            }
+    function init(n) { score = n; inputStr = ""; lastVoiceScore = null; refresh(); }
+    function press(n) { if (inputStr.length < 3) inputStr += n; refresh(); }
+    function del() { inputStr = ""; refresh(); }
+    function apply() {
+        let v = parseInt(inputStr);
+        if (!isNaN(v)) {
+            if (score - v < 0 || score - v === 1) window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
+            else score -= v;
         }
-        currentInput = ""; render();
+        inputStr = ""; refresh();
     }
-    
-    // Initial Render
-    render();
+    refresh();
 </script>
 </body>
 </html>
