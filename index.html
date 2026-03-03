@@ -3,184 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=430, height=932, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DART PRO - STEVE'S EDITION</title>
+    <title>DART PRO MASTER - SIZZLE CHEST</title>
+
     <style>
-        /* CORE RESET & ENGINE */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* 1.1: Core Reset */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            user-select: none;
+        }
+
         body, html { 
-            margin: 0; padding: 0; width: 430px; height: 932px; 
-            background: #000; overflow: hidden; 
-            display: flex; justify-content: center; align-items: flex-start;
+            margin: 0; padding: 0; 
+            width: 430px; height: 932px; 
+            background: #000; 
+            overflow: hidden; 
+            display: flex; justify-content: center; 
         }
 
-        #app-wrapper {
+        /* 1.2: Activated Background Control */
+        #app-shell {
             width: 430px; height: 932px;
-            /* ACTIVATED BACKGROUND */
-            background-image: url('IMG_7543.png');
+            background-image: url('IMG_7543.png'); /* Steve: Keep filename exact */
             background-size: 100% 100%;
-            background-repeat: no-repeat;
+            background-position: center;
             position: relative;
-            flex-shrink: 0;
+            box-shadow: 0 0 50px #000 inset;
         }
 
-        /* NEON GRADIENT TEXT STYLING */
-        .neon-gradient {
+        /* 1.3: Neon Typography Engine */
+        .neon-gradient-text {
             background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-family: 'Arial Black', sans-serif;
             font-weight: 900;
+            line-height: 1.1;
         }
 
-        /* SCORE REMAINING FRAME */
-        #score-remaining {
-            position: absolute; top: 185px; width: 430px;
-            text-align: center; font-size: 110px;
-            filter: drop-shadow(0 0 15px rgba(0,210,255,0.6));
+        /* 1.4: Display Positioning */
+        #score-main-frame {
+            position: absolute; top: 210px; width: 430px;
+            text-align: center; font-size: 108px;
+            filter: drop-shadow(0 0 20px rgba(0,210,255,0.8));
         }
 
-        /* THE THREE DARTS (ORBS) */
-        .orb-container { position: absolute; width: 105px; text-align: center; top: 405px; }
-        #orb-1 { left: 40px; } #orb-2 { left: 164px; } #orb-3 { left: 288px; }
-        
-        .dart-val { font-size: 32px; display: block; }
-        .dart-rem { font-size: 16px; color: #ff007f; font-weight: 900; font-family: sans-serif; margin-top: 5px; }
+        .dart-orb { position: absolute; width: 105px; text-align: center; top: 410px; }
+        #orb-pos-1 { left: 40px; } 
+        #orb-pos-2 { left: 164px; } 
+        #orb-pos-3 { left: 288px; }
 
-        /* INPUT DISPLAY FRAME */
-        #input-field {
-            position: absolute; top: 508px; width: 430px;
-            text-align: center; font-size: 55px; color: #72d6ff;
+        .dart-label { font-size: 30px; display: block; }
+        .dart-sub { font-size: 16px; color: #ff007f; font-weight: 900; margin-top: 4px; font-family: 'Arial', sans-serif; }
+
+        #input-readout {
+            position: absolute; top: 512px; width: 430px;
+            text-align: center; font-size: 58px; color: #72d6ff;
             font-family: 'Arial Black', sans-serif;
-            text-shadow: 0 0 20px #00d2ff;
+            text-shadow: 0 0 20px #00d2ff, 0 0 40px rgba(0,210,255,0.4);
         }
 
-        /* INVISIBLE ACTIVATION GRIDS */
-        .btn-mode { position: absolute; top: 305px; width: 80px; height: 50px; cursor: pointer; }
-        #mode-301 { left: 82px; } #mode-501 { left: 174px; } #mode-701 { left: 266px; }
-
-        .keypad-grid {
-            position: absolute; top: 570px; left: 42px; width: 345px; height: 265px;
+        /* 1.5: Activation Button Zones (Invisible Hit-boxes) */
+        .hit-zone { position: absolute; cursor: pointer; background: rgba(255,255,255,0); border: none; }
+        
+        .mode-hit { top: 310px; width: 80px; height: 50px; }
+        
+        .numpad-container {
+            position: absolute; top: 575px; left: 45px; 
+            width: 340px; height: 260px;
             display: grid; grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(4, 1fr);
         }
-        .key-btn { background: transparent; border: none; cursor: pointer; outline: none; }
 
-        .apply-btn {
-            position: absolute; bottom: 45px; left: 42px; width: 345px; height: 85px;
-            background: transparent; border: none; cursor: pointer;
+        .apply-hit-zone { 
+            bottom: 45px; left: 45px; 
+            width: 340px; height: 85px; 
+            border-radius: 15px;
         }
     </style>
 </head>
 <body>
 
-<div id="app-wrapper">
-    <div id="score-remaining" class="neon-gradient">501</div>
+<div id="app-shell">
     
-    <div class="orb-container" id="orb-1"><span id="t1" class="neon-gradient">-</span><span id="r1" class="dart-rem"></span></div>
-    <div class="orb-container" id="orb-2"><span id="t2" class="neon-gradient">-</span><span id="r2" class="dart-rem"></span></div>
-    <div class="orb-container" id="orb-3"><span id="t3" class="neon-gradient">-</span><span id="r3" class="dart-rem"></span></div>
+    <div id="score-main-frame" class="neon-gradient-text">501</div>
+    
+    <div class="dart-orb" id="orb-pos-1"><span id="val-1" class="neon-gradient-text">-</span><span id="rem-1" class="dart-sub"></span></div>
+    <div class="dart-orb" id="orb-pos-2"><span id="val-2" class="neon-gradient-text">-</span><span id="rem-2" class="dart-sub"></span></div>
+    <div class="dart-orb" id="orb-pos-3"><span id="val-3" class="neon-gradient-text">-</span><span id="rem-3" class="dart-sub"></span></div>
 
-    <div id="input-field">---</div>
+    <div id="input-readout">---</div>
 
-    <div class="btn-mode" id="mode-301" onclick="resetGame(301)"></div>
-    <div class="btn-mode" id="mode-501" onclick="resetGame(501)"></div>
-    <div class="btn-mode" id="mode-701" onclick="resetGame(701)"></div>
+    <button class="hit-zone mode-hit" style="left:82px" onclick="APP.reset(301)"></button>
+    <button class="hit-zone mode-hit" style="left:174px" onclick="APP.reset(501)"></button>
+    <button class="hit-zone mode-hit" style="left:266px" onclick="APP.reset(701)"></button>
 
-    <div class="keypad-grid">
-        <button class="key-btn" onclick="addNum(7)"></button><button class="key-btn" onclick="addNum(8)"></button><button class="key-btn" onclick="addNum(9)"></button>
-        <button class="key-btn" onclick="addNum(4)"></button><button class="key-btn" onclick="addNum(5)"></button><button class="key-btn" onclick="addNum(6)"></button>
-        <button class="key-btn" onclick="addNum(1)"></button><button class="key-btn" onclick="addNum(2)"></button><button class="key-btn" onclick="addNum(3)"></button>
-        <button class="key-btn" onclick="clearInput()"></button><button class="key-btn" onclick="addNum(0)"></button>
+    <div class="numpad-container">
+        <button class="hit-zone" onclick="APP.type(7)"></button><button class="hit-zone" onclick="APP.type(8)"></button><button class="hit-zone" onclick="APP.type(9)"></button>
+        <button class="hit-zone" onclick="APP.type(4)"></button><button class="hit-zone" onclick="APP.type(5)"></button><button class="hit-zone" onclick="APP.type(6)"></button>
+        <button class="hit-zone" onclick="APP.type(1)"></button><button class="hit-zone" onclick="APP.type(2)"></button><button class="hit-zone" onclick="APP.type(3)"></button>
+        <button class="hit-zone" onclick="APP.clear()"></button><button class="hit-zone" onclick="APP.type(0)"></button>
     </div>
 
-    <button class="apply-btn" onclick="confirmTurn()"></button>
+    <button class="hit-zone apply-hit-zone" onclick="APP.apply()"></button>
 </div>
 
 <script>
-    /* THE MASSIVE OUTCHART BRAIN - 100% ACCURATE */
-    const PRO_OUTCHART = {
-        170: ["T20", "T20", "DB"], 167: ["T20", "T19", "DB"], 164: ["T20", "T18", "DB"], 161: ["T20", "T17", "DB"], 160: ["T20", "T20", "D20"],
-        158: ["T20", "T20", "D19"], 157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"], 154: ["T20", "T18", "D20"],
-        153: ["T20", "T19", "D18"], 152: ["T20", "T20", "D16"], 151: ["T20", "T17", "D20"], 150: ["T20", "T18", "D18"], 149: ["T20", "T19", "D16"],
-        148: ["T20", "S16", "D20"], 147: ["T20", "S17", "D20"], 146: ["T20", "S18", "D20"], 145: ["T20", "S15", "D20"], 144: ["T20", "T20", "D12"],
-        143: ["T20", "S17", "D16"], 142: ["T20", "S14", "D20"], 141: ["T20", "S15", "D18"], 140: ["T20", "T20", "D10"], 139: ["T19", "T14", "DB"],
-        130: ["T20", "S20", "DB"], 121: ["T20", "S11", "D25"], 110: ["T20", "S10", "D20"], 100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"],
-        80: ["T20", "D10", "-"], 70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"], 50: ["DB", "-", "-"], 40: ["D20", "-", "-"],
-        32: ["D16", "-", "-"], 20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
-    };
+/**
+ * EDITOR'S NOTE: THE OATS DATABASE
+ * To change an out, find the number below and edit the array.
+ * T = Triple, D = Double, S = Single, DB = Double Bull.
+ */
+const OATS = {
+    170: ["T20", "T20", "DB"], 167: ["T20", "T19", "DB"], 164: ["T20", "T18", "DB"], 161: ["T20", "T17", "DB"], 160: ["T20", "T20", "D20"],
+    158: ["T20", "T20", "D19"], 157: ["T20", "T19", "D20"], 156: ["T20", "T20", "D18"], 155: ["T20", "T19", "D19"], 154: ["T20", "T18", "D20"],
+    153: ["T20", "T19", "D18"], 152: ["T20", "T20", "D16"], 151: ["T20", "T17", "D20"], 150: ["T20", "T18", "D18"], 149: ["T20", "T19", "D16"],
+    148: ["T20", "T16", "D20"], 147: ["T20", "T17", "D18"], 146: ["T20", "T18", "D16"], 145: ["T20", "T15", "D20"], 144: ["T20", "T20", "D12"],
+    143: ["T20", "T17", "D16"], 142: ["T20", "T14", "D20"], 141: ["T20", "T15", "D18"], 140: ["T20", "T20", "D10"], 130: ["T20", "S20", "DB"],
+    125: ["DB", "T20", "D20"], 121: ["T20", "T11", "D14"], 110: ["T20", "S10", "D20"], 100: ["T20", "D20", "-"], 90: ["T18", "D18", "-"],
+    80: ["T20", "D10", "-"], 70: ["T10", "D20", "-"], 60: ["S20", "D20", "-"], 50: ["DB", "-", "-"], 40: ["D20", "-", "-"],
+    32: ["D16", "-", "-"], 20: ["D10", "-", "-"], 10: ["D5", "-", "-"], 4: ["D2", "-", "-"], 2: ["D1", "-", "-"]
+};
 
-    let score = 501;
-    let inputStr = "";
-    let spokenScore = null;
+/**
+ * THE CORE APP ENGINE
+ */
+const APP = {
+    currentScore: 501,
+    currentInput: "",
+    lastVoicedScore: null,
 
-    /* VOICE ENGINE */
-    function voiceCaller(path) {
+    // Initialize Game
+    init: function() {
+        this.render();
+    },
+
+    // 3.1: Voice Engine
+    speak: function(path) {
         if (!path || path[0] === "-") return;
-        let p = path.filter(x => x !== "-").join(", ")
+        let pString = path.filter(x => x !== "-").join(", ")
             .replace(/T/g, "Triple ")
             .replace(/D(\d+)/g, "Double $1")
             .replace(/DB/g, "Double Bull")
             .replace(/S/g, "Single ");
-        const utterance = new SpeechSynthesisUtterance(p);
-        utterance.rate = 0.9;
+        
+        const utterance = new SpeechSynthesisUtterance(pString);
+        utterance.rate = 0.85; // Natural pacing
         window.speechSynthesis.speak(utterance);
-    }
+    },
 
-    function getDartVal(s) {
+    // 3.2: Value Calculator
+    getVal: function(s) {
         if (!s || s === "-") return 0;
         if (s === "DB") return 50;
-        let n = parseInt(s.substring(1));
-        if (s[0] === "T") return n * 3;
-        if (s[0] === "D") return n * 2;
-        return n;
-    }
+        let num = parseInt(s.substring(1));
+        if (s[0] === "T") return num * 3;
+        if (s[0] === "D") return num * 2;
+        return num;
+    },
 
-    /* RENDER ENGINE */
-    function updateUI() {
-        document.getElementById('score-remaining').innerText = score;
-        document.getElementById('input-field').innerText = inputStr || "---";
+    // 3.3: Interface Refresh
+    render: function() {
+        document.getElementById('score-main-frame').innerText = this.currentScore;
+        document.getElementById('input-readout').innerText = this.currentInput || "---";
+
+        // Logic for Oats/Outchart
+        let path = OATS[this.currentScore] || 
+                  (this.currentScore > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((this.currentScore - 80) / 2)]);
         
-        let path = PRO_OUTCHART[score] || (score > 170 ? ["-","-","-"] : ["T20", "S20", "D" + Math.floor((score - 80) / 2)]);
-        if (score <= 1) path = ["-", "-", "-"];
+        if (this.currentScore <= 1) path = ["-", "-", "-"];
 
-        // Update Orbs
-        document.getElementById('t1').innerText = path[0];
-        let r1 = score - getDartVal(path[0]);
-        document.getElementById('r1').innerText = r1 > 0 ? r1 : (r1 === 0 ? "OUT" : "");
+        // Update UI Elements
+        this.updateOrb(1, path[0], this.currentScore);
+        let r1 = this.currentScore - this.getVal(path[0]);
+        this.updateOrb(2, path[1], r1);
+        let r2 = r1 - this.getVal(path[1]);
+        this.updateOrb(3, path[2], r2);
 
-        document.getElementById('t2').innerText = path[1];
-        let r2 = r1 - getDartVal(path[1]);
-        document.getElementById('r2').innerText = r1 <= 0 ? "" : (r2 > 0 ? r2 : (r2 === 0 ? "OUT" : ""));
-
-        document.getElementById('t3').innerText = path[2];
-        let r3 = r2 - getDartVal(path[2]);
-        document.getElementById('r3').innerText = r2 <= 0 ? "" : (r3 > 0 ? r3 : (r3 === 0 ? "OUT" : ""));
-
-        // Trigger Voice
-        if (score <= 170 && score > 1 && score !== spokenScore) {
-            voiceCaller(path);
-            spokenScore = score;
+        // Auto-Voice Trigger
+        if (this.currentScore <= 170 && this.currentScore > 1 && this.currentScore !== this.lastVoicedScore) {
+            this.speak(path);
+            this.lastVoicedScore = this.currentScore;
         }
-    }
+    },
 
-    /* LOGIC ENGINE */
-    function resetGame(n) { score = n; inputStr = ""; spokenScore = null; updateUI(); }
-    function addNum(n) { if (inputStr.length < 3) inputStr += n; updateUI(); }
-    function clearInput() { inputStr = ""; updateUI(); }
-    function confirmTurn() {
-        let turnTotal = parseInt(inputStr);
-        if (!isNaN(turnTotal)) {
-            if (score - turnTotal < 0 || score - turnTotal === 1) {
+    updateOrb: function(idx, target, current) {
+        document.getElementById('val-' + idx).innerText = target;
+        document.getElementById('rem-' + idx).innerText = current > 0 && target !== "-" ? current : "";
+    },
+
+    // 3.4: Controller Methods
+    reset: function(n) {
+        this.currentScore = n;
+        this.currentInput = "";
+        this.lastVoicedScore = null;
+        this.render();
+    },
+
+    type: function(n) {
+        if (this.currentInput.length < 3) this.currentInput += n;
+        this.render();
+    },
+
+    clear: function() {
+        this.currentInput = "";
+        this.render();
+    },
+
+    apply: function() {
+        let val = parseInt(this.currentInput);
+        if (!isNaN(val)) {
+            if (this.currentScore - val < 0 || this.currentScore - val === 1) {
                 window.speechSynthesis.speak(new SpeechSynthesisUtterance("Bust"));
             } else {
-                score -= turnTotal;
+                this.currentScore -= val;
             }
         }
-        inputStr = "";
-        updateUI();
+        this.currentInput = "";
+        this.render();
     }
+};
 
-    updateUI();
+// POWER ON
+APP.init();
 </script>
 </body>
 </html>
