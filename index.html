@@ -218,16 +218,16 @@
     #footer{
       position:absolute;
       left:50px;
-      top:914px;           /* just below APPLY TURN, inside the 430x932 art */
+      top:902px;           /* closer to APPLY TURN */
       width:330px;         /* NOT wider than buttons */
       text-align:center;
-      font-size:9px;
+      font-size:8px;
       line-height:1.1;
-      color: rgba(255,255,255,0.70);
-      text-shadow: 0 0 8px rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.65);
+      text-shadow: 0 0 8px rgba(0,0,0,0.65);
       letter-spacing:0.3px;
       pointer-events:none;
-      z-index:20;
+      z-index:21;
     }
   
     /* Header: same width as buttons (330px) */
@@ -298,6 +298,19 @@
       padding:0 6px;
       box-sizing:border-box;
     }
+  
+    /* Mask the baked-in footer art so our footer text is clean */
+    #footerMask{
+      position:absolute;
+      left:50px;
+      top:896px;
+      width:330px;
+      height:26px;
+      background: rgba(0,0,0,0.45);
+      border-radius: 10px;
+      pointer-events:none;
+      z-index:20;
+    }
   </style>
 </head>
 
@@ -314,7 +327,7 @@
 
       <div id="headerBar" aria-hidden="true">
         <span class="hbL">THE DART ROOM</span>
-        <span class="hbC"><span class="hbVer">v1.2.3</span></span>
+        <span class="hbC"><span class="hbVer">v1.2.4</span></span>
         <span class="hbR">DART CALCULATOR</span>
       </div>
 
@@ -355,7 +368,7 @@
 
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
-<div id="footerPatch"></div>
+<div id="footerMask" aria-hidden="true"></div>
       <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room 2026. All Rights Reserved.</div>
     </div>
   </div>
