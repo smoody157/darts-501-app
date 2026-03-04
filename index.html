@@ -190,6 +190,26 @@
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
     }
+  
+    /* HUD text (fixed to viewport, not scaled) */
+    .hudText{
+      position:absolute;
+      left:0;
+      width:100%;
+      font-size:10px;
+      color: rgba(255,255,255,0.70);
+      text-shadow: 0 0 8px rgba(255,255,255,0.20);
+      text-align:center;
+      letter-spacing: 0.5px;
+      pointer-events:none;
+      z-index: 5;
+    }
+    #hudTop{ top:10px; }
+    #hudBottom{ bottom:10px; }
+
+    /* Hide legacy in-overlay HUD if present */
+    #version, #footer { display:none !important; }
+
   </style>
 </head>
 
@@ -201,11 +221,14 @@
     <!-- visible background -->
     <div id="bg-visible"></div>
 
-    <!-- overlay in base coordinate space -->
-    <div id="overlay">
-      <div id="version">v1.1.5 DROP15-UNITSHIFT</div>
+    
+    <!-- HUD (not scaled) -->
+    <div id="hudTop" class="hudText">v1.1.6 DROP16-CONSTRAIN</div>
+    <div id="hudBottom" class="hudText">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
 
-      <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+<!-- overlay in base coordinate space -->
+    <div id="overlay">
+<div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
 
@@ -242,9 +265,7 @@
 
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
-<div id="footerPatch"></div>
-      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
-    </div>
+</div>
   </div>
 
 <script>
@@ -268,36 +289,45 @@
     const Wv = stage.clientWidth;
     const Hv = stage.clientHeight;
 
-    // Fit entire image into viewport (contain)
-    const scale = Math.min(Wv / Wb, Hv / Hb);
+    // Reserve space for HUD: equal margin from borders (10px) and a 10px gap to content
+    const topHud = document.getElementById('hudTop');
+    const botHud = document.getElementById('hudBottom');
+
+    const topH = topHud ? Math.ceil(topHud.getBoundingClientRect().height) : 0;
+    const botH = botHud ? Math.ceil(botHud.getBoundingClientRect().height) : 0;
+
+    const M = 10;   // distance from border (matches your request)
+    const G = 10;   // gap between HUD and content
+    const reserveTop = M + topH + G;
+    const reserveBot = M + botH + G;
+
+    const HvAvail = Math.max(0, Hv - reserveTop - reserveBot);
+
+    // Fit entire image into the available vertical space (contain)
+    const scale = Math.min(Wv / Wb, HvAvail / Hb);
 
     const drawW = Math.round(Wb * scale);
     const drawH = Math.round(Hb * scale);
 
     const offsetX = Math.round((Wv - drawW) / 2);
-    const offsetY = Math.round((Hv - drawH) / 2);
-
-    const SHIFT_UP = 90; // move whole UI up so footer is visible // move whole screen up slightly so APPLY TURN isn't clipped // move whole screen up slightly so APPLY TURN isn't clipped // move whole screen up slightly so APPLY TURN isn't clipped
-    const offsetY2 = offsetY - SHIFT_UP;
+    const offsetY = Math.round(reserveTop + (HvAvail - drawH) / 2);
 
     // Visible background sized/positioned
     bgVisible.style.left = offsetX + 'px';
-    bgVisible.style.top = offsetY2 + 'px';
+    bgVisible.style.top = offsetY + 'px';
     bgVisible.style.width = drawW + 'px';
     bgVisible.style.height = drawH + 'px';
 
-    // If the jpeg name is wrong, fall back to outs.jpg automatically
-    // (GitHub is case-sensitive.)
+    // If the jpeg name is wrong, fall back to outs.jpg automatically (GitHub is case-sensitive.)
     bgVisible.style.backgroundImage = "url('OUTCHARTAPP.jpeg'), url('outs.jpg')";
 
     // Overlay transform: translate to offset, scale to match drawn bg,
-    // and also correct from base (430x932) to actual bg pixels (Wb,Hb)
-    // by scaling base-to-bg first, then viewport scale.
+    // and correct from base (430x932) to actual bg pixels (Wb,Hb)
     const baseW = 430, baseH = 932;
     const sx = (Wb / baseW) * scale;
     const sy = (Hb / baseH) * scale;
 
-    overlay.style.transform = `translate(${offsetX}px, ${offsetY2}px) scale(${sx}, ${sy})`;
+    overlay.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${sx}, ${sy})`;
   }
 
   function onReady(){
