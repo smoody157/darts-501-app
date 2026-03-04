@@ -157,15 +157,15 @@
     #pad {
       position:absolute;
       left:50px;
-      top:602px;
+      top:590px;
       width:330px;
-      height:272px;
+      height:256px;
       z-index:40;
     }
     #pad .hit{
       position:absolute;
       width:110px;
-      height:68px;
+      height:64px;
       background:transparent;
       border:none;
       padding:0;
@@ -218,7 +218,7 @@
     #footer{
       position:absolute;
       left:50px;
-      top:876px;
+      top:900px;
       width:330px;
       text-align:center;
       font-size:8px;
@@ -234,7 +234,7 @@
     #headerBar{
       position:absolute;
       left:50px;
-      top:8px;
+      top:14px;
       width:330px;
       display:flex;
       justify-content:space-between;
@@ -305,7 +305,7 @@
     #footerMask{
       position:absolute;
       left:50px;
-      top:872px;
+      top:896px;
       width:330px;
       height:28px;
       background: rgba(0,0,0,0.45);
@@ -329,7 +329,7 @@
 
       <div id="headerBar" aria-hidden="true">
         <span class="hbL">THE DART ROOM</span>
-        <span class="hbC"><span class="hbVer">v1.2.6</span></span>
+        <span class="hbC"><span class="hbVer">v1.2.8</span></span>
         <span class="hbR">DART CALCULATOR</span>
       </div>
 
@@ -353,19 +353,21 @@
       <button id="m701" class="hit mode" aria-label="701" onclick="APP.set(701)"></button>
 
       <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
-      <div id="pad" aria-label="Keypad">        <button class="hit" data-key="7" style="left:0px; top:0px;" aria-label="7"></button>
-        <button class="hit" data-key="8" style="left:110px; top:0px;" aria-label="8"></button>
-        <button class="hit" data-key="9" style="left:220px; top:0px;" aria-label="9"></button>
-        <button class="hit" data-key="4" style="left:0px; top:68px;" aria-label="4"></button>
-        <button class="hit" data-key="5" style="left:110px; top:68px;" aria-label="5"></button>
-        <button class="hit" data-key="6" style="left:220px; top:68px;" aria-label="6"></button>
-        <button class="hit" data-key="1" style="left:0px; top:136px;" aria-label="1"></button>
-        <button class="hit" data-key="2" style="left:110px; top:136px;" aria-label="2"></button>
-        <button class="hit" data-key="3" style="left:220px; top:136px;" aria-label="3"></button>
-        <button class="hit" data-key="del" style="left:0px; top:204px;" aria-label="DEL"></button>
-        <button class="hit" data-key="0" style="left:110px; top:204px;" aria-label="0"></button>
-        <button class="hit" data-key="donate" style="left:220px; top:204px;" aria-label="DONATE"></button>
+      <div id="pad" aria-label="Keypad">        <button class="hit" data-key="7" style="left:0px; top:0px;" aria-label="7" onclick="APP.key(7)"></button>
+        <button class="hit" data-key="8" style="left:110px; top:0px;" aria-label="8" onclick="APP.key(8)"></button>
+        <button class="hit" data-key="9" style="left:220px; top:0px;" aria-label="9" onclick="APP.key(9)"></button>
+        <button class="hit" data-key="4" style="left:0px; top:64px;" aria-label="4" onclick="APP.key(4)"></button>
+        <button class="hit" data-key="5" style="left:110px; top:64px;" aria-label="5" onclick="APP.key(5)"></button>
+        <button class="hit" data-key="6" style="left:220px; top:64px;" aria-label="6" onclick="APP.key(6)"></button>
+        <button class="hit" data-key="1" style="left:0px; top:128px;" aria-label="1" onclick="APP.key(1)"></button>
+        <button class="hit" data-key="2" style="left:110px; top:128px;" aria-label="2" onclick="APP.key(2)"></button>
+        <button class="hit" data-key="3" style="left:220px; top:128px;" aria-label="3" onclick="APP.key(3)"></button>
+        <button class="hit" data-key="del" style="left:0px; top:192px;" aria-label="DEL" onclick="APP.clr()"></button>
+        <button class="hit" data-key="0" style="left:110px; top:192px;" aria-label="0" onclick="APP.key(0)"></button>
+        <button class="hit" data-key="donate" style="left:220px; top:192px;" aria-label="DONATE" onclick="APP.donate()"></button>
         <div id="donateMask" aria-hidden="true"></div>
+        <div id="donateLabel" aria-hidden="true">DONATIONS<br>WELCOME</div>
+</div>
         <div id="donateLabel" aria-hidden="true">DONATIONS<br>WELCOME</div>
 </div>
 
@@ -509,7 +511,7 @@
     return best.seq;
   }
 
-  const APP = {
+  var APP = {
   s: 501,
   i: "",
 
