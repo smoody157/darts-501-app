@@ -157,25 +157,66 @@
     #pad {
       position:absolute;
       left:50px;
-      top:584px;
+      top:590px;           /* tune later if needed */
       width:330px;
       height:256px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 0;
       z-index:40;
     }
-    #pad .hit{
-      position:absolute;
-      width:110px;
-      height:64px;
-      background:transparent;
-      border:none;
-      padding:0;
-      margin:0;
-      outline:none;
-      z-index:41;
+    #pad button.key{
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      outline: none;
       -webkit-tap-highlight-color: rgba(0,0,0,0);
+      position: relative;
+    }
+    /* Debug mode: show hitboxes */
+    body.debug #pad button.key{
+      outline: 1px solid rgba(0,255,255,0.85);
+      background: rgba(0,255,255,0.08);
+    }
+    body.debug #pad button.key::after{
+      content: attr(data-key);
+      position:absolute;
+      left:6px;
+      top:6px;
+      font-size:11px;
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 0 6px rgba(0,0,0,0.8);
+      pointer-events:none;
     }
 
-
+    /* Donate text: small overlay only (button unchanged) */
+    #pad button.key.donate::before{
+      content:"";
+      position:absolute;
+      inset:10px 10px 10px 10px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.65);
+      pointer-events:none;
+    }
+    #pad button.key.donate .donTxt{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      font-size:5px;
+      letter-spacing:0.8px;
+      line-height:1.05;
+      color: rgba(255,255,255,0.88);
+      text-shadow: 0 0 8px rgba(0,0,0,0.80);
+      pointer-events:none;
+      text-align:center;
+    }
     /* rows */
     #pad .hit:nth-of-type(1), #pad .hit:nth-of-type(2), #pad .hit:nth-of-type(3){ top:0%; }
     #pad .hit:nth-of-type(4), #pad .hit:nth-of-type(5), #pad .hit:nth-of-type(6){ top:25%; }
@@ -218,7 +259,7 @@
     #footer{
       position:absolute;
       left:50px;
-      top:900px;
+      top:872px;
       width:330px;
       text-align:center;
       font-size:8px;
@@ -234,7 +275,7 @@
     #headerBar{
       position:absolute;
       left:50px;
-      top:8px;
+      top:18px;
       width:330px;
       display:flex;
       justify-content:space-between;
@@ -267,45 +308,11 @@
     }
   
     /* Donations cell mask + smaller label (text only) */
-    #donateMask{
-      position:absolute;
-      left:66.6666%;
-      top:75%;
-      width:33.3333%;
-      height:25%;
-      background: rgba(0,0,0,0.65);
-      border-radius: 14px;
-      pointer-events:none;
-      z-index:42;
-    }
-    #donateLabel{
-      position:absolute;
-      left:66.6666%;
-      top:75%;
-      width:33.3333%;
-      height:25%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      font-size:5px;
-      letter-spacing:1px;
-      opacity:.92;
-      color: rgba(255,255,255,0.88);
-      text-shadow: 0 0 8px rgba(0,0,0,0.75);
-      pointer-events:none;
-      text-align:center;
-      line-height:1.05;
-      padding:0 6px;
-      box-sizing:border-box;
-      z-index:43;
-    }
-  
     /* Mask the baked-in footer art so our footer text is clean */
     #footerMask{
       position:absolute;
       left:50px;
-      top:896px;
+      top:868px;
       width:330px;
       height:28px;
       background: rgba(0,0,0,0.45);
@@ -329,7 +336,7 @@
 
       <div id="headerBar" aria-hidden="true">
         <span class="hbL">THE DART ROOM</span>
-        <span class="hbC"><span class="hbVer">v1.2.9</span></span>
+        <span class="hbC"><span class="hbVer" id="verTap">v1.3.1</span></span>
         <span class="hbR">DART CALCULATOR</span>
       </div>
 
@@ -353,19 +360,23 @@
       <button id="m701" class="hit mode" aria-label="701" onclick="APP.set(701)"></button>
 
       <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
-      <div id="pad" aria-label="Keypad">        <button class="hit" data-key="7" style="left:0px; top:0px;" aria-label="7" onclick="APP.key(7)"></button>
-        <button class="hit" data-key="8" style="left:110px; top:0px;" aria-label="8" onclick="APP.key(8)"></button>
-        <button class="hit" data-key="9" style="left:220px; top:0px;" aria-label="9" onclick="APP.key(9)"></button>
-        <button class="hit" data-key="4" style="left:0px; top:64px;" aria-label="4" onclick="APP.key(4)"></button>
-        <button class="hit" data-key="5" style="left:110px; top:64px;" aria-label="5" onclick="APP.key(5)"></button>
-        <button class="hit" data-key="6" style="left:220px; top:64px;" aria-label="6" onclick="APP.key(6)"></button>
-        <button class="hit" data-key="1" style="left:0px; top:128px;" aria-label="1" onclick="APP.key(1)"></button>
-        <button class="hit" data-key="2" style="left:110px; top:128px;" aria-label="2" onclick="APP.key(2)"></button>
-        <button class="hit" data-key="3" style="left:220px; top:128px;" aria-label="3" onclick="APP.key(3)"></button>
-        <button class="hit" data-key="del" style="left:0px; top:192px;" aria-label="DEL" onclick="APP.clr()"></button>
-        <button class="hit" data-key="0" style="left:110px; top:192px;" aria-label="0" onclick="APP.key(0)"></button>
-        <button class="hit" data-key="donate" style="left:220px; top:192px;" aria-label="DONATE" onclick="APP.donate()"></button>
-        <div id="donateMask" aria-hidden="true"></div>
+      <div id="pad" aria-label="Keypad">
+        <button class="key" data-key="7" onclick="APP.key(7)"></button>
+        <button class="key" data-key="8" onclick="APP.key(8)"></button>
+        <button class="key" data-key="9" onclick="APP.key(9)"></button>
+
+        <button class="key" data-key="4" onclick="APP.key(4)"></button>
+        <button class="key" data-key="5" onclick="APP.key(5)"></button>
+        <button class="key" data-key="6" onclick="APP.key(6)"></button>
+
+        <button class="key" data-key="1" onclick="APP.key(1)"></button>
+        <button class="key" data-key="2" onclick="APP.key(2)"></button>
+        <button class="key" data-key="3" onclick="APP.key(3)"></button>
+
+        <button class="key" data-key="DEL" onclick="APP.clr()"></button>
+        <button class="key" data-key="0" onclick="APP.key(0)"></button>
+        <button class="key donate" data-key="DONATE" onclick="APP.donate()"><span class="donTxt">DONATIONS<br>WELCOME</span></button>
+      </div>
         <div id="donateLabel" aria-hidden="true">DONATIONS<br>WELCOME</div>
 </div>
         <div id="donateLabel" aria-hidden="true">DONATIONS<br>WELCOME</div>
@@ -408,7 +419,7 @@
     const offsetX = Math.round((Wv - drawW) / 2);
     const offsetY = Math.round((Hv - drawH) / 2);
 
-    const SHIFT_UP = 4; // tiny lift to reduce bottom padding without clipping logo
+    const SHIFT_UP = 8; // lift whole UI slightly to reduce top gap and help footer visibility
     const offsetY2 = Math.max(0, offsetY - SHIFT_UP);
 
     // Visible background sized/positioned
@@ -565,6 +576,24 @@
 };
 
 APP.draw();
+
+
+  // Debug: triple-tap the version text to toggle hitbox outlines
+  (function(){
+    const el = document.getElementById('verTap');
+    if(!el) return;
+    let taps = 0;
+    let tmr = null;
+    el.addEventListener('click', () => {
+      taps++;
+      if(tmr) clearTimeout(tmr);
+      tmr = setTimeout(() => { taps = 0; }, 550);
+      if(taps >= 3){
+        document.body.classList.toggle('debug');
+        taps = 0;
+      }
+    });
+  })();
 
 </script>
 </body>
