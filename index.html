@@ -96,6 +96,8 @@
       color: rgba(255,255,255,0.75);
       font-weight: 800;
       text-shadow: 0 0 8px rgba(255,255,255,0.12);
+      z-index: 6;
+      pointer-events: none;
     }
 
     .dart-val {
@@ -104,105 +106,18 @@
       text-align: center;
       font-size: 25px;
       line-height: 1;
-    }
-
-    /* Dart labels ABOVE values, per your request */
-    \1372px\2 left: 40px; }
-    \1372px\2 left: 164px; }
-    \1372px\2 left: 288px; }
-    \1388px\2 left: 40px; }
-    \1388px\2 left: 164px; }
-    \1388px\2 left: 288px; }
-
-    #input {
-      position: absolute;
-      top: 468px;
-      left: 0;
-      width: 430px;
-      font-size: 52px;
-      text-align: center;
-      color: #72d6ff;
-      text-shadow: 0 0 15px rgba(0,210,255,0.65);
-      font-weight: 900;
+      z-index: 6;
       pointer-events: none;
     }
 
-    /* Top header bar */
-    #topbar{
-      position:absolute;
-      top: 28px;
-      left: 14px;
-      width: 402px; /* 430 - 28 padding */
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      pointer-events:none;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 1px;
-      color: rgba(130,220,255,0.95);
-      text-shadow: 0 0 10px rgba(0,210,255,0.25);
-    }
-    #topLeft, #topRight{ color: rgba(255,255,255,0.72); text-shadow: 0 0 8px rgba(0,0,0,0.5); }
-    #topCenter{ color: rgba(130,220,255,0.95); }
+    /* Dart labels ABOVE values, per your request */
+    #dl1 { top: 372px; left: 40px; }
+    #dl2 { top: 372px; left: 164px; }
+    #dl3 { top: 372px; left: 288px; }
 
-    #version {
-      position: absolute;
-      top: 24px;
-      right: 14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.55);
-      text-shadow: 0 0 6px rgba(0,0,0,0.45);
-    }
-
-    /* Donate artwork text patch (embedded text is in the JPEG) */
-    #donateMask{
-      position:absolute;
-      /* anchor to keypad grid origin */
-      top: 560px;   /* pad top */
-      left: 50px;   /* pad left */
-
-      /* donate key is bottom-right cell: col 3, row 4 */
-      transform: translate(220px, 225px); /* (2*110, 3*75) */
-
-      /* slightly inset so we don't cover button edge glow */
-      width: 110px;
-      height: 75px;
-      padding: 0;
-      border-radius: 14px;
-
-      /* OPAQUE enough to fully hide embedded background text */
-      background: rgba(0,0,0,0.78);
-
-      pointer-events:none;
-      z-index: 2;
-    }
-#donateText{
-      position:absolute;
-      top: 560px;
-      left: 50px;
-      transform: translate(220px, 225px);
-      width: 110px;
-      height: 75px;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-
-      /* VERY small, per request */
-      font-size: 4px;
-      line-height: 1.0;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-
-      color: rgba(255,85,170,0.95);
-      text-shadow: none; /* remove shadowy blob look */
-
-      pointer-events:none;
-      z-index: 3;
-    }
+    #d1  { top: 388px; left: 40px; }
+    #d2  { top: 388px; left: 164px; }
+    #d3  { top: 388px; left: 288px; }
 /* Invisible hit zones (buttons) */
     .hit {
       position: absolute;
@@ -216,7 +131,9 @@
     }
 
     /* Mode buttons - aligned to your original coords */
-    .mode { top: 375px; width: 60px; height: 40px; }
+    .mode { top: 375px; width: 60px; height: 40px; 
+      z-index: 20;
+    }
     #m301 { left: 125px; }
     #m501 { left: 185px; }
     #m701 { left: 245px; }
@@ -264,7 +181,7 @@
     <div id="overlay">
       <div id="topbar" aria-hidden="true">
         <div id="topLeft">DART CALCULATOR</div>
-        <div id="topCenter">v1.0.0</div>
+        <div id="topCenter">v1.0.1</div>
         <div id="topRight">THE DART ROOM</div>
       </div>
 <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
