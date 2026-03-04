@@ -1,199 +1,238 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dart Calculator</title>
-<style>
-body{margin:0;background:#000;font-family:Arial,Helvetica,sans-serif;}
-#app{width:100vw;height:100vh;background:url('OUTCHARTAPP.jpeg') center/contain no-repeat;position:relative;color:white;}
 
-#brand{
-position:absolute;
-top:15%;
-width:100%;
+<style>
+body{
+margin:0;
+background:#000;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
 text-align:center;
-font-size:14px;
-letter-spacing:2px;
-color:#e5e5e5;
 }
 
-#score{
-position:absolute;
-top:22%;
+.container{
+max-width:420px;
+margin:auto;
+position:relative;
+}
+
+.logo{
 width:100%;
-text-align:center;
-font-size:82px;
-font-weight:900;
-background:linear-gradient(#8cecff,#ff4fa1);
+}
+
+.designed{
+margin-top:-18px;
+font-size:12px;
+letter-spacing:2px;
+color:#ccc;
+}
+
+.scorelabel{
+color:#e6c97a;
+font-weight:bold;
+letter-spacing:2px;
+margin-top:10px;
+}
+
+.score{
+font-size:90px;
+font-weight:bold;
+background:linear-gradient(#8ee7ff,#ff4fa0);
 -webkit-background-clip:text;
 color:transparent;
+margin-top:5px;
 }
 
-.mode{
-position:absolute;
-top:36%;
-width:100%;
+.modes{
 display:flex;
 justify-content:center;
-gap:24px;
+gap:18px;
+margin-top:10px;
 }
 
-.mode button{
-padding:10px 22px;
-font-weight:bold;
-border-radius:14px;
+.modebtn{
 border:2px solid #6ad7ff;
-background:rgba(0,0,0,0.6);
+border-radius:14px;
+padding:8px 18px;
 color:#ffe28a;
-box-shadow:0 0 10px #6ad7ff;
+background:rgba(0,0,0,.5);
+font-weight:bold;
 }
 
-#darts{
-position:absolute;
-top:46%;
-width:100%;
+.darts{
 display:flex;
-justify-content:space-around;
+justify-content:space-between;
+margin-top:18px;
 }
 
-.dart{text-align:center;font-weight:bold;}
-
-#input{
-position:absolute;
-top:58%;
-width:100%;
-text-align:center;
-font-size:40px;
+.dartbox{
+width:30%;
+border:2px solid #6ad7ff;
+border-radius:14px;
+padding:10px;
 }
 
-#pad{
-position:absolute;
-top:64%;
-width:100%;
+.input{
+border:2px solid #e6c97a;
+border-radius:16px;
+margin:18px 10px;
+padding:14px;
+font-size:30px;
+}
+
+.pad{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:10px;
-padding:0 40px;
+padding:0 10px;
 }
 
-#pad button{
-padding:20px;
-font-size:24px;
-border-radius:14px;
+.pad button{
+padding:18px;
+font-size:22px;
+border-radius:12px;
 border:none;
-background:rgba(255,255,255,.1);
-color:white;
+background:#1a1a1a;
+color:#fff;
 }
 
-#donate{
-border:3px solid #ff3a8b !important;
-color:#ff3a8b !important;
+.del{
+background:#ff2e7a;
+}
+
+.donate{
+border:3px solid #ff2e7a;
+color:#ff2e7a;
+background:transparent;
 font-weight:bold;
 }
 
-#apply{
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
-padding:18px 80px;
-border-radius:20px;
+.apply{
+margin-top:14px;
+padding:18px;
+border-radius:18px;
 border:none;
-background:#9ecbff;
-color:black;
+background:#9dc6ff;
+color:#000;
 font-weight:bold;
+width:90%;
 }
 
 footer{
-position:absolute;
-bottom:0;
-width:100%;
-text-align:center;
 font-size:12px;
-opacity:.85;
+margin-top:12px;
+opacity:.8;
 }
 </style>
 </head>
 
 <body>
-<div id="app">
 
-<div id="brand">Designed by Steve's Graphic Designs</div>
+<div class="container">
 
-<div id="score">501</div>
+<img src="OUTCHARTAPP.jpeg" class="logo">
 
-<div class="mode">
-<button onclick="setMode(301)">301</button>
-<button onclick="setMode(501)">501</button>
-<button onclick="setMode(701)">701</button>
+<div class="designed">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+
+<div class="scorelabel">SCORE REMAINING</div>
+<div class="score" id="score">501</div>
+
+<div class="modes">
+<button class="modebtn" onclick="setMode(301)">301</button>
+<button class="modebtn" onclick="setMode(501)">501</button>
+<button class="modebtn" onclick="setMode(701)">701</button>
 </div>
 
-<div id="darts">
-<div class="dart">DART 1<br>-</div>
-<div class="dart">DART 2<br>-</div>
-<div class="dart">DART 3<br>-</div>
+<div class="darts">
+<div class="dartbox">DART 1<br><span id="d1">-</span></div>
+<div class="dartbox">DART 2<br><span id="d2">-</span></div>
+<div class="dartbox">DART 3<br><span id="d3">-</span></div>
 </div>
 
-<div id="input">---</div>
+<div class="input" id="input">---</div>
 
-<div id="pad">
-<button onclick="key(7)">7</button>
-<button onclick="key(8)">8</button>
-<button onclick="key(9)">9</button>
-<button onclick="key(4)">4</button>
-<button onclick="key(5)">5</button>
-<button onclick="key(6)">6</button>
-<button onclick="key(1)">1</button>
-<button onclick="key(2)">2</button>
-<button onclick="key(3)">3</button>
-<button onclick="del()">DEL</button>
-<button onclick="key(0)">0</button>
-<button id="donate" onclick="donate()">DONATIONS<br>WELCOME</button>
+<div class="pad">
+<button onclick="num(7)">7</button>
+<button onclick="num(8)">8</button>
+<button onclick="num(9)">9</button>
+<button onclick="num(4)">4</button>
+<button onclick="num(5)">5</button>
+<button onclick="num(6)">6</button>
+<button onclick="num(1)">1</button>
+<button onclick="num(2)">2</button>
+<button onclick="num(3)">3</button>
+<button class="del" onclick="del()">DEL</button>
+<button onclick="num(0)">0</button>
+<button class="donate" onclick="donate()">DONATIONS<br>WELCOME</button>
 </div>
 
-<button id="apply" onclick="apply()">APPLY TURN</button>
+<button class="apply" onclick="applyTurn()">APPLY TURN</button>
 
-<footer>Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</footer>
+<footer>
+Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.
+</footer>
 
 </div>
 
 <script>
-let score=501;
-let input="";
 
-function draw(){
-document.getElementById("score").innerText=score;
-document.getElementById("input").innerText=input||"---";
+let score=501
+let input=""
+let dart=1
+
+function update(){
+document.getElementById("score").innerText=score
+document.getElementById("input").innerText=input||"---"
 }
 
 function setMode(v){
-score=v;
-input="";
-draw();
+score=v
+dart=1
+document.getElementById("d1").innerText="-"
+document.getElementById("d2").innerText="-"
+document.getElementById("d3").innerText="-"
+input=""
+update()
 }
 
-function key(n){
-if(input.length<3) input+=n;
-draw();
+function num(n){
+if(input.length<3){
+input+=n
+update()
+}
 }
 
 function del(){
-input="";
-draw();
+input=""
+update()
 }
 
-function apply(){
-let v=parseInt(input||0);
-score=Math.max(0,score-v);
-input="";
-draw();
+function applyTurn(){
+
+if(!input)return
+
+let v=parseInt(input)
+
+score=Math.max(0,score-v)
+
+document.getElementById("d"+dart).innerText=v
+
+dart++
+if(dart>3)dart=1
+
+input=""
+update()
 }
 
 function donate(){
-window.open("https://venmo.com/u/Steve-Moody-8","_blank");
+window.open("https://venmo.com/u/Steve-Moody-8","_blank")
 }
 
-draw();
+update()
+
 </script>
 
 </body>
