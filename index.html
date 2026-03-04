@@ -13,101 +13,62 @@
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   }
 
-  /* Center the fixed artboard and scale it to fit the phone */
-  #wrap {
+  /* Fullscreen stage; image is letterboxed via JS (contain) */
+  #stage {
     position:fixed; inset:0;
+    background: #000;
+    overflow:hidden;
+  }
+  #bg {
+    position:absolute; inset:0;
+    background: #000 center/contain no-repeat;
+  }
+
+  /* Overlay text never blocks taps */
+  .overlay {
+    position:absolute;
     display:flex;
     align-items:center;
     justify-content:center;
-  }
-  #stage{
-    position:relative;
-    width: 1015px;
-    height: 2166px;
-    transform-origin: top left;
-    background: url('IMG_7603.jpeg') no-repeat 0 0 / 1015px 2166px;
-  }
-
-  /* Overlay should NEVER block taps */
-  #overlay {
-    position:absolute; inset:0;
+    text-align:center;
     pointer-events:none;
   }
 
-  /* Only add what is NOT already in the background */
   #version {
-    position:absolute;
-    top: 2.2%;
-    left: 0;
-    width: 100%;
-    text-align:center;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-size: 26px;
-    letter-spacing: 2px;
     color: rgba(0,140,255,0.95);
     text-shadow: 0 0 18px rgba(0,140,255,0.22);
     font-weight: 900;
+    letter-spacing: 0.08em;
   }
 
   #brand {
-    position:absolute;
-    top: 16.4%;
-    left: 0;
-    width: 100%;
-    text-align:center;
-    font-size: 16px;
-    letter-spacing: 2px;
     color: rgba(255,255,255,0.80);
     text-shadow: 0 0 10px rgba(0,0,0,0.55);
     font-weight: 800;
+    letter-spacing: 0.12em;
   }
 
-  /* Remaining score number (dynamic) */
   #score {
-    position:absolute;
-    top: 23.6%;
-    left: 0;
-    width: 100%;
-    text-align:center;
-    font-size: 210px;
-    line-height: 1;
     color: rgba(255,255,255,0.98);
     text-shadow: 0 0 22px rgba(255,255,255,0.10), 0 0 26px rgba(0,0,0,0.60);
     font-weight: 900;
   }
 
-  /* Dart suggestion VALUES ONLY (labels are on the background already) */
-  .dart-val {
-    position:absolute;
-    width: 22%;
-    text-align:center;
-    font-size: 88px;
-    letter-spacing: 2px;
+  .dart {
     color: rgba(130,220,255,0.95);
     text-shadow: 0 0 16px rgba(0,210,255,0.22), 0 0 18px rgba(0,0,0,0.55);
     font-weight: 900;
+    letter-spacing: 0.04em;
   }
-  #d1 { top: 41.5%; left: 13.5%; }
-  #d2 { top: 41.5%; left: 39.0%; }
-  #d3 { top: 41.5%; left: 64.5%; }
 
-  /* Typed input in the long "triangle/rectangle" area */
   #input {
-    position:absolute;
-    top: 52.8%;
-    left: 12%;
-    width: 76%;
-    height: 5.2%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 110px;
-    letter-spacing: 8px;
     color: rgba(0,0,0,0.88);
     font-weight: 900;
+    letter-spacing: 0.18em;
   }
 
-  /* INTERACTIVE AREAS (transparent buttons) */
+  /* Tap zones */
   .tap {
     position:absolute;
     background: transparent;
@@ -119,18 +80,9 @@
     touch-action: manipulation;
   }
 
-  /* 301 / 501 / 701 buttons */
-  #m301 { top: 33.7%; left: 31.0%; width: 12.5%; height: 3.2%; }
-  #m501 { top: 33.7%; left: 44.0%; width: 12.5%; height: 3.2%; }
-  #m701 { top: 33.7%; left: 57.0%; width: 12.5%; height: 3.2%; }
-
-  /* Keypad: 3x4 grid */
+  /* Keypad grid */
   #pad {
     position:absolute;
-    top: 61.7%;
-    left: 10.5%;
-    width: 79.0%;
-    height: 22.6%;
     display:grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
@@ -146,60 +98,48 @@
     pointer-events:auto;
     touch-action: manipulation;
   }
-
-  /* Apply Turn button */
-  #apply { top: 85.9%; left: 10.5%; width: 79.0%; height: 4.6%; }
-
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div id="stage">
-    <div id="overlay" aria-hidden="true">
-      <div id="version">v1.1.0</div>
-      <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
-      <div id="score">501</div>
-      <div id="d1" class="dart-val">-</div>
-      <div id="d2" class="dart-val">-</div>
-      <div id="d3" class="dart-val">-</div>
-      <div id="input">---</div>
-    </div>
+<div id="stage">
+  <div id="bg"></div>
 
-    <button id="m301" class="tap" onclick="APP.set(301)" aria-label="301"></button>
-    <button id="m501" class="tap" onclick="APP.set(501)" aria-label="501"></button>
-    <button id="m701" class="tap" onclick="APP.set(701)" aria-label="701"></button>
+  <div id="version" class="overlay">v1.1.1</div>
+  <div id="brand" class="overlay">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
-    <div id="pad" aria-label="Keypad">
-      <button onclick="APP.key(7)" aria-label="7"></button>
-      <button onclick="APP.key(8)" aria-label="8"></button>
-      <button onclick="APP.key(9)" aria-label="9"></button>
-      <button onclick="APP.key(4)" aria-label="4"></button>
-      <button onclick="APP.key(5)" aria-label="5"></button>
-      <button onclick="APP.key(6)" aria-label="6"></button>
-      <button onclick="APP.key(1)" aria-label="1"></button>
-      <button onclick="APP.key(2)" aria-label="2"></button>
-      <button onclick="APP.key(3)" aria-label="3"></button>
-      <button onclick="APP.clr()" aria-label="Delete"></button>
-      <button onclick="APP.key(0)" aria-label="0"></button>
-      <button onclick="APP.donate()" aria-label="Donate"></button>
-    </div>
+  <div id="score" class="overlay">501</div>
+  <div id="d1" class="overlay dart">-</div>
+  <div id="d2" class="overlay dart">-</div>
+  <div id="d3" class="overlay dart">-</div>
+  <div id="input" class="overlay">---</div>
 
-    <button id="apply" class="tap" onclick="APP.apply()" aria-label="Apply Turn"></button>
+  <button id="m301" class="tap" aria-label="301"></button>
+  <button id="m501" class="tap" aria-label="501"></button>
+  <button id="m701" class="tap" aria-label="701"></button>
+
+  <div id="pad" aria-label="Keypad">
+    <button data-k="7" aria-label="7"></button>
+    <button data-k="8" aria-label="8"></button>
+    <button data-k="9" aria-label="9"></button>
+    <button data-k="4" aria-label="4"></button>
+    <button data-k="5" aria-label="5"></button>
+    <button data-k="6" aria-label="6"></button>
+    <button data-k="1" aria-label="1"></button>
+    <button data-k="2" aria-label="2"></button>
+    <button data-k="3" aria-label="3"></button>
+    <button data-k="DEL" aria-label="Delete"></button>
+    <button data-k="0" aria-label="0"></button>
+    <button data-k="DONATE" aria-label="Donate"></button>
   </div>
+
+  <button id="apply" class="tap" aria-label="Apply Turn"></button>
 </div>
 
 <script>
-  function fitStage(){
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const scale = Math.min(vw / 1015, vh / 2166);
-    const stage = document.getElementById('stage');
-    stage.style.transform = 'scale(' + scale + ')';
-  }
-  window.addEventListener('resize', fitStage);
-  window.addEventListener('load', fitStage);
-  fitStage();
-/* Out chart embedded from your spreadsheet (used for <=170) */
+  const BG_SRC = "IMG_7603.jpeg";
+  const LAYOUT = {"version":{"x":0.5,"y":0.035,"w":0.6,"h":0.03},"brand":{"x":0.5,"y":0.175,"w":0.9,"h":0.03},"score":{"x":0.5,"y":0.285,"w":0.9,"h":0.12},"d1":{"x":0.25,"y":0.43,"w":0.22,"h":0.06},"d2":{"x":0.5,"y":0.43,"w":0.22,"h":0.06},"d3":{"x":0.75,"y":0.43,"w":0.22,"h":0.06},"input":{"x":0.5,"y":0.545,"w":0.8,"h":0.07},"m301":{"x":0.375,"y":0.355,"w":0.12,"h":0.045},"m501":{"x":0.5,"y":0.355,"w":0.12,"h":0.045},"m701":{"x":0.625,"y":0.355,"w":0.12,"h":0.045},"pad":{"x":0.5,"y":0.735,"w":0.82,"h":0.26},"apply":{"x":0.5,"y":0.902,"w":0.82,"h":0.055}};
+
+  // Out chart embedded (<=170). 171+ -> T20 T20 T20
   const OUT_SHOT = [null,null,"D1","S1","D2","S1","D3","S3","D4","S1","D5","S3","D6","S5","D7","S7","D8","S9","D9","S3","D10","S5","D11","S7","D12","S9","D13","S11","D14","S13","D15","S15","D16","S1","D17","S3","D18","S5","D19","S7","D20","S9","S10","S11","S12","S13","S6","S7","S8","S9","S10","S11","S12","S13","S14","S15","S16","S17","S18","S19","S20","SB","T10","T13","T16","SB","T14","T17","T16","T15","T10","T13","T16","T19","T14","T17","T16","T19","T18","T19","D20","T19","DB","T17","T20","T15","T18","T17","T20","T19","T18","T17","T20","T19","T18","T19","T20","T19","T20","T19","T20","T19","T20","T19","T16","DB","T20","T19","T19","T20","T19","T19","T20","T19","T18","T19","T20","T20","T20","T19","T20","T20","T18","T19","T20","DB","T19","T20","T18","T19","T20","T17","DB","T20","T18","DB","T20","T20","T19","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20"];
   const OUT_REM  = [null,null,0,2,0,4,0,4,0,8,0,8,0,8,0,8,0,8,0,16,0,16,0,16,0,16,0,16,0,16,0,16,0,32,0,32,0,32,0,32,0,32,32,32,32,32,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,36,32,24,16,40,24,16,20,24,40,32,24,16,32,24,28,20,24,22,40,24,32,32,24,40,32,36,28,32,36,40,32,36,40,38,36,40,38,42,40,44,42,46,56,55,46,50,51,49,53,54,52,56,60,58,56,57,58,62,60,61,68,66,64,75,69,67,74,72,70,80,82,73,80,85,76,77,81,82,80,81,82,83,84,85,86,87,88,89,93,91,92,93,97,95,96,97,98,99,100,101,102,103,107,105,106,107,108,109,110,111,112,113,114,115,116,117,118,122,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,182,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,202,200,201,202,203,204,208,206,207,211,209,210,214,212,219,217,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,242,240,241,248,246,244,245,249,247,248,252,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441];
 
@@ -211,13 +151,101 @@
     return s;
   }
 
+  const IMG = new Image();
+  IMG.src = BG_SRC;
+
+  function place(id, rect, imgW, imgH, offX, offY){
+    const el = document.getElementById(id);
+    if (!el) return;
+    const w = rect.w * imgW;
+    const h = rect.h * imgH;
+    const x = offX + (rect.x * imgW) - (w/2);
+    const y = offY + (rect.y * imgH) - (h/2);
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.width = w + "px";
+    el.style.height = h + "px";
+  }
+
+  function fit(){
+    const stage = document.getElementById("stage");
+    const bg = document.getElementById("bg");
+
+    const vw = stage.clientWidth;
+    const vh = stage.clientHeight;
+
+    const iw = IMG.naturalWidth || 1015;
+    const ih = IMG.naturalHeight || 2166;
+    const ar = iw / ih;
+
+    let imgW, imgH, offX, offY;
+    if ((vw / vh) > ar) {
+      // fit height
+      imgH = vh;
+      imgW = imgH * ar;
+      offX = (vw - imgW) / 2;
+      offY = 0;
+    } else {
+      // fit width
+      imgW = vw;
+      imgH = imgW / ar;
+      offX = 0;
+      offY = (vh - imgH) / 2;
+    }
+
+    bg.style.backgroundImage = `url('${BG_SRC}')`;
+    bg.style.backgroundSize = `${imgW}px ${imgH}px`;
+    bg.style.backgroundPosition = `${offX}px ${offY}px`;
+
+    // Place overlays & tap zones
+    place("version", LAYOUT.version, imgW, imgH, offX, offY);
+    place("brand",   LAYOUT.brand,   imgW, imgH, offX, offY);
+    place("score",   LAYOUT.score,   imgW, imgH, offX, offY);
+    place("d1",      LAYOUT.d1,      imgW, imgH, offX, offY);
+    place("d2",      LAYOUT.d2,      imgW, imgH, offX, offY);
+    place("d3",      LAYOUT.d3,      imgW, imgH, offX, offY);
+    place("input",   LAYOUT.input,   imgW, imgH, offX, offY);
+
+    // Tap zones
+    place("m301", LAYOUT.m301, imgW, imgH, offX, offY);
+    place("m501", LAYOUT.m501, imgW, imgH, offX, offY);
+    place("m701", LAYOUT.m701, imgW, imgH, offX, offY);
+    place("apply",LAYOUT.apply,imgW, imgH, offX, offY);
+
+    // Pad (grid container)
+    const pad = document.getElementById("pad");
+    const pr = LAYOUT.pad;
+    const pw = pr.w * imgW;
+    const ph = pr.h * imgH;
+    const px = offX + (pr.x * imgW) - (pw/2);
+    const py = offY + (pr.y * imgH) - (ph/2);
+    pad.style.left = px + "px";
+    pad.style.top = py + "px";
+    pad.style.width = pw + "px";
+    pad.style.height = ph + "px";
+
+    // Responsive font sizes based on image height
+    document.getElementById("version").style.fontSize = Math.max(10, imgH*0.012) + "px";
+    document.getElementById("brand").style.fontSize   = Math.max(8,  imgH*0.007) + "px";
+    document.getElementById("score").style.fontSize   = Math.max(36, imgH*0.090) + "px";
+    document.getElementById("d1").style.fontSize      = Math.max(16, imgH*0.038) + "px";
+    document.getElementById("d2").style.fontSize      = Math.max(16, imgH*0.038) + "px";
+    document.getElementById("d3").style.fontSize      = Math.max(16, imgH*0.038) + "px";
+    document.getElementById("input").style.fontSize   = Math.max(18, imgH*0.050) + "px";
+  }
+
+  window.addEventListener("resize", fit);
+  IMG.onload = fit;
+  // If the image fails to load, still try with fallback sizes
+  setTimeout(fit, 300);
+
   const APP = {
     s: 501,
     i: "",
 
     draw(){
-      document.getElementById('score').innerText = this.s;
-      document.getElementById('input').innerText = this.i || "---";
+      document.getElementById("score").textContent = this.s;
+      document.getElementById("input").textContent = this.i || "---";
     },
 
     set(n){
@@ -227,16 +255,20 @@
       this.updateOut();
     },
 
-    key(n){
+    key(k){
+      if (k === "DEL") {
+        this.i = "";
+        this.draw();
+        return;
+      }
+      if (k === "DONATE") {
+        window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
+        return;
+      }
       if (this.i.length < 3) {
-        this.i += String(n);
+        this.i += String(k);
         this.draw();
       }
-    },
-
-    clr(){
-      this.i = "";
-      this.draw();
     },
 
     updateOut(){
@@ -257,16 +289,16 @@
           if (cur === 0) break;
         }
       }
-      document.getElementById('d1').innerText = darts[0];
-      document.getElementById('d2').innerText = darts[1];
-      document.getElementById('d3').innerText = darts[2];
+      document.getElementById("d1").textContent = darts[0];
+      document.getElementById("d2").textContent = darts[1];
+      document.getElementById("d3").textContent = darts[2];
     },
 
     apply(){
       const v = parseInt(this.i, 10);
       if (!isNaN(v)) {
         const next = this.s - v;
-        if (next < 0 || next === 1) { // bust or leave 1
+        if (next < 0 || next === 1) {
           this.i = "";
           this.draw();
           return;
@@ -275,16 +307,22 @@
         this.i = "";
         this.draw();
         this.updateOut();
-        return;
+      } else {
+        this.i = "";
+        this.draw();
       }
-      this.i = "";
-      this.draw();
-    },
-
-    donate(){
-      window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
     }
   };
+
+  // Wire taps
+  document.getElementById("m301").addEventListener("click", () => APP.set(301));
+  document.getElementById("m501").addEventListener("click", () => APP.set(501));
+  document.getElementById("m701").addEventListener("click", () => APP.set(701));
+  document.getElementById("apply").addEventListener("click", () => APP.apply());
+
+  document.querySelectorAll("#pad button").forEach(btn => {
+    btn.addEventListener("click", () => APP.key(btn.dataset.k));
+  });
 
   APP.draw();
   APP.updateOut();
