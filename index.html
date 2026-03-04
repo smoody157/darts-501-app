@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Dart Room – Dart Calculator</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -155,18 +155,53 @@
 
     /* Keypad grid area (3 columns). We map each cell precisely. */
     #pad {
-    position:absolute;
-    left:50px;
-    top:590px;            /* moved DOWN to stop lower rows triggering the row above */
-    width:330px;
-    height:256px;         /* 64px * 4 rows */
-    display:grid;
-    grid-template-columns:110px 110px 110px;  /* 330 / 3 */
-    grid-template-rows:64px 64px 64px 64px;   /* 256 / 4 */
-    gap: 0;
-}
-    #pad .hit { position: relative; width: 100%; height: 100%; }
+      position:absolute;
+      left:50px;
+      top:590px;
+      width:330px;
+      height:256px;
+    }
+    #pad .hit{
+      position:absolute;
+      width:33.3333%;
+      height:25%;
+      background:transparent;
+      border:none;
+      padding:0;
+      margin:0;
+      outline:none;
+    }
+    /* columns */
+    #pad .hit:nth-of-type(1), #pad .hit:nth-of-type(4), #pad .hit:nth-of-type(7), #pad .hit:nth-of-type(10){ left:0%; }
+    #pad .hit:nth-of-type(2), #pad .hit:nth-of-type(5), #pad .hit:nth-of-type(8), #pad .hit:nth-of-type(11){ left:33.3333%; }
+    #pad .hit:nth-of-type(3), #pad .hit:nth-of-type(6), #pad .hit:nth-of-type(9), #pad .hit:nth-of-type(12){ left:66.6666%; }
 
+    /* rows */
+    #pad .hit:nth-of-type(1), #pad .hit:nth-of-type(2), #pad .hit:nth-of-type(3){ top:0%; }
+    #pad .hit:nth-of-type(4), #pad .hit:nth-of-type(5), #pad .hit:nth-of-type(6){ top:25%; }
+    #pad .hit:nth-of-type(7), #pad .hit:nth-of-type(8), #pad .hit:nth-of-type(9){ top:50%; }
+    #pad .hit:nth-of-type(10), #pad .hit:nth-of-type(11), #pad .hit:nth-of-type(12){ top:75%; }
+
+    /* Donations overlay text (text only, not a button) */
+    #donateText{
+      position:absolute;
+      left:66.6666%;
+      top:75%;
+      width:33.3333%;
+      height:25%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:7px;
+      letter-spacing:1px;
+      opacity:.85;
+      color: rgba(255,255,255,0.80);
+      text-shadow: 0 0 8px rgba(0,0,0,0.55);
+      pointer-events:none;
+      text-align:center;
+      padding:0 6px;
+      box-sizing:border-box;
+    }
     /* Apply button */
     #apply { bottom: 56px; left: 50px; width: 330px; height: 70px; }
 
@@ -183,7 +218,7 @@
     #footer {
       position: absolute;
       left: 0;
-      bottom: 3px;
+      bottom: 5px;
       width: 430px;
       text-align: center;
       font-size: 10px;
@@ -191,28 +226,41 @@
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
     }
   
-    /* Header line (separate from footer, scaled with the UI) */
-    #header{
+    /* Header: same width as buttons (330px) */
+    #headerBar{
       position:absolute;
-      left:0;
-      top:24px; /* near the logo frame border */
-      width:430px;
+      left:50px;
+      top:18px;
+      width:330px;
       display:flex;
       justify-content:space-between;
       align-items:center;
-      padding:0 14px;
       font-size:10px;
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
-      letter-spacing: 0.5px;
+      letter-spacing:0.5px;
       pointer-events:none;
-      z-index: 50;
+      z-index:20;
     }
-    #header .verBlue{
+    #headerBar .hbVer{
       color: rgba(70,160,255,0.95);
       text-shadow: 0 0 10px rgba(70,160,255,0.45);
     }
 
+    /* Footer: same width as buttons, sits closer to APPLY TURN (not wider than buttons) */
+    #footer{
+      position:absolute;
+      left:50px;
+      width:330px;
+      bottom:30px;
+      text-align:center;
+      font-size:10px;
+      color: rgba(255,255,255,0.70);
+      text-shadow: 0 0 8px rgba(0,0,0,0.55);
+      letter-spacing:0.5px;
+      pointer-events:none;
+      z-index:20;
+    }
   </style>
 </head>
 
@@ -227,19 +275,19 @@
     <!-- overlay in base coordinate space -->
     <div id="overlay">
 
-      <div id="header">
-        <span class="hL">THE DART ROOM</span>
-        <span class="hC"><span class="verBlue">v1.2.1</span></span>
-        <span class="hR">DART CALCULATOR</span>
+      <div id="headerBar" aria-hidden="true">
+        <span class="hbL">THE DART ROOM</span>
+        <span class="hbC"><span class="hbVer">v1.2.2</span></span>
+        <span class="hbR">DART CALCULATOR</span>
       </div>
 
 <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
 
-      <div id="dl1" class="dart-label">DART 1</div>
-      <div id="dl2" class="dart-label">DART 2</div>
-      <div id="dl3" class="dart-label">DART 3</div>
+      <div id="dl1" class="dart-label">NEXT 1</div>
+      <div id="dl2" class="dart-label">NEXT 2</div>
+      <div id="dl3" class="dart-label">NEXT 3</div>
 
       <div id="d1" class="neon dart-val">-</div>
       <div id="d2" class="neon dart-val">-</div>
@@ -254,6 +302,7 @@
 
       <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
       <div id="pad" aria-label="Keypad">
+        <div id="donateText" aria-hidden="true">DONATIONS WELCOME</div>
         <button class="hit" onclick="APP.key(7)" aria-label="7"></button>
         <button class="hit" onclick="APP.key(8)" aria-label="8"></button>
         <button class="hit" onclick="APP.key(9)" aria-label="9"></button>
@@ -305,8 +354,8 @@
     const offsetX = Math.round((Wv - drawW) / 2);
     const offsetY = Math.round((Hv - drawH) / 2);
 
-    const SHIFT_UP = 90; // move whole UI up so footer is visible // move whole screen up slightly so APPLY TURN isn't clipped // move whole screen up slightly so APPLY TURN isn't clipped // move whole screen up slightly so APPLY TURN isn't clipped
-    const offsetY2 = offsetY - SHIFT_UP;
+    const SHIFT_UP = 16; // small lift; avoids clipping top while keeping footer visible
+    const offsetY2 = Math.max(0, offsetY - SHIFT_UP);
 
     // Visible background sized/positioned
     bgVisible.style.left = offsetX + 'px';
@@ -348,7 +397,67 @@
 })();
 
 /* APP LOGIC (ALL BUTTONS ACTIVE) */
-const APP = {
+
+  function suggestCheckout(rem){
+    // Returns 3 suggested targets (strings) to finish, preferring standard checkouts.
+    // Targets: S1-20, D1-20, T1-20, SB (25), DB (50), MISS (0)
+    const throws = [];
+    for(let n=1;n<=20;n++){
+      throws.push({t:`T${n}`, v:3*n});
+      throws.push({t:`D${n}`, v:2*n});
+      throws.push({t:`S${n}`, v:n});
+    }
+    throws.push({t:"SB", v:25});
+    throws.push({t:"DB", v:50});
+    throws.push({t:"MISS", v:0});
+
+    const finishes = new Set();
+    for(let n=1;n<=20;n++) finishes.add(2*n); // doubles
+    finishes.add(50); // DB
+
+    // brute-force 3 darts, last dart must be a finish
+    let best = null;
+    for(const a of throws){
+      for(const b of throws){
+        const r2 = rem - a.v - b.v;
+        if(r2 <= 0) continue;
+        // choose best last dart that finishes exactly
+        for(const c of throws){
+          if(!finishes.has(c.v)) continue;
+          if(r2 - c.v !== 0) continue;
+          const score = a.v*10000 + b.v*100 + c.v; // prefer higher first, then second
+          if(!best || score > best.score){
+            best = {score, seq:[a.t,b.t,c.t]};
+          }
+        }
+      }
+    }
+    // fallback: greedy scoring if no checkout
+    if(!best){
+      const pick = (r)=>{
+        if(r>=60) return "T20";
+        if(r>=57) return "T19";
+        if(r>=54) return "T18";
+        if(r>=51) return "T17";
+        if(r>=50) return "DB";
+        if(r>=40 && r%2===0) return `D${r/2}`;
+        if(r>=25) return "SB";
+        return `S${Math.max(1, Math.min(20, r))}`;
+      };
+      let r=rem;
+      const seq=[];
+      for(let i=0;i<3;i++){
+        const t=pick(r);
+        const v = t==="DB"?50 : t==="SB"?25 : t==="MISS"?0 : (t[0]==="T"?3: t[0]==="D"?2:1)*parseInt(t.slice(1),10);
+        seq.push(t);
+        r = Math.max(0, r - v);
+      }
+      return seq;
+    }
+    return best.seq;
+  }
+
+  const APP = {
   s: 501,
   i: "",
   dart: 1,
