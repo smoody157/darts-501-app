@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Dart Room – Dart Calculator</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -183,7 +183,7 @@
     #footer {
       position: absolute;
       left: 0;
-      bottom: 5px;
+      bottom: 3px;
       width: 430px;
       text-align: center;
       font-size: 10px;
@@ -191,11 +191,11 @@
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
     }
   
-    /* Header (separate from footer) */
+    /* Header line (separate from footer, scaled with the UI) */
     #header{
       position:absolute;
       left:0;
-      top:28px; /* closer to the logo frame without overlapping it */
+      top:24px; /* near the logo frame border */
       width:430px;
       display:flex;
       justify-content:space-between;
@@ -206,25 +206,12 @@
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
       letter-spacing: 0.5px;
       pointer-events:none;
-      z-index:3;
+      z-index: 50;
     }
     #header .verBlue{
       color: rgba(70,160,255,0.95);
       text-shadow: 0 0 10px rgba(70,160,255,0.45);
     }
-
-    /* Footer (separate, pinned to bottom) */
-    #footer{
-      bottom:3px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:0 14px;
-      letter-spacing: 0.5px;
-      white-space:nowrap;
-      z-index:3;
-    }
-    #footer span{ white-space:nowrap; }
 
   </style>
 </head>
@@ -242,7 +229,7 @@
 
       <div id="header">
         <span class="hL">THE DART ROOM</span>
-        <span class="hC"><span class="verBlue">v1.2.0</span></span>
+        <span class="hC"><span class="verBlue">v1.2.1</span></span>
         <span class="hR">DART CALCULATOR</span>
       </div>
 
@@ -284,7 +271,7 @@
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
 <div id="footerPatch"></div>
-      <div id="footer"><span class="fL">DART CALCULATOR</span><span class="fC">© THE DART ROOM</span><span class="fR">ALL RIGHTS RESERVED</span></div>
+      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room 2026. All Rights Reserved.</div>
     </div>
   </div>
 
