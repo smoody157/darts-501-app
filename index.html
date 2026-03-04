@@ -128,6 +128,7 @@
       cursor: pointer;
     
       z-index: 10;
+    
       pointer-events: auto;
       touch-action: manipulation;
     }
@@ -135,6 +136,8 @@
     /* Mode buttons - aligned to your original coords */
     .mode { top: 375px; width: 60px; height: 40px; 
       z-index: 20;
+    
+      z-index: 60;
     }
     #m301 { left: 125px; }
     #m501 { left: 185px; }
@@ -151,14 +154,17 @@
     grid-template-columns:110px 110px 110px;
     grid-template-rows:75px 75px 75px 75px;
     gap: 0px;
-    z-index: 30;            /* ensure pad is above any patches/text */
+    z-index: 50;           /* always above overlays */
     pointer-events: auto;
 }
-    #pad .hit {
+    #pad .hit{
       position: relative;
       width: 100%;
       height: 100%;
-      z-index: 31;
+      background: transparent;
+      border: none;
+      outline: none;
+      z-index: 51;
       pointer-events: auto;
       touch-action: manipulation;
     }
@@ -192,7 +198,7 @@
     <div id="overlay">
       <div id="topbar" aria-hidden="true">
         <div id="topLeft">DART CALCULATOR</div>
-        <div id="topCenter">v1.0.3</div>
+        <div id="topCenter">v1.0.4</div>
         <div id="topRight">THE DART ROOM</div>
       </div>
 <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
