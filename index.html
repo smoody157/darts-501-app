@@ -68,7 +68,7 @@
 
     #score {
       position: absolute;
-      top: 224px;
+      top: 216px;
       left: 0;
       width: 430px;
       font-size: 92px;
@@ -157,12 +157,12 @@
     #pad {
     position:absolute;
     left:50px;
-    top:580px;            /* nudged DOWN to match artwork tap areas */
+    top:590px;            /* moved DOWN to stop lower rows triggering the row above */
     width:330px;
-    height:272px;         /* 68px * 4 rows */
+    height:256px;         /* 64px * 4 rows */
     display:grid;
     grid-template-columns:110px 110px 110px;  /* 330 / 3 */
-    grid-template-rows:68px 68px 68px 68px;   /* 272 / 4 */
+    grid-template-rows:64px 64px 64px 64px;   /* 256 / 4 */
     gap: 0;
 }
     #pad .hit { position: relative; width: 100%; height: 100%; }
@@ -203,7 +203,7 @@
 
     <!-- overlay in base coordinate space -->
     <div id="overlay">
-      <div id="version">v1.0.0</div>
+      <div id="version">v1.0.9 BIGDROP-RF</div>
 
       <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
