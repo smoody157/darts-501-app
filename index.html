@@ -191,30 +191,38 @@
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
     }
   
+    /* Header (separate from footer) */
     #header{
       position:absolute;
       left:0;
-      top:44px; /* snug to the logo frame border */
+      top:28px; /* closer to the logo frame without overlapping it */
       width:430px;
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       padding:0 14px;
       font-size:10px;
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
       letter-spacing: 0.5px;
       pointer-events:none;
+      z-index:3;
     }
-    #header .verBlue{ color: rgba(70,160,255,0.95); text-shadow: 0 0 10px rgba(70,160,255,0.45); }
+    #header .verBlue{
+      color: rgba(70,160,255,0.95);
+      text-shadow: 0 0 10px rgba(70,160,255,0.45);
+    }
 
-    /* Footer mirrored layout */
+    /* Footer (separate, pinned to bottom) */
     #footer{
       bottom:3px;
       display:flex;
       justify-content:space-between;
+      align-items:center;
       padding:0 14px;
       letter-spacing: 0.5px;
+      white-space:nowrap;
+      z-index:3;
     }
     #footer span{ white-space:nowrap; }
 
@@ -234,7 +242,7 @@
 
       <div id="header">
         <span class="hL">THE DART ROOM</span>
-        <span class="hC"><span class="verBlue">v1.1.9</span></span>
+        <span class="hC"><span class="verBlue">v1.2.0</span></span>
         <span class="hR">DART CALCULATOR</span>
       </div>
 
