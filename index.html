@@ -62,7 +62,7 @@
     /* CREDIT between yellow rules */
     #credit {
       position: absolute;
-      top: calc(var(--h) * (132 / 932));
+      top: calc(var(--h) * (148 / 932));
       left: 0;
       width: var(--w);
       text-align: center;
@@ -147,7 +147,7 @@
     .modeBtn {
       position: relative;
       border: none;
-      border-radius: 14px;
+      border-radius: 18px;
       background: rgba(0,0,0,0.0);
       cursor: pointer;
 
@@ -264,7 +264,7 @@
     #donateKey::before {
       content:"";
       position:absolute;
-      inset: calc(var(--w) * (8 / 430));
+      inset: 0;
       border-radius: 14px;
       border: 3px solid rgba(255, 0, 120, 0.60);
       box-shadow:
@@ -321,6 +321,14 @@
       text-align: center;
       pointer-events: none;
     }
+
+    #footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.0) 100%);
+      pointer-events: none;
+    }
     #footer span {
       font-size: 11px;
       font-weight: 700;
@@ -335,7 +343,7 @@
   <div id="stage">
     <div id="appScale">
       <div id="app">
-        <div id="version">v1.0.0</div>
+        <div id="version">v1.0.1</div>
         <div id="credit">DESIGNED BY STEVE’S GRAPHIC DESIGNS</div>
 
         <div id="scoreRemaining">SCORE REMAINING</div>
