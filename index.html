@@ -58,7 +58,7 @@
   #score {
     position:absolute;
     left:0;
-    top: 262px; /* tuned down */
+    top: 268px; /* tuned down */
     width:430px;
     font-size:92px;
     line-height: 1;
@@ -84,18 +84,18 @@
     filter: drop-shadow(0 0 12px rgba(0,210,255,0.65));
   }
   /* moved UP per your screenshot notes */
-  #dl1 { left: 35px; top: 372px; }
-  #dl2 { left: 155px; top: 372px; }
-  #dl3 { left: 275px; top: 372px; }
-  #d1  { left: 35px; top: 398px; }
-  #d2  { left: 155px; top: 398px; }
-  #d3  { left: 275px; top: 398px; }
+  #dl1 { left: 35px; top: 350px; }
+  #dl2 { left: 155px; top: 350px; }
+  #dl3 { left: 275px; top: 350px; }
+  #d1  { left: 35px; top: 374px; }
+  #d2  { left: 155px; top: 374px; }
+  #d3  { left: 275px; top: 374px; }
 
   /* Input display in the long bar */
   #input {
     position:absolute;
     left:0;
-    top: 508px; /* moved up into bar */
+    top: 492px; /* moved up into bar */
     width:430px;
     text-align:center;
     font-size:54px;
@@ -108,7 +108,7 @@
   .hit { position:absolute; background:transparent; border:0; padding:0; margin:0; cursor:pointer; }
 
   /* Mode buttons (make them cover the full rounded squares) */
-  .mode { top: 336px; width: 74px; height: 46px; }
+  .mode { top: 320px; width: 74px; height: 46px; }
   #m301 { left: 110px; }
   #m501 { left: 178px; }
   #m701 { left: 246px; }
@@ -164,7 +164,7 @@
     <div id="bg"></div>
 
     <div id="overlay">
-      <div id="version">v1.2.0</div>
+      <div id="version">v1.2.2</div>
 
       <div id="headerPatch"></div>
       <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
@@ -1079,7 +1079,7 @@ const OUTS = {
 
     const offsetX = Math.round((Wv - drawW) / 2);
     const offsetYraw = Math.round((Hv - drawH) / 2);
-    const offsetY = offsetYraw - 22; // move whole art/UI up to remove top gap
+    const offsetY = offsetYraw - 44; // moved up (alignment pass v1.2.2)
 
     bg.style.left = offsetX + 'px';
     bg.style.top = offsetY + 'px';
