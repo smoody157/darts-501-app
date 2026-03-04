@@ -1,178 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Dart Room – Dart Calculator</title>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background:#000; overflow:hidden; font-family: Arial, Helvetica, sans-serif; }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Dart Calculator</title>
+<style>
+  html, body {
+    margin:0; padding:0; width:100%; height:100%;
+    background:#000; overflow:hidden;
+    -webkit-user-select:none; user-select:none;
+    -webkit-tap-highlight-color: transparent;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
 
-    /* Stage centers the background image */
-    #stage {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
+  /* Center a fixed 430x932 stage and scale it to fit */
+  #wrap {
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #stage {
+    position:relative;
+    width:430px; height:932px;
+    transform-origin: top left;
+    background: url('OUTCHARTAPP.jpeg') no-repeat 0 0 / 430px 932px; /* prevents stray top-left text */
+  }
 
-    /* We render the background as an <img> so we can read its true size and compute a perfect math transform */
-    #bg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: auto;
-      height: auto;
-      max-width: none;
-      max-height: none;
-      opacity: 0; /* hidden; used only to compute sizing */
-      pointer-events: none;
-    }
+  /* Overlay */
+  #overlay {
+    position:absolute; inset:0;
+    pointer-events:none; /* overlays never block taps */
+  }
 
-    /* The visible background layer */
-    #bg-visible {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 0px; /* set by JS */
-      height: 0px; /* set by JS */
-      background-image: url("OUTCHARTAPP.jpeg");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
+  /* Header bar */
+  #topbar{
+    position:absolute;
+    top: 26px;
+    left: 14px;
+    width: 402px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    z-index: 80;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  #topLeft, #topRight{
+    color: rgba(0,0,0,0.85);
+    font-weight: 900;
+    white-space:nowrap;
+  }
+  #topCenter{
+    color: rgba(0,140,255,0.95);
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(0,140,255,0.25);
+    white-space:nowrap;
+  }
 
-    /* Overlay is in BASE coordinate space (430x932), then we apply a single transform (scale + translate) */
-    #overlay {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 430px;
-      height: 932px;
-      transform-origin: top left;
-    }
+  /* Brand line (centered between gold borders) */
+  #brand {
+    position:absolute;
+    top: 168px;
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 8px;
+    letter-spacing: 1.1px;
+    color: rgba(255,255,255,0.78);
+    text-shadow: 0 0 8px rgba(255,255,255,0.12);
+    font-weight: 800;
+    z-index: 6;
+  }
 
-    /* Text styles */
-    .neon {
-      background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 900;
-      text-align: center;
-      filter: drop-shadow(0 0 10px rgba(0,210,255,0.55));
-    }
+  #scoreLabel {
+    position:absolute;
+    top: 210px;
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+    z-index: 6;
+  }
 
-    #topbar{
-      position:absolute;
-      top: 26px;              /* closer to logo */
-      left: 14px;
-      width: 402px;           /* 430 - 28 */
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      pointer-events:none;
-      z-index: 80;
+  /* Remaining score (DO NOT MOVE) */
+  #score {
+    position:absolute;
+    top: 205px;
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 86px;
+    line-height: 1;
+    color: rgba(255,255,255,0.98);
+    text-shadow: 0 0 18px rgba(255,255,255,0.12), 0 0 18px rgba(0,0,0,0.55);
+    font-weight: 900;
+    z-index: 6;
+  }
 
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 11px;        /* readable */
-      letter-spacing: 1px;
-      color: rgba(130,220,255,0.95);
-      text-shadow: 0 0 10px rgba(0,210,255,0.20);
-    }
-    #topLeft, #topRight{
-      color: rgba(0,0,0,0.85);           /* black writing */
-      text-shadow: none;
-      font-weight: 900;
-    }
-    #topCenter{
-      color: rgba(0,140,255,0.95);       /* blue version */
-      text-shadow: 0 0 10px rgba(0,140,255,0.25);
-      font-weight: 900;
-    }
+  /* Dart labels + values */
+  .dart-label, .dart-val {
+    position:absolute;
+    width: 120px;
+    text-align:center;
+    z-index: 6;
+  }
+  .dart-label {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.70);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+  }
+  .dart-val {
+    font-size: 26px;
+    letter-spacing: 1px;
+    color: rgba(130,220,255,0.95);
+    text-shadow: 0 0 12px rgba(0,210,255,0.25);
+    font-weight: 900;
+  }
 
-    #score {
-      position: absolute;
-      top: 205px;
-      left: 0;
-      width: 430px;
-      font-size: 92px;
-      line-height: 1;
-      pointer-events: none;
-    }
+  /* X tweaks: DART 1 slightly left, DART 3 slightly right; values follow */
+  #dl1 { top: 372px; left: 36px; }
+  #d1  { top: 388px; left: 36px; }
 
-    #brand {
-      position: absolute;
-      top: 176px; /* moved down slightly per header spacing */
-      left: 0;
-      width: 430px;
-      text-align: center;
-      font-size: 10px; /* resized to fit between gold borders */
-      letter-spacing: 1.2px;
-      color: rgba(255,255,255,0.80);
-      text-shadow: 0 0 8px rgba(255,255,255,0.15);
-      font-weight: 700;
-      pointer-events: none;
-    }
+  #dl2 { top: 372px; left: 164px; }
+  #d2  { top: 388px; left: 164px; }
 
-    .dart-label {
-      position: absolute;
-      width: 105px;
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.75);
-      font-weight: 800;
-      text-shadow: 0 0 8px rgba(255,255,255,0.12);
-      z-index: 6;
-      pointer-events: none;
-    }
+  #dl3 { top: 372px; left: 292px; }
+  #d3  { top: 388px; left: 292px; }
 
-    .dart-val {
-      position: absolute;
-      width: 105px;
-      text-align: center;
-      font-size: 25px;
-      line-height: 1;
-      z-index: 6;
-      pointer-events: none;
-    }
+  /* Typed input shown in the small rectangle (high-contrast) */
+  #input {
+    position:absolute;
+    top: 486px;
+    left: 132px;
+    width: 166px;
+    height: 46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 34px;
+    color: rgba(0,0,0,0.88);
+    text-shadow: none;
+    font-weight: 900;
+    letter-spacing: 3px;
+    z-index: 6;
+  }
 
-    /* Dart labels ABOVE values, per your request */
-    #dl1 { top: 372px; left: 40px; }
-    #dl2 { top: 372px; left: 164px; }
-    #dl3 { top: 372px; left: 288px; }
+  /* Mode buttons (touch) */
+  .mode {
+    position:absolute;
+    top: 305px;
+    width: 110px;
+    height: 48px;
+    background: transparent;
+    border: none;
+    outline: none;
+    z-index: 80;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+  #m301 { left: 52px; }
+  #m501 { left: 160px; }
+  #m701 { left: 268px; }
 
-    #d1  { top: 388px; left: 40px; }
-    #d2  { top: 388px; left: 164px; }
-    #d3  { top: 388px; left: 288px; }
-/* Invisible hit zones (buttons) */
-    .hit {
-      position: absolute;
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-    
-      z-index: 10;
-    
-      pointer-events: auto;
-      touch-action: manipulation;
-    }
+  /* Mode label overlays: lower + centered inside borders */
+  .modeText {
+    position:absolute;
+    top: 318px; /* lowered */
+    width: 110px;
+    height: 48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.90);
+    text-shadow: 0 0 10px rgba(0,0,0,0.60);
+    z-index: 6;
+  }
+  #t301 { left: 52px; }
+  #t501 { left: 160px; }
+  #t701 { left: 268px; }
 
-    /* Mode buttons - aligned to your original coords */
-    .mode { top: 375px; width: 60px; height: 40px; 
-      z-index: 20;
-    
-      z-index: 60;
-    }
-    #m301 { left: 125px; }
-    #m501 { left: 185px; }
-    #m701 { left: 245px; }
-
-    /* Keypad grid area (3 columns). We map each cell precisely. */
-    #pad {
+  /* Keypad grid (touch layer) */
+  #pad {
     position:absolute;
     left:50px;
     top:560px;
@@ -181,266 +198,233 @@
     display:grid;
     grid-template-columns:110px 110px 110px;
     grid-template-rows:75px 75px 75px 75px;
-    gap: 0px;
-    z-index: 50;           /* always above overlays */
-    pointer-events: auto;
-}
-    #pad .hit{
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      z-index: 51;
-      pointer-events: auto;
-      touch-action: manipulation;
-    }
+    gap:0px;
+    z-index: 70;
+    pointer-events:auto;
+  }
+  #pad button {
+    width:100%; height:100%;
+    background: transparent;
+    border:none; outline:none;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
 
-    /* Apply button */
-    #apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
-#footer {
-      position: absolute;
-      left: 0;
-      bottom: 10px;
-      width: 430px;
-      text-align: center;
-      font-size: 9px;
-      color: rgba(255,255,255,0.70);
-      text-shadow: 0 0 8px rgba(0,0,0,0.55);
-      background: transparent;
-      pointer-events:none;
-    }
-  </style>
+  /* Apply Turn */
+  #apply {
+    position:absolute;
+    left: 50px;
+    top: 870px;
+    width: 330px;
+    height: 54px;
+    background: transparent;
+    border:none; outline:none;
+    z-index: 80;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+
+  /* Donate patch + rewritten text (NOT on touchpads) */
+  #donateMask{
+    position:absolute;
+    top: 560px;
+    left: 50px;
+    transform: translate(224px, 229px); /* inset */
+    width: 102px;
+    height: 67px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.62);
+    mix-blend-mode: multiply;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    opacity: 0.92;
+    z-index: 10;
+  }
+  #donateText{
+    position:absolute;
+    top: 560px;
+    left: 50px;
+    transform: translate(224px, 229px);
+    width: 102px;
+    height: 67px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size: 1px; /* half of 2px */
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: 0.15px;
+    color: rgba(255,85,170,0.95);
+    text-shadow: none;
+    z-index: 11;
+  }
+
+  /* Footer */
+  #footer {
+    position:absolute;
+    left:0;
+    bottom:10px;
+    width:430px;
+    text-align:center;
+    font-size:9px;
+    color: rgba(255,255,255,0.70);
+    text-shadow: 0 0 8px rgba(0,0,0,0.55);
+    z-index: 6;
+  }
+</style>
 </head>
-
 <body>
-  <div id="stage">
-    <!-- hidden loader img for true dimensions -->
-    <img id="bg" src="OUTCHARTAPP.jpeg" alt="bg" />
+  <div id="wrap">
+    <div id="stage">
+      <div id="overlay">
+        <div id="topbar" aria-hidden="true">
+          <div id="topLeft">THE DART CALCULATOR</div>
+          <div id="topCenter">v1.0.6</div>
+          <div id="topRight">THE DART ROOM</div>
+        </div>
 
-    <!-- visible background -->
-    <div id="bg-visible"></div>
+        <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+        <div id="scoreLabel">SCORE REMAINING</div>
+        <div id="score">501</div>
 
-    <!-- overlay in base coordinate space -->
-    <div id="overlay">
-      <div id="topbar" aria-hidden="true">
-        <div id="topLeft">THE DART CALCULATOR</div>
-        <div id="topCenter">v1.0.2</div>
-        <div id="topRight">THE DART ROOM</div>
+        <div id="dl1" class="dart-label">DART 1</div>
+        <div id="dl2" class="dart-label">DART 2</div>
+        <div id="dl3" class="dart-label">DART 3</div>
+        <div id="d1" class="dart-val">-</div>
+        <div id="d2" class="dart-val">-</div>
+        <div id="d3" class="dart-val">-</div>
+
+        <div id="input">---</div>
+
+        <div id="t301" class="modeText">301</div>
+        <div id="t501" class="modeText">501</div>
+        <div id="t701" class="modeText">701</div>
+
+        <div id="donateMask" aria-hidden="true"></div>
+        <div id="donateText" aria-hidden="true">DONATIONS<br>WELCOME</div>
       </div>
-<div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
-      <div id="score" class="neon">501</div>
+      <button id="m301" class="mode" onclick="APP.set(301)" aria-label="301"></button>
+      <button id="m501" class="mode" onclick="APP.set(501)" aria-label="501"></button>
+      <button id="m701" class="mode" onclick="APP.set(701)" aria-label="701"></button>
 
-      <div id="dl1" class="dart-label">DART 1</div>
-      <div id="dl2" class="dart-label">DART 2</div>
-      <div id="dl3" class="dart-label">DART 3</div>
-
-      <div id="d1" class="neon dart-val">-</div>
-      <div id="d2" class="neon dart-val">-</div>
-      <div id="d3" class="neon dart-val">-</div>
-
-      <div id="input">---</div>
-
-      <!-- Mode hit zones -->
-      <button id="m301" class="hit mode" aria-label="301" onclick="APP.set(301)"></button>
-      <button id="m501" class="hit mode" aria-label="501" onclick="APP.set(501)"></button>
-      <button id="m701" class="hit mode" aria-label="701" onclick="APP.set(701)"></button>
-
-      <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
       <div id="pad" aria-label="Keypad">
-        <button class="hit" onclick="APP.key(7)"></button>
-        <button class="hit" onclick="APP.key(8)"></button>
-        <button class="hit" onclick="APP.key(9)"></button>
-        <button class="hit" onclick="APP.key(4)"></button>
-        <button class="hit" onclick="APP.key(5)"></button>
-        <button class="hit" onclick="APP.key(6)"></button>
-        <button class="hit" onclick="APP.key(1)"></button>
-        <button class="hit" onclick="APP.key(2)"></button>
-        <button class="hit" onclick="APP.key(3)"></button>
-        <button class="hit" onclick="APP.clr()" aria-label="Delete"></button>
-        <button class="hit" onclick="APP.key(0)" aria-label="Zero"></button>
-        <button class="hit" onclick="APP.donate()" aria-label="Donate"></button>
+        <button onclick="APP.key(7)" aria-label="7"></button>
+        <button onclick="APP.key(8)" aria-label="8"></button>
+        <button onclick="APP.key(9)" aria-label="9"></button>
+        <button onclick="APP.key(4)" aria-label="4"></button>
+        <button onclick="APP.key(5)" aria-label="5"></button>
+        <button onclick="APP.key(6)" aria-label="6"></button>
+        <button onclick="APP.key(1)" aria-label="1"></button>
+        <button onclick="APP.key(2)" aria-label="2"></button>
+        <button onclick="APP.key(3)" aria-label="3"></button>
+        <button onclick="APP.clr()" aria-label="Delete"></button>
+        <button onclick="APP.key(0)" aria-label="0"></button>
+        <button onclick="APP.donate()" aria-label="Donate"></button>
       </div>
 
-      <!-- Donate artwork text patch (DONATIONS WELCOME is embedded in the JPEG) -->
-      <div id="donateMask" aria-hidden="true"></div>
-      <div id="donateText" aria-hidden="true">DONATIONS<br>WELCOME</div>
+      <button id="apply" onclick="APP.apply()" aria-label="Apply Turn"></button>
 
-      <!-- Apply hit zone -->
-      <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
-<div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
+      <div id="overlay">
+        <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
+      </div>
     </div>
   </div>
 
 <script>
-/**
- * MATH-LOCKED LAYOUT (NO GUESSING):
- * - Background image provides the coordinate system.
- * - Overlay is built in base coordinates (430x932).
- * - We compute ONE transform to fit the background into the viewport.
- * - All hitboxes/text move together, so nothing “floats”.
- */
-(function fitToBackground(){
-  const bg = document.getElementById('bg');
-  const bgVisible = document.getElementById('bg-visible');
-  const overlay = document.getElementById('overlay');
-  const stage = document.getElementById('stage');
+  // Scale stage to fit viewport
+  function fitStage(){
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scale = Math.min(vw / 430, vh / 932);
+    document.getElementById('stage').style.transform = `scale(${scale})`;
+  }
+  window.addEventListener('resize', fitStage);
+  fitStage();
 
-  function applyFit() {
-    const Wb = bg.naturalWidth || 430;
-    const Hb = bg.naturalHeight || 932;
+  /* OUTS CHART (embedded from SUGGESTED501OUTS) */
+  const OUT_SHOT = [null,null,"D1","S1","D2","S1","D3","S3","D4","S1","D5","S3","D6","S5","D7","S7","D8","S9","D9","S3","D10","S5","D11","S7","D12","S9","D13","S11","D14","S13","D15","S15","D16","S1","D17","S3","D18","S5","D19","S7","D20","S9","S10","S11","S12","S13","S6","S7","S8","S9","S10","S11","S12","S13","S14","S15","S16","S17","S18","S19","S20","SB","T10","T13","T16","SB","T14","T17","T16","T15","T10","T13","T16","T19","T14","T17","T16","T19","T18","T19","D20","T19","DB","T17","T20","T15","T18","T17","T20","T19","T18","T17","T20","T19","T18","T19","T20","T19","T20","T19","T20","T19","T20","T19","T16","DB","T20","T19","T19","T20","T19","T19","T20","T19","T18","T19","T20","T20","T20","T19","T20","T20","T18","T19","T20","DB","T19","T20","T18","T19","T20","T17","DB","T20","T18","DB","T20","T20","T19","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
+  const OUT_REM  = [null,null,0,2,0,4,0,4,0,8,0,8,0,8,0,8,0,8,0,16,0,16,0,16,0,16,0,16,0,16,0,16,0,32,0,32,0,32,0,32,0,32,32,32,32,32,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,36,32,24,16,40,24,16,20,24,40,32,24,16,32,24,28,20,24,22,40,24,32,32,24,40,32,36,28,32,36,40,32,36,40,38,36,40,38,42,40,44,42,46,56,55,46,50,51,49,53,54,52,56,60,58,56,57,58,62,60,61,68,66,64,75,69,67,74,72,70,80,82,73,80,85,76,77,81,82,80,81,82,83,84,85,86,87,88,89,93,91,92,93,97,95,96,97,98,99,100,101,102,103,107,105,106,107,108,109,110,111,112,113,114,115,116,117,118,122,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,182,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,202,200,201,202,203,204,208,206,207,211,209,210,214,212,219,217,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,242,240,241,248,246,244,245,249,247,248,252,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null];
 
-    const Wv = stage.clientWidth;
-    const Hv = stage.clientHeight;
-
-    // Fit entire image into viewport (contain), but reserve a small safe-bottom
-    // so the APPLY TURN button is never cut off by browser UI.
-    const SAFE_BOTTOM = 10; // px in viewport space
-    const scale = Math.min(Wv / Wb, (Hv - SAFE_BOTTOM) / Hb);
-
-    const drawW = Math.round(Wb * scale);
-    const drawH = Math.round(Hb * scale);
-
-    const offsetX = Math.round((Wv - drawW) / 2);
-    const offsetY = Math.round(((Hv - SAFE_BOTTOM) - drawH) / 2);
-
-    // Visible background sized/positioned
-    bgVisible.style.left = offsetX + 'px';
-    bgVisible.style.top = offsetY + 'px';
-    bgVisible.style.width = drawW + 'px';
-    bgVisible.style.height = drawH + 'px';
-
-    // If the jpeg name is wrong, fall back to outs.jpg automatically
-    // (GitHub is case-sensitive.)
-    bgVisible.style.backgroundImage = "url('OUTCHARTAPP.jpeg'), url('outs.jpg')";
-
-    // Overlay transform: translate to offset, scale to match drawn bg,
-    // and also correct from base (430x932) to actual bg pixels (Wb,Hb)
-    // by scaling base-to-bg first, then viewport scale.
-    const baseW = 430, baseH = 932;
-    const sx = (Wb / baseW) * scale;
-    const sy = (Hb / baseH) * scale;
-
-    overlay.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${sx}, ${sy})`;
+  function fmtShot(s){
+    if (!s) return "-";
+    s = String(s).trim().toUpperCase();
+    if (s === "SB" || s === "S25") return "B";
+    if (s === "DB" || s === "BULL" || s === "D25") return "DB";
+    return s;
   }
 
-  function onReady(){
-    applyFit();
-    window.addEventListener('resize', applyFit, { passive:true });
-  }
+  const APP = {
+    s: 501,
+    i: "",
 
-  bg.addEventListener('load', onReady);
+    draw(){
+      document.getElementById('score').innerText = this.s;
+      document.getElementById('input').innerText = this.i || "---";
+    },
 
-  // If OUTCHARTAPP.jpeg fails to load, fall back to outs.jpg
-  bg.addEventListener('error', () => {
-    bg.src = 'outs.jpg';
-  });
-
-  // In some caches, load may have already fired
-  if (bg.complete) {
-    if (bg.naturalWidth) onReady();
-    else bg.src = 'outs.jpg';
-  }
-})();
-
-/* OUTS CHART (embedded from your SUGGESTED501OUTS sheet) */
-const OUT_SHOT = [null,null,"D1","S1","D2","S1","D3","S3","D4","S1","D5","S3","D6","S5","D7","S7","D8","S9","D9","S3","D10","S5","D11","S7","D12","S9","D13","S11","D14","S13","D15","S15","D16","S1","D17","S3","D18","S5","D19","S7","D20","S9","S10","S11","S12","S13","S6","S7","S8","S9","S10","S11","S12","S13","S14","S15","S16","S17","S18","S19","S20","SB","T10","T13","T16","SB","T14","T17","T16","T15","T10","T13","T16","T19","T14","T17","T16","T19","T18","T19","D20","T19","DB","T17","T20","T15","T18","T17","T20","T19","T18","T17","T20","T19","T18","T19","T20","T19","T20","T19","T20","T19","T20","T19","T16","DB","T20","T19","T19","T20","T19","T19","T20","T19","T18","T19","T20","T20","T20","T19","T20","T20","T18","T19","T20","DB","T19","T20","T18","T19","T20","T17","DB","T20","T18","DB","T20","T20","T19","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20"];
-const OUT_REM  = [null,null,0,2,0,4,0,4,0,8,0,8,0,8,0,8,0,8,0,16,0,16,0,16,0,16,0,16,0,16,0,16,0,32,0,32,0,32,0,32,0,32,32,32,32,32,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,36,32,24,16,40,24,16,20,24,40,32,24,16,32,24,28,20,24,22,40,24,32,32,24,40,32,36,28,32,36,40,32,36,40,38,36,40,38,42,40,44,42,46,56,55,46,50,51,49,53,54,52,56,60,58,56,57,58,62,60,61,68,66,64,75,69,67,74,72,70,80,82,73,80,85,76,77,81,82,80,81,82,83,84,85,86,87,88,89,93,91,92,93,97,95,96,97,98,99,100,101,102,103,107,105,106,107,108,109,110,111,112,113,114,115,116,117,118,122,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,182,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,202,200,201,202,203,204,208,206,207,211,209,210,214,212,219,217,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,242,240,241,248,246,244,245,249,247,248,252,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441];
-
-function fmtShot(s){
-  if (!s) return "-";
-  s = String(s).trim().toUpperCase();
-  // Your preferred labels:
-  if (s === "SB") return "B";     // single bull (25)
-  if (s === "DB") return "DB";    // double bull (50)
-  return s;
-}
-
-/* APP LOGIC (CHART-DRIVEN OUTS) */
-const APP = {
-  s: 501,
-  i: "",
-
-  draw(){
-    document.getElementById('score').innerText = this.s;
-    document.getElementById('input').innerText = this.i || "---";
-  },
-
-  set(n){
-    this.s = n;
-    this.i = "";
-    this.draw();
-    this.updateOut();
-  },
-
-  key(n){
-    if (this.i.length < 3) {
-      this.i += String(n);
-      this.draw();
-    }
-  },
-
-  clr(){
-    this.i = "";
-    this.draw();
-  },
-
-  updateOut(){
-    // Fill DART 1/2/3 using your chart chain: score -> (shot, remainder) -> ...
-    let cur = this.s;
-    const darts = ["-","-","-"];
-
-    for (let k=0; k<3; k++) {
-      if (!cur || cur < 2 || cur > 501) break;
-
-      const shot = OUT_SHOT[cur];
-      const rem  = OUT_REM[cur];
-
-      if (!shot || rem === null || rem === undefined) break;
-
-      darts[k] = fmtShot(shot);
-
-      // next remaining score
-      cur = rem;
-      if (cur === 0) break;
-    }
-
-    document.getElementById('d1').innerText = darts[0];
-    document.getElementById('d2').innerText = darts[1];
-    document.getElementById('d3').innerText = darts[2];
-  },
-
-  apply(){
-    const v = parseInt(this.i, 10);
-    if (!isNaN(v)) {
-      const next = this.s - v;
-
-      // bust rules: cannot go below 0 or to 1
-      if (next < 0 || next === 1) {
-        this.i = "";
-        this.draw();
-        return;
-      }
-
-      this.s = next;
+    set(n){
+      this.s = n;
       this.i = "";
       this.draw();
       this.updateOut();
-      return;
+    },
+
+    key(n){
+      if (this.i.length < 3) {
+        this.i += String(n);
+        this.draw();
+      }
+    },
+
+    clr(){
+      this.i = "";
+      this.draw();
+    },
+
+    updateOut(){
+      let cur = this.s;
+      const darts = ["-","-","-"];
+      for (let k=0; k<3; k++) {
+        if (!cur || cur < 2 || cur > 501) break; /* chart is 501 outs */
+        const shot = OUT_SHOT[cur];
+        const rem  = OUT_REM[cur];
+        if (!shot || rem === null || rem === undefined) break;
+        darts[k] = fmtShot(shot);
+        cur = rem;
+        if (cur === 0) break;
+      }
+      document.getElementById('d1').innerText = darts[0];
+      document.getElementById('d2').innerText = darts[1];
+      document.getElementById('d3').innerText = darts[2];
+    },
+
+    apply(){
+      const v = parseInt(this.i, 10);
+      if (!isNaN(v)) {
+        const next = this.s - v;
+        if (next < 0 || next === 1) {
+          this.i = "";
+          this.draw();
+          return;
+        }
+        this.s = next;
+        this.i = "";
+        this.draw();
+        this.updateOut();
+        return;
+      }
+      this.i = "";
+      this.draw();
+    },
+
+    donate(){
+      window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
     }
+  };
 
-    this.i = "";
-    this.draw();
-  },
-
-  donate(){
-    window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
-  }
-};
-
-APP.draw();
-APP.updateOut();</script>
+  APP.draw();
+  APP.updateOut();
+</script>
 </body>
 </html>
