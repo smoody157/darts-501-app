@@ -65,7 +65,7 @@
 
     #score {
       position: absolute;
-      top: 248px;
+      top: 232px;
       left: 0;
       width: 430px;
       font-size: 92px;
@@ -74,11 +74,11 @@
 
     #brand {
       position: absolute;
-      top: 176px;
+      top: 176px; /* moved down slightly per header spacing */
       left: 0;
       width: 430px;
       text-align: center;
-      font-size: 9px;
+      font-size: 10px; /* resized to fit between gold borders */
       letter-spacing: 1.2px;
       color: rgba(255,255,255,0.80);
       text-shadow: 0 0 8px rgba(255,255,255,0.15);
@@ -105,12 +105,12 @@
     }
 
     /* Dart labels ABOVE values, per your request */
-    #dl1 { top: 378px; left: 40px; }
-    #dl2 { top: 378px; left: 164px; }
-    #dl3 { top: 378px; left: 288px; }
-    #d1  { top: 394px; left: 40px; }
-    #d2  { top: 394px; left: 164px; }
-    #d3  { top: 394px; left: 288px; }
+    #dl1 { top: 408px; left: 40px; }
+    #dl2 { top: 408px; left: 164px; }
+    #dl3 { top: 408px; left: 288px; }
+    #d1  { top: 424px; left: 40px; }
+    #d2  { top: 424px; left: 164px; }
+    #d3  { top: 424px; left: 288px; }
 
     #input {
       position: absolute;
@@ -124,6 +124,25 @@
       font-weight: 900;
     }
 
+    /* Top header bar */
+    #topbar{
+      position:absolute;
+      top: 14px;
+      left: 14px;
+      width: 402px; /* 430 - 28 padding */
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: rgba(130,220,255,0.95);
+      text-shadow: 0 0 10px rgba(0,210,255,0.25);
+    }
+    #topLeft, #topRight{ color: rgba(255,255,255,0.72); text-shadow: 0 0 8px rgba(0,0,0,0.5); }
+    #topCenter{ color: rgba(130,220,255,0.95); }
+
     #version {
       position: absolute;
       top: 24px;
@@ -132,41 +151,6 @@
       font-size: 10px;
       color: rgba(255,255,255,0.55);
       text-shadow: 0 0 6px rgba(0,0,0,0.45);
-    }
-
-    /* Donate artwork text patch (embedded text is in the JPEG) */
-    #donateMask{
-      position:absolute;
-      top: 560px;   /* pad top */
-      left: 50px;   /* pad left */
-      /* donate key is bottom-right cell: col 3, row 4 */
-      transform: translate(220px, 225px); /* (2*110, 3*75) */
-      width: 110px;
-      height: 75px;
-      border-radius: 14px;
-      background: rgba(0,0,0,0.50);
-      pointer-events:none;
-      z-index: 2;
-    }
-    #donateText{
-      position:absolute;
-      top: 560px;
-      left: 50px;
-      transform: translate(220px, 225px);
-      width: 110px;
-      height: 75px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      font-size: 12px;     /* smaller than artwork */
-      line-height: 1.05;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: rgba(255,85,170,0.95);
-      text-shadow: 0 0 10px rgba(255,85,170,0.35);
-      pointer-events:none;
-      z-index: 3;
     }
 
     /* Invisible hit zones (buttons) */
@@ -187,16 +171,16 @@
 
     /* Keypad grid area (3 columns). We map each cell precisely. */
     #pad {
-      position:absolute;
-      left:50px;
-      top:560px;
-      width:330px;
-      height:300px;
-      display:grid;
-      grid-template-columns:110px 110px 110px; /* locked columns */
-      grid-template-rows:75px 75px 75px 75px;  /* locked rows */
-      gap: 0px;
-    }
+    position:absolute;
+    left:50px;
+    top:560px;
+    width:330px;
+    height:300px;
+    display:grid;
+    grid-template-columns:110px 110px 110px;
+    grid-template-rows:75px 75px 75px 75px;
+    gap: 0px;
+}
     #pad .hit { position: relative; width: 100%; height: 100%; }
 
     /* Apply button */
@@ -210,7 +194,8 @@
       font-size: 9px;
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
-      background: transparent; /* explicit: no background */
+      background: transparent;
+      pointer-events:none;
     }
   </style>
 </head>
@@ -225,9 +210,12 @@
 
     <!-- overlay in base coordinate space -->
     <div id="overlay">
-      <div id="version">v1.0.0</div>
-
-      <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+      <div id="topbar" aria-hidden="true">
+        <div id="topLeft">DART CALCULATOR</div>
+        <div id="topCenter">v1.0.0</div>
+        <div id="topRight">THE DART ROOM</div>
+      </div>
+<div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
 
@@ -261,10 +249,6 @@
         <button class="hit" onclick="APP.key(0)" aria-label="Zero"></button>
         <button class="hit" onclick="APP.donate()" aria-label="Donate"></button>
       </div>
-
-      <!-- Donate artwork text patch (only for the DONATE key) -->
-      <div id="donateMask" aria-hidden="true"></div>
-      <div id="donateText" aria-hidden="true">DONATIONS<br>WELCOME</div>
 
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
@@ -344,10 +328,10 @@
 })();
 
 /* APP LOGIC (ALL BUTTONS ACTIVE) */
+/* APP LOGIC (CHECKOUT RECOMMENDER) */
 const APP = {
   s: 501,
   i: "",
-  dart: 1,
 
   draw(){
     document.getElementById('score').innerText = this.s;
@@ -357,11 +341,8 @@ const APP = {
   set(n){
     this.s = n;
     this.i = "";
-    this.dart = 1;
-    document.getElementById('d1').innerText = "-";
-    document.getElementById('d2').innerText = "-";
-    document.getElementById('d3').innerText = "-";
     this.draw();
+    this.updateOut(); // recommendations depend on remaining score
   },
 
   key(n){
@@ -376,24 +357,37 @@ const APP = {
     this.draw();
   },
 
+  // --- CHECKOUT ENGINE (math instead of a hard-coded chart) ---
+  // Standard segments: S1-20, D1-20, T1-20, SB(25), BULL(50).
+  // We require the LAST dart to be a double (D1-20) or BULL(50) for a valid out.
+  // If no out (or score > 170), we show "-" in the dart boxes.
+  updateOut(){
+    const [a,b,c] = CHECKOUT.best(this.s);
+    document.getElementById('d1').innerText = a || "-";
+    document.getElementById('d2').innerText = b || "-";
+    document.getElementById('d3').innerText = c || "-";
+  },
+
   apply(){
     const v = parseInt(this.i, 10);
     if (!isNaN(v)) {
-      // basic darts bust rules: cannot go below 0 or to 1
       const next = this.s - v;
+
+      // Bust rules (simple): cannot go below 0 or to 1
       if (next < 0 || next === 1) {
-        // bust: do nothing but clear input
         this.i = "";
         this.draw();
         return;
       }
-      this.s = next;
 
-      // track dart values in the three boxes
-      document.getElementById('d' + this.dart).innerText = v;
-      this.dart += 1;
-      if (this.dart > 3) this.dart = 1;
+      this.s = next;
+      this.i = "";
+      this.draw();
+      this.updateOut();
+      return;
     }
+
+    // if nothing entered, just clear
     this.i = "";
     this.draw();
   },
@@ -403,7 +397,104 @@ const APP = {
   }
 };
 
+const CHECKOUT = (() => {
+  const shots = [];
+
+  // Singles / Doubles / Triples 1..20
+  for (let n=1; n<=20; n++){
+    shots.push({t:`S${n}`, v:n,  f:`${n}`});
+    shots.push({t:`D${n}`, v:2*n, f:`D${n}`});
+    shots.push({t:`T${n}`, v:3*n, f:`T${n}`});
+  }
+  // Bulls
+  shots.push({t:"SB", v:25, f:"SB"});
+  shots.push({t:"BULL", v:50, f:"BULL"});
+
+  const isFinisher = (s) => s.t.startsWith("D") || s.t === "BULL";
+
+  // Heuristic scoring: prefer fewer darts, prefer higher first dart, prefer T20, then T19, then bulls,
+  // and avoid awkward singles when a better setup exists.
+  function rank(combo){
+    // combo is array of shot objects length 1..3
+    let score = 0;
+
+    // fewer darts better
+    score -= combo.length * 1000;
+
+    // prefer high first dart value
+    score -= (200 - combo[0].v);
+
+    // prefer T20, T19 for first dart if same value region
+    const first = combo[0].t;
+    if (first === "T20") score -= 60;
+    if (first === "T19") score -= 40;
+    if (first === "T18") score -= 20;
+
+    // prefer double-20/double-16/double-18 finishes
+    const last = combo[combo.length-1].t;
+    if (last === "D20") score -= 30;
+    if (last === "D16") score -= 24;
+    if (last === "D18") score -= 18;
+    if (last === "BULL") score -= 10;
+
+    return score;
+  }
+
+  function best(remaining){
+    // Standard out table only guarantees up to 170. Beyond that, show blanks.
+    if (remaining < 2 || remaining > 170) return ["-","-","-"];
+
+    let bestCombo = null;
+    let bestRank = Infinity;
+
+    // 1 dart
+    for (const a of shots){
+      if (!isFinisher(a)) continue;
+      if (a.v === remaining){
+        const combo = [a];
+        const r = rank(combo);
+        if (r < bestRank){ bestRank = r; bestCombo = combo; }
+      }
+    }
+
+    // 2 darts
+    for (const a of shots){
+      for (const b of shots){
+        if (!isFinisher(b)) continue;
+        if (a.v + b.v === remaining){
+          const combo = [a,b];
+          const r = rank(combo);
+          if (r < bestRank){ bestRank = r; bestCombo = combo; }
+        }
+      }
+    }
+
+    // 3 darts
+    for (const a of shots){
+      for (const b of shots){
+        for (const c of shots){
+          if (!isFinisher(c)) continue;
+          if (a.v + b.v + c.v === remaining){
+            const combo = [a,b,c];
+            const r = rank(combo);
+            if (r < bestRank){ bestRank = r; bestCombo = combo; }
+          }
+        }
+      }
+    }
+
+    if (!bestCombo) return ["-","-","-"];
+
+    const out = bestCombo.map(x => x.f);
+    while (out.length < 3) out.push("-");
+    return out;
+  }
+
+  return { best };
+})();
+
 APP.draw();
+APP.updateOut();
 </script>
 </body>
 </html>
