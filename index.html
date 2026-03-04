@@ -159,38 +159,51 @@
     /* Donate artwork text patch (embedded text is in the JPEG) */
     #donateMask{
       position:absolute;
+      /* anchor to keypad grid origin */
       top: 560px;   /* pad top */
       left: 50px;   /* pad left */
-      transform: translate(220px, 225px); /* bottom-right key: (2*110, 3*75) */
+
+      /* donate key is bottom-right cell: col 3, row 4 */
+      transform: translate(220px, 225px); /* (2*110, 3*75) */
+
+      /* slightly inset so we don't cover button edge glow */
       width: 110px;
       height: 75px;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.18);
+      padding: 0;
+      border-radius: 14px;
+
+      /* OPAQUE enough to fully hide embedded background text */
+      background: rgba(0,0,0,0.78);
+
       pointer-events:none;
       z-index: 2;
     }
-    #donateText{
+#donateText{
       position:absolute;
       top: 560px;
       left: 50px;
       transform: translate(220px, 225px);
       width: 110px;
       height: 75px;
+
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
-      font-size: 5px;     /* ~half size */
-      line-height: 1.05;
+
+      /* VERY small, per request */
+      font-size: 4px;
+      line-height: 1.0;
       font-weight: 900;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.4px;
+
       color: rgba(255,85,170,0.95);
-      text-shadow: 0 0 6px rgba(255,85,170,0.18);
+      text-shadow: none; /* remove shadowy blob look */
+
       pointer-events:none;
       z-index: 3;
     }
-
-    /* Invisible hit zones (buttons) */
+/* Invisible hit zones (buttons) */
     .hit {
       position: absolute;
       background: transparent;
