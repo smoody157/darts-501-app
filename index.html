@@ -41,6 +41,9 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
+    
+      filter: contrast(1.08) saturate(1.18) brightness(1.06);
+      will-change: transform;
     }
 
     /* Overlay is in BASE coordinate space (430x932), then we apply a single transform (scale + translate) */
@@ -65,7 +68,7 @@
 
     #score {
       position: absolute;
-      top: 232px;
+      top: 224px;
       left: 0;
       width: 430px;
       font-size: 92px;
@@ -100,17 +103,17 @@
       position: absolute;
       width: 105px;
       text-align: center;
-      font-size: 32px;
+      font-size: 36px;
       line-height: 1;
     }
 
     /* Dart labels ABOVE values, per your request */
-    #dl1 { top: 372px; left: 40px; }
-    #dl2 { top: 372px; left: 164px; }
-    #dl3 { top: 372px; left: 288px; }
-    #d1  { top: 396px; left: 40px; }
-    #d2  { top: 396px; left: 164px; }
-    #d3  { top: 396px; left: 288px; }
+    #dl1 { top: 368px; left: 34px; }
+    #dl2 { top: 368px; left: 164px; }
+    #dl3 { top: 368px; left: 294px; }
+    #d1  { top: 394px; left: 34px; }
+    #d2  { top: 394px; left: 164px; }
+    #d3  { top: 394px; left: 294px; }
 
     #input {
       position: absolute;
