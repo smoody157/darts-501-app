@@ -5,33 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Dart Calculator</title>
 <style>
-  html,body{
+  html, body {
     margin:0; padding:0; width:100%; height:100%;
     background:#000; overflow:hidden;
     -webkit-user-select:none; user-select:none;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   }
+  #stage { position:fixed; inset:0; background:#000; overflow:hidden; }
+  #bg { position:absolute; inset:0; background:#000 center/contain no-repeat; }
 
-  /* Pure-CSS scaling: stage always fits screen, no JS scaling */
-  #wrap{
-    position:fixed; inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#000;
-  }
-
-  #stage{
-    position:relative;
-    height:100vh;
-    aspect-ratio: 1015 / 2166;
-    max-width:100vw;
-    background: url('./IMG_7603.jpeg') center center / contain no-repeat;
-  }
-
-  /* Overlays never block taps */
-  .ov{
+  .overlay {
     position:absolute;
     display:flex;
     align-items:center;
@@ -40,72 +24,49 @@
     pointer-events:none;
   }
 
-  /* Only add what is NOT in the background */
-  #version{
-    left:20%;
-    top:2.4%;
-    width:60%;
-    height:3%;
+  #version {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    color: rgba(0,140,255,0.95);
-    text-shadow: 0 0 18px rgba(0,140,255,0.22);
-    font-weight:900;
-    letter-spacing:0.08em;
-    font-size: clamp(10px, 1.6vh, 22px);
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 0 10px rgba(0,0,0,0.45);
+    font-weight: 900;
+    letter-spacing: 0.08em;
   }
-
-  #brand{
-    left:5%;
-    top:16.6%;
-    width:90%;
-    height:2.6%;
+  #brand {
     color: rgba(255,255,255,0.78);
     text-shadow: 0 0 10px rgba(0,0,0,0.55);
-    font-weight:800;
-    letter-spacing:0.12em;
-    font-size: clamp(8px, 1.1vh, 16px);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+  }
+  #score {
+    /* Blue -> Pink gradient like the logo style */
+    background: linear-gradient(180deg, rgba(110,210,255,1) 0%, rgba(255,105,200,1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 22px rgba(255,255,255,0.08), 0 0 26px rgba(0,0,0,0.60);
+    font-weight: 900;
+  }
+  .dart {
+    background: linear-gradient(180deg, rgba(255,105,200,1) 0%, rgba(110,210,255,1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 16px rgba(0,210,255,0.18), 0 0 18px rgba(0,0,0,0.55);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+  #input {
+    color: rgba(255,255,255,0.90);
+    text-shadow: 0 0 12px rgba(0,0,0,0.65);
+    font-weight: 900;
+    letter-spacing: 0.18em;
   }
 
-  #score{
-    left:5%;
-    top:23.0%;
-    width:90%;
-    height:12%;
-    color: rgba(255,255,255,0.98);
-    text-shadow: 0 0 22px rgba(255,255,255,0.10), 0 0 26px rgba(0,0,0,0.60);
-    font-weight:900;
-    font-size: clamp(36px, 9vh, 120px);
-  }
-
-  .dart{
-    width:22%;
-    height:6%;
-    top:41.0%;
-    color: rgba(130,220,255,0.95);
-    text-shadow: 0 0 16px rgba(0,210,255,0.22), 0 0 18px rgba(0,0,0,0.55);
-    font-weight:900;
-    letter-spacing:0.04em;
-    font-size: clamp(16px, 4.0vh, 60px);
-  }
-  #d1{ left:14%; }
-  #d2{ left:39%; }
-  #d3{ left:64%; }
-
-  #input{
-    left:10%;
-    top:52.0%;
-    width:80%;
-    height:7%;
-    color: rgba(0,0,0,0.88);
-    font-weight:900;
-    letter-spacing:0.18em;
-    font-size: clamp(18px, 5.0vh, 70px);
-  }
-
-  /* Tap zones */
-  .tap{
+  .tap {
     position:absolute;
-    background:transparent;
+    background: transparent;
     border:none;
     outline:none;
     padding:0;
@@ -114,72 +75,64 @@
     touch-action: manipulation;
   }
 
-  /* 301/501/701 */
-  #m301{ left:31%; top:33.7%; width:12.5%; height:3.2%; }
-  #m501{ left:44%; top:33.7%; width:12.5%; height:3.2%; }
-  #m701{ left:57%; top:33.7%; width:12.5%; height:3.2%; }
-
-  /* Keypad grid */
-  #pad{
+  #pad {
     position:absolute;
-    left:10.5%;
-    top:61.7%;
-    width:79%;
-    height:22.6%;
     display:grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr;
-    gap:0;
+    gap: 0;
     pointer-events:auto;
   }
-  #pad button{
-    background:transparent;
+  #pad button {
+    width:100%;
+    height:100%;
+    background: transparent;
     border:none;
     outline:none;
     pointer-events:auto;
     touch-action: manipulation;
   }
-
-  /* Apply */
-  #apply{ left:10.5%; top:85.9%; width:79%; height:4.6%; }
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div id="stage">
-    <div id="version" class="ov">v1.1.2</div>
-    <div id="brand" class="ov">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+<div id="stage">
+  <div id="bg"></div>
 
-    <div id="score" class="ov">501</div>
-    <div id="d1" class="ov dart">-</div>
-    <div id="d2" class="ov dart">-</div>
-    <div id="d3" class="ov dart">-</div>
-    <div id="input" class="ov">---</div>
+  <div id="version" class="overlay">v1.1.4</div>
+  <div id="brand" class="overlay">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
-    <button id="m301" class="tap" aria-label="301"></button>
-    <button id="m501" class="tap" aria-label="501"></button>
-    <button id="m701" class="tap" aria-label="701"></button>
+  <div id="score" class="overlay">501</div>
+  <div id="d1" class="overlay dart">-</div>
+  <div id="d2" class="overlay dart">-</div>
+  <div id="d3" class="overlay dart">-</div>
+  <div id="input" class="overlay">---</div>
 
-    <div id="pad" aria-label="Keypad">
-      <button data-k="7" aria-label="7"></button>
-      <button data-k="8" aria-label="8"></button>
-      <button data-k="9" aria-label="9"></button>
-      <button data-k="4" aria-label="4"></button>
-      <button data-k="5" aria-label="5"></button>
-      <button data-k="6" aria-label="6"></button>
-      <button data-k="1" aria-label="1"></button>
-      <button data-k="2" aria-label="2"></button>
-      <button data-k="3" aria-label="3"></button>
-      <button data-k="DEL" aria-label="Delete"></button>
-      <button data-k="0" aria-label="0"></button>
-      <button data-k="DONATE" aria-label="Donate"></button>
-    </div>
+  <button id="m301" class="tap" aria-label="301"></button>
+  <button id="m501" class="tap" aria-label="501"></button>
+  <button id="m701" class="tap" aria-label="701"></button>
 
-    <button id="apply" class="tap" aria-label="Apply Turn"></button>
+  <div id="pad" aria-label="Keypad">
+    <button data-k="7" aria-label="7"></button>
+    <button data-k="8" aria-label="8"></button>
+    <button data-k="9" aria-label="9"></button>
+    <button data-k="4" aria-label="4"></button>
+    <button data-k="5" aria-label="5"></button>
+    <button data-k="6" aria-label="6"></button>
+    <button data-k="1" aria-label="1"></button>
+    <button data-k="2" aria-label="2"></button>
+    <button data-k="3" aria-label="3"></button>
+    <button data-k="DEL" aria-label="Delete"></button>
+    <button data-k="0" aria-label="0"></button>
+    <button data-k="DONATE" aria-label="Donate"></button>
   </div>
+
+  <button id="apply" class="tap" aria-label="Apply Turn"></button>
 </div>
 
 <script>
+  const BG_SRC = "https://raw.githubusercontent.com/smoody157/darts-501-app/main/IMG_7603.jpeg";
+  const LAYOUT = {"version":{"x":0.5,"y":0.045,"w":0.6,"h":0.04},"brand":{"x":0.5,"y":0.195,"w":0.92,"h":0.03},"score":{"x":0.5,"y":0.305,"w":0.9,"h":0.12},"d1":{"x":0.24,"y":0.420,"w":0.24,"h":0.07},"d2":{"x":0.5,"y":0.405,"w":0.24,"h":0.07},"d3":{"x":0.76,"y":0.420,"w":0.24,"h":0.07},"input":{"x":0.5,"y":0.535,"w":0.82,"h":0.08},"m301":{"x":0.415,"y":0.335,"w":0.13,"h":0.05},"m501":{"x":0.5,"y":0.335,"w":0.13,"h":0.05},"m701":{"x":0.585,"y":0.335,"w":0.13,"h":0.05},"pad":{"x":0.5,"y":0.725,"w":0.86,"h":0.29},"apply":{"x":0.5,"y":0.885,"w":0.86,"h":0.07}};
+
   const OUT_SHOT = [null,null,"D1","S1","D2","S1","D3","S3","D4","S1","D5","S3","D6","S5","D7","S7","D8","S9","D9","S3","D10","S5","D11","S7","D12","S9","D13","S11","D14","S13","D15","S15","D16","S1","D17","S3","D18","S5","D19","S7","D20","S9","S10","S11","S12","S13","S6","S7","S8","S9","S10","S11","S12","S13","S14","S15","S16","S17","S18","S19","S20","SB","T10","T13","T16","SB","T14","T17","T16","T15","T10","T13","T16","T19","T14","T17","T16","T19","T18","T19","D20","T19","DB","T17","T20","T15","T18","T17","T20","T19","T18","T17","T20","T19","T18","T19","T20","T19","T20","T19","T20","T19","T20","T19","T16","DB","T20","T19","T19","T20","T19","T19","T20","T19","T18","T19","T20","T20","T20","T19","T20","T20","T18","T19","T20","DB","T19","T20","T18","T19","T20","T17","DB","T20","T18","DB","T20","T20","T19","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20"];
   const OUT_REM  = [null,null,0,2,0,4,0,4,0,8,0,8,0,8,0,8,0,8,0,16,0,16,0,16,0,16,0,16,0,16,0,16,0,32,0,32,0,32,0,32,0,32,32,32,32,32,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,36,32,24,16,40,24,16,20,24,40,32,24,16,32,24,28,20,24,22,40,24,32,32,24,40,32,36,28,32,36,40,32,36,40,38,36,40,38,42,40,44,42,46,56,55,46,50,51,49,53,54,52,56,60,58,56,57,58,62,60,61,68,66,64,75,69,67,74,72,70,80,82,73,80,85,76,77,81,82,80,81,82,83,84,85,86,87,88,89,93,91,92,93,97,95,96,97,98,99,100,101,102,103,107,105,106,107,108,109,110,111,112,113,114,115,116,117,118,122,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,182,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,202,200,201,202,203,204,208,206,207,211,209,210,214,212,219,217,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,242,240,241,248,246,244,245,249,247,248,252,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441];
 
@@ -190,6 +143,90 @@
     if (s === "DB" || s === "BULL" || s === "D25") return "DB";
     return s;
   }
+
+  const IMG = new Image();
+  IMG.decoding = "async";
+  IMG.src = BG_SRC;
+
+  function place(id, rect, imgW, imgH, offX, offY){
+    const el = document.getElementById(id);
+    if (!el) return;
+    const w = rect.w * imgW;
+    const h = rect.h * imgH;
+    const x = offX + (rect.x * imgW) - (w/2);
+    const y = offY + (rect.y * imgH) - (h/2);
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.width = w + "px";
+    el.style.height = h + "px";
+  }
+
+  function fit(){
+    const stage = document.getElementById("stage");
+    const bg = document.getElementById("bg");
+
+    const vw = stage.clientWidth;
+    const vh = stage.clientHeight;
+
+    const iw = IMG.naturalWidth || 708;
+    const ih = IMG.naturalHeight || 1536;
+    const ar = iw / ih;
+
+    let imgW, imgH, offX, offY;
+    if ((vw / vh) > ar) {
+      imgH = vh;
+      imgW = imgH * ar;
+      offX = (vw - imgW) / 2;
+      offY = 0;
+    } else {
+      imgW = vw;
+      imgH = imgW / ar;
+      offX = 0;
+      offY = (vh - imgH) / 2;
+    }
+
+    bg.style.backgroundImage = "url('" + BG_SRC + "')";
+    bg.style.backgroundSize = imgW + "px " + imgH + "px";
+    bg.style.backgroundPosition = offX + "px " + offY + "px";
+
+    // Place overlays & tap zones
+    place("version", LAYOUT.version, imgW, imgH, offX, offY);
+    place("brand",   LAYOUT.brand,   imgW, imgH, offX, offY);
+    place("score",   LAYOUT.score,   imgW, imgH, offX, offY);
+    place("d1",      LAYOUT.d1,      imgW, imgH, offX, offY);
+    place("d2",      LAYOUT.d2,      imgW, imgH, offX, offY);
+    place("d3",      LAYOUT.d3,      imgW, imgH, offX, offY);
+    place("input",   LAYOUT.input,   imgW, imgH, offX, offY);
+
+    place("m301", LAYOUT.m301, imgW, imgH, offX, offY);
+    place("m501", LAYOUT.m501, imgW, imgH, offX, offY);
+    place("m701", LAYOUT.m701, imgW, imgH, offX, offY);
+    place("apply",LAYOUT.apply,imgW, imgH, offX, offY);
+
+    // Pad
+    const pad = document.getElementById("pad");
+    const pr = LAYOUT.pad;
+    const pw = pr.w * imgW;
+    const ph = pr.h * imgH;
+    const px = offX + (pr.x * imgW) - (pw/2);
+    const py = offY + (pr.y * imgH) - (ph/2);
+    pad.style.left = px + "px";
+    pad.style.top = py + "px";
+    pad.style.width = pw + "px";
+    pad.style.height = ph + "px";
+
+    // Fonts responsive
+    document.getElementById("version").style.fontSize = Math.max(10, imgH*0.018) + "px";
+    document.getElementById("brand").style.fontSize   = Math.max(8,  imgH*0.010) + "px";
+    document.getElementById("score").style.fontSize   = Math.max(36, imgH*0.110) + "px";
+    ["d1","d2","d3"].forEach(id=>document.getElementById(id).style.fontSize = Math.max(16, imgH*0.060) + "px");
+    document.getElementById("input").style.fontSize   = Math.max(18, imgH*0.070) + "px";
+  }
+
+  window.addEventListener("resize", fit);
+  IMG.onload = fit;
+  IMG.onerror = fit;
+  setTimeout(fit, 250);
 
   const APP = {
     s: 501,
@@ -205,72 +242,47 @@
       this.updateOut();
     },
     key(k){
-      if (k === "DEL") {
-        this.i = "";
-        this.draw();
-        return;
-      }
-      if (k === "DONATE") {
-        window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
-        return;
-      }
-      if (this.i.length < 3) {
-        this.i += String(k);
-        this.draw();
-      }
+      if (k === "DEL") { this.i=""; this.draw(); return; }
+      if (k === "DONATE") { window.open("https://venmo.com/u/Steve-Moody-8","_blank"); return; }
+      if (this.i.length < 3) { this.i += String(k); this.draw(); }
     },
     updateOut(){
       const darts = ["-","-","-"];
       if (this.s > 170) {
-        darts[0] = "T20";
-        darts[1] = "T20";
-        darts[2] = "T20";
+        darts[0]="T20"; darts[1]="T20"; darts[2]="T20";
       } else {
         let cur = this.s;
         for (let k=0; k<3; k++) {
-          if (!cur || cur < 2 || cur > 170) break;
+          if (!cur || cur<2 || cur>170) break;
           const shot = OUT_SHOT[cur];
           const rem  = OUT_REM[cur];
-          if (!shot || rem === null || rem === undefined) break;
-          darts[k] = fmtShot(shot);
+          if (!shot || rem===null || rem===undefined) break;
+          darts[k]=fmtShot(shot);
           cur = rem;
-          if (cur === 0) break;
+          if (cur===0) break;
         }
       }
-      document.getElementById("d1").textContent = darts[0];
-      document.getElementById("d2").textContent = darts[1];
-      document.getElementById("d3").textContent = darts[2];
+      document.getElementById("d1").textContent=darts[0];
+      document.getElementById("d2").textContent=darts[1];
+      document.getElementById("d3").textContent=darts[2];
     },
     apply(){
-      const v = parseInt(this.i, 10);
+      const v = parseInt(this.i,10);
       if (!isNaN(v)) {
         const next = this.s - v;
-        if (next < 0 || next === 1) {
-          this.i = "";
-          this.draw();
-          return;
-        }
-        this.s = next;
-        this.i = "";
-        this.draw();
-        this.updateOut();
-      } else {
-        this.i = "";
-        this.draw();
-      }
+        if (next<0 || next===1) { this.i=""; this.draw(); return; }
+        this.s=next; this.i=""; this.draw(); this.updateOut();
+      } else { this.i=""; this.draw(); }
     }
   };
 
-  document.getElementById("m301").addEventListener("click", () => APP.set(301));
-  document.getElementById("m501").addEventListener("click", () => APP.set(501));
-  document.getElementById("m701").addEventListener("click", () => APP.set(701));
-  document.getElementById("apply").addEventListener("click", () => APP.apply());
-  document.querySelectorAll("#pad button").forEach(btn => {
-    btn.addEventListener("click", () => APP.key(btn.dataset.k));
-  });
+  document.getElementById("m301").addEventListener("click", ()=>APP.set(301));
+  document.getElementById("m501").addEventListener("click", ()=>APP.set(501));
+  document.getElementById("m701").addEventListener("click", ()=>APP.set(701));
+  document.getElementById("apply").addEventListener("click", ()=>APP.apply());
+  document.querySelectorAll("#pad button").forEach(btn=>btn.addEventListener("click", ()=>APP.key(btn.dataset.k)));
 
-  APP.draw();
-  APP.updateOut();
+  APP.draw(); APP.updateOut();
 </script>
 </body>
 </html>
