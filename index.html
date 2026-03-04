@@ -72,31 +72,17 @@
       line-height: 1;
     }
 
-    /* Masks to "break" the glow line behind the brand text */
-    #brandMaskL, #brandMaskR{
-      position:absolute;
-      top: 184px; /* aligned with the gold line behind brand */
-      height: 14px;
-      background: rgba(0,0,0,0.85);
-      border-radius: 10px;
-      z-index: 4; /* behind brand text, above background */
-      pointer-events:none;
-    }
-    #brandMaskL{ left: 14px; width: 125px; }
-    #brandMaskR{ right: 14px; width: 125px; }
-
     #brand {
       position: absolute;
-      top: 176px; /* between gold borders */
+      top: 176px;
       left: 0;
       width: 430px;
       text-align: center;
-      font-size: 9px; /* smaller so it fits clean */
-      letter-spacing: 1.1px;
+      font-size: 9px;
+      letter-spacing: 1.2px;
       color: rgba(255,255,255,0.80);
       text-shadow: 0 0 8px rgba(255,255,255,0.15);
       font-weight: 700;
-      z-index: 5;
     }
 
     .dart-label {
@@ -148,36 +134,39 @@
       text-shadow: 0 0 6px rgba(0,0,0,0.45);
     }
 
-    /* Donate button text override (smaller font) */
+    /* Donate artwork text patch (embedded text is in the JPEG) */
     #donateMask{
       position:absolute;
-      top: 804px;
-      left: 270px;
+      top: 560px;   /* pad top */
+      left: 50px;   /* pad left */
+      /* donate key is bottom-right cell: col 3, row 4 */
+      transform: translate(220px, 225px); /* (2*110, 3*75) */
       width: 110px;
-      height: 60px;
-      background: rgba(0,0,0,0.55);
-      border-radius: 10px;
-      z-index: 2;
+      height: 75px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.50);
       pointer-events:none;
+      z-index: 2;
     }
     #donateText{
       position:absolute;
-      top: 812px;
-      left: 270px;
+      top: 560px;
+      left: 50px;
+      transform: translate(220px, 225px);
       width: 110px;
-      height: 60px;
+      height: 75px;
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
-      font-size: 12px;
+      font-size: 12px;     /* smaller than artwork */
       line-height: 1.05;
       font-weight: 900;
       letter-spacing: 1px;
       color: rgba(255,85,170,0.95);
       text-shadow: 0 0 10px rgba(255,85,170,0.35);
-      z-index: 3;
       pointer-events:none;
+      z-index: 3;
     }
 
     /* Invisible hit zones (buttons) */
@@ -198,33 +187,21 @@
 
     /* Keypad grid area (3 columns). We map each cell precisely. */
     #pad {
-    position:absolute;
-    left:50px;
-    top:560px;
-    width:330px;
-    height:300px;
-    display:grid;
-    grid-template-columns:110px 110px 110px; /* lock columns */
-    grid-template-rows:75px 75px 75px 75px;  /* lock rows */
-    gap: 0px;
-}
+      position:absolute;
+      left:50px;
+      top:560px;
+      width:330px;
+      height:300px;
+      display:grid;
+      grid-template-columns:110px 110px 110px; /* locked columns */
+      grid-template-rows:75px 75px 75px 75px;  /* locked rows */
+      gap: 0px;
+    }
     #pad .hit { position: relative; width: 100%; height: 100%; }
 
     /* Apply button */
     #apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
-
-    /* Donate button hit zone (mirror side of DEL, sized to match artwork button) */
-    #donate {
-      position: absolute;
-      /* tuned to sit over the DONATIONS WELCOME key on your artwork;
-         adjust ONLY if your artwork changes */
-      top: 800px;
-      left: 270px;
-      width: 110px;
-      height: 60px;
-    }
-
-    #footer {
+#footer {
       position: absolute;
       left: 0;
       bottom: 6px;
@@ -250,8 +227,6 @@
     <div id="overlay">
       <div id="version">v1.0.0</div>
 
-      <div id="brandMaskL"></div>
-      <div id="brandMaskR"></div>
       <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
@@ -287,15 +262,12 @@
         <button class="hit" onclick="APP.donate()" aria-label="Donate"></button>
       </div>
 
+      <!-- Donate artwork text patch (only for the DONATE key) -->
+      <div id="donateMask" aria-hidden="true"></div>
+      <div id="donateText" aria-hidden="true">DONATIONS<br>WELCOME</div>
+
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
-
-      <!-- Donate hit zone (extra safety; if you have a dedicated donate area) -->
-      <button id="donate" class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
-
-      <div id="donateMask"></div>
-      <div id="donateText">DONATIONS<br>WELCOME</div>
-
 <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
     </div>
   </div>
