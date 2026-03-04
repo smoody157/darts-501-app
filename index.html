@@ -1,290 +1,620 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>Dart Calculator</title>
 <style>
-  :root{
-    /* ONE PLACE to nudge everything if your background image is trimmed differently */
+  :root {
+    --appW: 430;
+    --appH: 932;
+    --xShift: 0px;
     --yShift: 0px;
-
-    /* App canvas size (matches iPhone screenshot aspect) */
-    --w: 430px;
-    --h: 932px;
-
-    --cyan:#67d6ff;
-    --pink:#ff4aa6;
-    --gold:#d7b35a;
-    --ink:#0b0b12;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{height:100%; margin:0; background:#000; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-  body{display:flex; align-items:center; justify-content:center;}
-  #app{
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; height:100%; background:#000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  #wrap {
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 12px 0;
+  }
+  #app {
     position:relative;
-    width:var(--w);
-    height:var(--h);
+    width: calc(var(--appW) * 1px);
+    height: calc(var(--appH) * 1px);
+    transform: translate(var(--xShift), var(--yShift));
     overflow:hidden;
-    background:
-      url("outchartapp.jpeg") center/100% 100% no-repeat,
-      url("OUTCHARTAPP.jpeg") center/100% 100% no-repeat,
-      url("outs.jpeg") center/100% 100% no-repeat,
-      url("outs.jpg") center/100% 100% no-repeat,
-      #000;
+  }
+  /* scale to fit small screens */
+  @media (max-width: 460px) {
+    #app {
+      width: 100vw;
+      height: calc(100vw * (var(--appH) / var(--appW)));
+      max-height: 100vh;
+    }
+  }
+  #bg {
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    z-index:0;
+    user-select:none;
+    -webkit-user-drag:none;
+  }
+  #overlay {
+    position:absolute; inset:0;
+    z-index:5;
+  }
+  /* helper: absolute positioned item with translate scaling from design coords */
+  .abs {
+    position:absolute;
+    transform: translate(-50%, -50%);
+    text-align:center;
   }
 
-  /* Overlay layer (all interactive UI sits here) */
-  #ui{position:absolute; inset:0; transform:translateY(var(--yShift));}
-
-  /* Version */
-  #ver{position:absolute; right:18px; top:18px; font-size:14px; letter-spacing:.06em; color:rgba(255,255,255,.55);}
-
-  /* Designed by text between top frame borders */
-  #designed{position:absolute; left:0; right:0; top:214px; text-align:center; font-size:14px; letter-spacing:.16em;
-    color:rgba(255,255,255,.55);}
-
-  /* Score Remaining label (inside the big yellow frame, under the designed line) */
-  #scoreLabel{position:absolute; left:0; right:0; top:244px; text-align:center; font-size:14px; letter-spacing:.18em;
-    color:rgba(120,220,255,.9);}
-
-  /* Big score number (radiant gradient, not a background overlay) */
-  #score{position:absolute; left:0; right:0; top:270px; text-align:center; font-weight:900; font-size:96px; line-height:1;
-    background:linear-gradient(180deg, #7fe5ff 10%, #8fd6ff 40%, #ff5ab3 92%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    text-shadow:0 10px 18px rgba(0,0,0,.55);
+  /* text styles */
+  .smallcaps {
+    letter-spacing: 3px;
+    font-weight: 700;
+    opacity: 0.9;
   }
 
-  /* Game mode buttons (301/501/701) */
-  #modes{position:absolute; left:54px; right:54px; top:372px; display:flex; gap:18px; justify-content:space-between;}
-  .modeBtn{
-    flex:1;
-    height:46px;
-    border-radius:14px;
-    background:rgba(0,0,0,.35);
-    border:2px solid rgba(120,220,255,.65);
-    color:rgba(240,220,160,.95);
-    font-weight:800;
-    letter-spacing:.08em;
-    font-size:22px;
-    cursor:pointer;
+  /* gradient text */
+  .gradPink {
+    background: linear-gradient(#7fe6ff, #ff5ac8);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color: transparent;
+    text-shadow: 0 0 12px rgba(127,230,255,.20);
   }
-  .modeBtn.active{
-    border-color: rgba(240,210,120,.85);
-    box-shadow: 0 0 18px rgba(120,220,255,.35);
+  .gradCyan {
+    background: linear-gradient(#b7fbff, #4ad9ff);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color: transparent;
+    text-shadow: 0 0 12px rgba(127,230,255,.25);
   }
-
-  /* Outs boxes (3 squares) */
-  #outs{position:absolute; left:38px; right:38px; top:438px; display:flex; gap:14px;}
-  .outBox{
-    flex:1;
-    height:118px;
-    border-radius:18px;
-    position:relative;
-  }
-  .outLabel{position:absolute; top:10px; left:0; right:0; text-align:center;
-    font-size:13px; letter-spacing:.18em; color:rgba(255,255,255,.60); font-weight:700;}
-  .outVal{position:absolute; top:40px; left:0; right:0; text-align:center;
-    font-size:44px; font-weight:900;
-    background:linear-gradient(180deg, #7fe5ff 10%, #8fd6ff 45%, #ff5ab3 92%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    text-shadow:0 10px 18px rgba(0,0,0,.55);
+  .gold {
+    color:#d8b35a;
+    text-shadow: 0 0 10px rgba(216,179,90,.18);
   }
 
-  /* Entry display row (the long bar above keypad) */
-  #entry{position:absolute; left:38px; right:38px; top:566px; height:78px; display:flex; align-items:center; justify-content:center;
-    font-size:64px; font-weight:900;
-    background:linear-gradient(180deg, #7fe5ff 10%, #8fd6ff 45%, #ff5ab3 92%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    text-shadow:0 10px 18px rgba(0,0,0,.55);
+  /* top texts */
+  #version {
+    position:absolute;
+    right: 14px;
+    top: 18px;
+    font-size: 14px;
+    color: rgba(255,255,255,.55);
+    z-index:10;
+  }
+  #brand {
+    left: 215px; top: 205px;
+    width: 390px;
+    font-size: 16px;
+    color: rgba(255,255,255,.65);
+  }
+  #scoreLabel {
+    left: 215px; top: 236px;
+    width: 360px;
+    font-size: 16px;
+  }
+  #score {
+    left: 215px; top: 310px;
+    width: 380px;
+    font-size: 92px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  /* mode buttons (301/501/701) */
+  #modes {
+    position:absolute;
+    left: 215px;
+    top: 390px;
+    width: 360px;
+    height: 56px;
+    transform: translate(-50%, -50%);
+    display:flex;
+    gap: 18px;
+    justify-content:center;
+    align-items:center;
+  }
+  .modeBtn {
+    width: 104px;
+    height: 44px;
+    border-radius: 14px;
+    border: 2px solid rgba(127,230,255,.75);
+    background: rgba(0,0,0,.45);
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #d8b35a;
+    box-shadow: 0 0 18px rgba(127,230,255,.12);
+  }
+  .modeBtn.active {
+    border-color: rgba(216,179,90,.9);
+    box-shadow: 0 0 20px rgba(216,179,90,.22), 0 0 16px rgba(127,230,255,.10) inset;
+  }
+
+  /* dart out boxes */
+  .dartLabel {
+    position:absolute;
+    width: 110px;
+    font-size: 14px;
+    color: rgba(255,255,255,.60);
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align:center;
     pointer-events:none;
   }
-
-  /* Keypad hit areas (transparent, on top of image) */
-  #pad{position:absolute; left:38px; right:38px; top:656px; height:238px; display:grid;
-    grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(4,1fr); gap:14px;
+  .dartVal {
+    position:absolute;
+    width: 110px;
+    height: 40px;
+    font-size: 30px;
+    font-weight: 1000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
   }
-  .hit{
-    background:transparent;
-    border:none;
+  /* centers inside each small box */
+  #dl1 { left: 96px;  top: 458px; }
+  #dl2 { left: 215px; top: 458px; }
+  #dl3 { left: 334px; top: 458px; }
+
+  #d1 { left: 96px;  top: 505px; }
+  #d2 { left: 215px; top: 505px; }
+  #d3 { left: 334px; top: 505px; }
+
+  /* turn input (middle long bar) */
+  #input {
+    left: 215px; top: 610px;
+    width: 300px;
+    font-size: 72px;
+    font-weight: 1000;
+    letter-spacing: 2px;
+  }
+
+  /* keypad hit areas */
+  #keys {
+    position:absolute;
+    left: 215px;
+    top: 758px;
+    width: 360px;
+    height: 320px;
+    transform: translate(-50%, -50%);
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 18px 18px;
+  }
+  .key {
+    border-radius: 18px;
+    background: rgba(0,0,0,0.001); /* transparent but clickable */
+    border: none;
     padding:0;
+    margin:0;
     cursor:pointer;
-    z-index:50;
+  }
+  /* special buttons live outside grid */
+  #del {
+    position:absolute;
+    left: 92px; top: 790px;
+    width: 150px; height: 78px;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.001);
+    border:none;
+    border-radius: 18px;
+    cursor:pointer;
+  }
+  #zero {
+    position:absolute;
+    left: 215px; top: 790px;
+    width: 150px; height: 78px;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.001);
+    border:none;
+    border-radius: 18px;
+    cursor:pointer;
   }
 
-  /* Bottom row buttons (DEL, 0, DONATE) sit in the 4th row of grid.
-     We use the same hit buttons, but render no visual here because the image already has it. */
+  /* donate button */
+  #donate {
+    position:absolute;
+    left: 334px; top: 790px;
+    width: 150px; height: 78px;
+    transform: translate(-50%, -50%);
+    border-radius: 18px;
+    border:none;
+    background: rgba(0,0,0,0.001);
+    cursor:pointer;
+  }
 
-  /* Apply Turn button hit area */
-  #apply{position:absolute; left:38px; right:38px; top:910px; height:66px; background:transparent; border:none; cursor:pointer; z-index:50;}
+  /* apply turn */
+  #apply {
+    position:absolute;
+    left: 215px; top: 885px;
+    width: 360px; height: 66px;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.001);
+    border:none;
+    border-radius: 18px;
+    cursor:pointer;
+  }
 
-  /* Footer (patch over any baked-in footer text, then render your new one) */
-  #footerPatch{position:absolute; left:0; right:0; bottom:0; height:56px; background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.85) 55%, rgba(0,0,0,1));}
-  #footer{position:absolute; left:18px; right:18px; bottom:10px; text-align:center;
-    font-size:13px; letter-spacing:.03em; color:rgba(255,255,255,.70);}
+  /* footer */
+  #footer {
+    position:absolute;
+    left: 215px; top: 920px;
+    width: 410px;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: rgba(255,255,255,.65);
+    letter-spacing: 0.5px;
+    text-align:center;
+    padding: 0 10px;
+  }
 </style>
 </head>
 <body>
-  <div id="app" aria-label="Dart Calculator">
-    <div id="ui">
-      <div id="ver">v1.3.2</div>
-      <div id="designed">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
-      <div id="scoreLabel">SCORE REMAINING</div>
-      <div id="score">501</div>
+  <div id="wrap">
+    <div id="app">
+      <img id="bg" alt="background" />
+      <div id="version">v1.3.2</div>
+      <div id="overlay">
+        <div id="brand" class="abs smallcaps">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+        <div id="scoreLabel" class="abs smallcaps gold">SCORE REMAINING</div>
+        <div id="score" class="abs gradPink">501</div>
 
-      <div id="modes" role="group" aria-label="Game mode">
-        <button class="modeBtn" id="m301" type="button">301</button>
-        <button class="modeBtn active" id="m501" type="button">501</button>
-        <button class="modeBtn" id="m701" type="button">701</button>
+        <div id="modes" aria-label="Game mode">
+          <button id="m301" class="modeBtn" type="button">301</button>
+          <button id="m501" class="modeBtn active" type="button">501</button>
+          <button id="m701" class="modeBtn" type="button">701</button>
+        </div>
+
+        <div id="dl1" class="dartLabel">DART 1</div>
+        <div id="dl2" class="dartLabel">DART 2</div>
+        <div id="dl3" class="dartLabel">DART 3</div>
+
+        <div id="d1" class="dartVal gradPink"></div>
+        <div id="d2" class="dartVal gradPink"></div>
+        <div id="d3" class="dartVal gradPink"></div>
+
+        <div id="input" class="abs gradCyan">00</div>
+
+        <!-- keypad -->
+        <div id="keys" aria-label="Keypad">
+          <button class="key" data-k="7" type="button"></button>
+          <button class="key" data-k="8" type="button"></button>
+          <button class="key" data-k="9" type="button"></button>
+          <button class="key" data-k="4" type="button"></button>
+          <button class="key" data-k="5" type="button"></button>
+          <button class="key" data-k="6" type="button"></button>
+          <button class="key" data-k="1" type="button"></button>
+          <button class="key" data-k="2" type="button"></button>
+          <button class="key" data-k="3" type="button"></button>
+          <div></div><div></div><div></div>
+        </div>
+
+        <button id="del" type="button" aria-label="Delete"></button>
+        <button id="zero" type="button" aria-label="Zero"></button>
+
+        <button id="donate" type="button" aria-label="Donations Welcome"></button>
+        <button id="apply" type="button" aria-label="Apply Turn"></button>
+
+        <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
       </div>
-
-      <div id="outs" aria-label="Out suggestions">
-        <div class="outBox"><div class="outLabel">DART 1</div><div class="outVal" id="o1"></div></div>
-        <div class="outBox"><div class="outLabel">DART 2</div><div class="outVal" id="o2"></div></div>
-        <div class="outBox"><div class="outLabel">DART 3</div><div class="outVal" id="o3"></div></div>
-      </div>
-
-      <div id="entry" aria-label="Entry">00</div>
-
-      <div id="pad" aria-label="Keypad">
-        <button class="hit" type="button" data-k="7" aria-label="7"></button>
-        <button class="hit" type="button" data-k="8" aria-label="8"></button>
-        <button class="hit" type="button" data-k="9" aria-label="9"></button>
-
-        <button class="hit" type="button" data-k="4" aria-label="4"></button>
-        <button class="hit" type="button" data-k="5" aria-label="5"></button>
-        <button class="hit" type="button" data-k="6" aria-label="6"></button>
-
-        <button class="hit" type="button" data-k="1" aria-label="1"></button>
-        <button class="hit" type="button" data-k="2" aria-label="2"></button>
-        <button class="hit" type="button" data-k="3" aria-label="3"></button>
-
-        <button class="hit" type="button" data-k="DEL" aria-label="Delete"></button>
-        <button class="hit" type="button" data-k="0" aria-label="0"></button>
-        <button class="hit" type="button" data-k="DONATE" aria-label="Donations Welcome"></button>
-      </div>
-
-      <button id="apply" type="button" aria-label="Apply Turn"></button>
-
-      <div id="footerPatch"></div>
-      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
     </div>
   </div>
 
 <script>
-(() => {
-  "use strict";
+  // Background file loader (supports different filename casing in repo)
+  (function() {
+    const bg = document.getElementById('bg');
+    const candidates = [
+      './OUTCHARTAPP.jpeg',
+      './outchartapp.jpeg',
+      './OUTCHARTAPP.jpg',
+      './outchartapp.jpg',
+      './outs.jpg',
+      './outs.jpeg'
+    ];
+    let i = 0;
+    const tryNext = () => {
+      if (i >= candidates.length) {
+        // fallback: solid black
+        bg.style.display = 'none';
+        return;
+      }
+      const src = candidates[i++];
+      const img = new Image();
+      img.onload = () => { bg.src = src; };
+      img.onerror = () => tryNext();
+      img.src = src + '?v=' + Date.now();
+    };
+    tryNext();
+  })();
 
-  const OUTS = {"2":["D1","",""],"3":["S1","D1",""],"4":["D2","",""],"5":["S1","D2",""],"6":["D3","",""],"7":["S3","D2",""],"8":["D4","",""],"9":["S1","D4",""],"10":["D5","",""],"11":["S3","D4",""],"12":["D6","",""],"13":["S5","D4",""],"14":["D7","",""],"15":["S7","D4",""],"16":["D8","",""],"17":["S9","D4",""],"18":["D9","",""],"19":["S3","D8",""],"20":["D10","",""],"21":["S5","D8",""],"22":["D11","",""],"23":["S7","D8",""],"24":["D12","",""],"25":["S9","D8",""],"26":["D13","",""],"27":["S11","D8",""],"28":["D14","",""],"29":["S13","D8",""],"30":["D15","",""],"31":["S15","D8",""],"32":["D16","",""],"33":["S1","D16",""],"34":["D17","",""],"35":["S3","D16",""],"36":["D18","",""],"37":["S5","D16",""],"38":["D19","",""],"39":["S7","D16",""],"40":["D20","",""],"41":["S9","D16",""],"42":["S10","D16",""],"43":["S11","D16",""],"44":["S12","D16",""],"45":["S13","D16",""],"46":["S6","D20",""],"47":["S7","D20",""],"48":["S8","D20",""],"49":["S9","D20",""],"50":["S10","D20",""],"51":["S11","D20",""],"52":["S12","D20",""],"53":["S13","D20",""],"54":["S14","D20",""],"55":["S15","D20",""],"56":["S16","D20",""],"57":["S17","D20",""],"58":["S18","D20",""],"59":["S19","D20",""],"60":["S20","D20",""],"61":["SB","D18",""],"62":["T10","D16",""],"63":["T13","D12",""],"64":["T16","D8",""],"65":["SB","D20",""],"66":["T14","D12",""],"67":["T17","D8",""],"68":["T16","D10",""],"69":["T15","D12",""],"70":["T10","D20",""],"71":["T13","D16",""],"72":["T16","D12",""],"73":["T19","D8",""],"74":["T14","D16",""],"75":["T17","D12",""],"76":["T16","D14",""],"77":["T19","D10",""],"78":["T18","D12",""],"79":["T19","D11",""],"80":["D20","D20",""],"81":["T19","D12",""],"82":["DB","D16",""],"83":["T17","D16",""],"84":["T20","D12",""],"85":["T15","D20",""],"86":["T18","D16",""],"87":["T17","D18",""],"88":["T20","D14",""],"89":["T19","D16",""],"90":["T18","D18",""],"91":["T17","D20",""],"92":["T20","D16",""],"93":["T19","D18",""],"94":["T18","D20",""],"95":["T19","D19",""],"96":["T20","D18",""],"97":["T19","D20",""],"98":["T20","D19",""],"99":["T19","S10","D16"],"100":["T20","D20",""],"101":["T19","S12","D16"],"102":["T20","S10","D16"],"103":["T19","S6","D20"],"104":["T16","S16","D20"],"105":["DB","S15","D20"],"106":["T20","S6","D20"],"107":["T19","S10","D20"],"108":["T19","S11","D20"],"109":["T20","S9","D20"],"110":["T19","S13","D20"],"111":["T19","S14","D20"],"112":["T20","S12","D20"],"113":["T19","S16","D20"],"114":["T18","S20","D20"],"115":["T19","S18","D20"],"116":["T20","S16","D20"],"117":["T20","S17","D20"],"118":["T20","S18","D20"],"119":["T19","T10","D16"],"120":["T20","S20","D20"],"121":["T20","SB","D18"],"122":["T18","T16","D10"],"123":["T19","T14","D12"],"124":["T20","T16","D8"],"125":["DB","T17","D12"],"126":["T19","T15","D12"],"127":["T20","T17","D8"],"128":["T18","T14","D16"],"129":["T19","T16","D12"],"130":["T20","T10","D20"],"131":["T17","D20","D20"],"132":["DB","DB","D16"],"133":["T20","T19","D8"],"134":["T18","D20","D20"],"135":["DB","T15","D20"],"136":["T20","T16","D14"],"137":["T20","T19","D10"],"138":["T19","T19","D12"],"139":["T19","DB","D16"],"140":["T20","D20","D20"],"141":["T20","T19","D12"],"142":["T20","DB","D16"],"143":["T20","T17","D16"],"144":["T20","T20","D12"],"145":["T20","T15","D20"],"146":["T20","T18","D16"],"147":["T20","T17","D18"],"148":["T20","T20","D14"],"149":["T20","T19","D16"],"150":["T19","T19","D18"],"151":["T20","T17","D20"],"152":["T20","T20","D16"],"153":["T20","T19","D18"],"154":["T19","T19","D20"],"155":["T20","T19","D19"],"156":["T20","T20","D18"],"157":["T20","T19","D20"],"158":["T20","T20","D19"],"159":["T20","T19","S10"],"160":["T20","T20","D20"],"161":["T20","T19","S12"],"162":["T20","T20","S10"],"163":["T20","T19","S6"],"164":["T19","T19","S10"],"165":["T20","DB","S15"],"166":["T20","T20","S6"],"167":["T20","T19","S10"],"168":["T20","T19","S11"],"169":["T20","T20","S9"],"170":["T20","T19","S13"]};
+  // Embedded outs (generated from SUGGESTED501OUTS.xlsm "DATA SHEET")
+  const OUTS = {
+  2: ["D1", "", ""],
+  3: ["S1", "D1", ""],
+  4: ["D2", "", ""],
+  5: ["S1", "D2", ""],
+  6: ["D3", "", ""],
+  7: ["S3", "D2", ""],
+  8: ["D4", "", ""],
+  9: ["S1", "D4", ""],
+  10: ["D5", "", ""],
+  11: ["S3", "D4", ""],
+  12: ["D6", "", ""],
+  13: ["S5", "D4", ""],
+  14: ["D7", "", ""],
+  15: ["S7", "D4", ""],
+  16: ["D8", "", ""],
+  17: ["S9", "D4", ""],
+  18: ["D9", "", ""],
+  19: ["S3", "D8", ""],
+  20: ["D10", "", ""],
+  21: ["S5", "D8", ""],
+  22: ["D11", "", ""],
+  23: ["S7", "D8", ""],
+  24: ["D12", "", ""],
+  25: ["S9", "D8", ""],
+  26: ["D13", "", ""],
+  27: ["S11", "D8", ""],
+  28: ["D14", "", ""],
+  29: ["S13", "D8", ""],
+  30: ["D15", "", ""],
+  31: ["S15", "D8", ""],
+  32: ["D16", "", ""],
+  33: ["S1", "D16", ""],
+  34: ["D17", "", ""],
+  35: ["S3", "D16", ""],
+  36: ["D18", "", ""],
+  37: ["S5", "D16", ""],
+  38: ["D19", "", ""],
+  39: ["S7", "D16", ""],
+  40: ["D20", "", ""],
+  41: ["S9", "D16", ""],
+  42: ["S10", "D16", ""],
+  43: ["S11", "D16", ""],
+  44: ["S12", "D16", ""],
+  45: ["S13", "D16", ""],
+  46: ["S6", "D20", ""],
+  47: ["S7", "D20", ""],
+  48: ["S8", "D20", ""],
+  49: ["S9", "D20", ""],
+  50: ["S10", "D20", ""],
+  51: ["S11", "D20", ""],
+  52: ["S12", "D20", ""],
+  53: ["S13", "D20", ""],
+  54: ["S14", "D20", ""],
+  55: ["S15", "D20", ""],
+  56: ["S16", "D20", ""],
+  57: ["S17", "D20", ""],
+  58: ["S18", "D20", ""],
+  59: ["S19", "D20", ""],
+  60: ["S20", "D20", ""],
+  61: ["SB", "D18", ""],
+  62: ["T10", "D16", ""],
+  63: ["T13", "D12", ""],
+  64: ["T16", "D8", ""],
+  65: ["SB", "D20", ""],
+  66: ["T14", "D12", ""],
+  67: ["T17", "D8", ""],
+  68: ["T16", "D10", ""],
+  69: ["T15", "D12", ""],
+  70: ["T10", "D20", ""],
+  71: ["T13", "D16", ""],
+  72: ["T16", "D12", ""],
+  73: ["T19", "D8", ""],
+  74: ["T14", "D16", ""],
+  75: ["T17", "D12", ""],
+  76: ["T16", "D14", ""],
+  77: ["T19", "D10", ""],
+  78: ["T18", "D12", ""],
+  79: ["T19", "D11", ""],
+  80: ["D20", "D20", ""],
+  81: ["T19", "D12", ""],
+  82: ["DB", "D16", ""],
+  83: ["T17", "D16", ""],
+  84: ["T20", "D12", ""],
+  85: ["T15", "D20", ""],
+  86: ["T18", "D16", ""],
+  87: ["T17", "D18", ""],
+  88: ["T20", "D14", ""],
+  89: ["T19", "D16", ""],
+  90: ["T18", "D18", ""],
+  91: ["T17", "D20", ""],
+  92: ["T20", "D16", ""],
+  93: ["T19", "D18", ""],
+  94: ["T18", "D20", ""],
+  95: ["T19", "D19", ""],
+  96: ["T20", "D18", ""],
+  97: ["T19", "D20", ""],
+  98: ["T20", "D19", ""],
+  99: ["T19", "S10", "D16"],
+  100: ["T20", "D20", ""],
+  101: ["T19", "S12", "D16"],
+  102: ["T20", "S10", "D16"],
+  103: ["T19", "S6", "D20"],
+  104: ["T16", "S16", "D20"],
+  105: ["DB", "S15", "D20"],
+  106: ["T20", "S6", "D20"],
+  107: ["T19", "S10", "D20"],
+  108: ["T19", "S11", "D20"],
+  109: ["T20", "S9", "D20"],
+  110: ["T19", "S13", "D20"],
+  111: ["T19", "S14", "D20"],
+  112: ["T20", "S12", "D20"],
+  113: ["T19", "S16", "D20"],
+  114: ["T18", "S20", "D20"],
+  115: ["T19", "S18", "D20"],
+  116: ["T20", "S16", "D20"],
+  117: ["T20", "S17", "D20"],
+  118: ["T20", "S18", "D20"],
+  119: ["T19", "T10", "D16"],
+  120: ["T20", "S20", "D20"],
+  121: ["T20", "SB", "D18"],
+  122: ["T18", "T16", "D10"],
+  123: ["T19", "T14", "D12"],
+  124: ["T20", "T16", "D8"],
+  125: ["DB", "T17", "D12"],
+  126: ["T19", "T15", "D12"],
+  127: ["T20", "T17", "D8"],
+  128: ["T18", "T14", "D16"],
+  129: ["T19", "T16", "D12"],
+  130: ["T20", "T10", "D20"],
+  131: ["T17", "D20", "D20"],
+  132: ["DB", "DB", "D16"],
+  133: ["T20", "T19", "D8"],
+  134: ["T18", "D20", "D20"],
+  135: ["DB", "T15", "D20"],
+  136: ["T20", "T16", "D14"],
+  137: ["T20", "T19", "D10"],
+  138: ["T19", "T19", "D12"],
+  139: ["T19", "DB", "D16"],
+  140: ["T20", "D20", "D20"],
+  141: ["T20", "T19", "D12"],
+  142: ["T20", "DB", "D16"],
+  143: ["T20", "T17", "D16"],
+  144: ["T20", "T20", "D12"],
+  145: ["T20", "T15", "D20"],
+  146: ["T20", "T18", "D16"],
+  147: ["T20", "T17", "D18"],
+  148: ["T20", "T20", "D14"],
+  149: ["T20", "T19", "D16"],
+  150: ["T19", "T19", "D18"],
+  151: ["T20", "T17", "D20"],
+  152: ["T20", "T20", "D16"],
+  153: ["T20", "T19", "D18"],
+  154: ["T19", "T19", "D20"],
+  155: ["T20", "T19", "D19"],
+  156: ["T20", "T20", "D18"],
+  157: ["T20", "T19", "D20"],
+  158: ["T20", "T20", "D19"],
+  159: ["T20", "T19", "S10"],
+  160: ["T20", "T20", "D20"],
+  161: ["T20", "T19", "S12"],
+  162: ["T20", "T20", "S10"],
+  163: ["T20", "T19", "S6"],
+  164: ["T19", "T19", "S10"],
+  165: ["T20", "DB", "S15"],
+  166: ["T20", "T20", "S6"],
+  167: ["T20", "T19", "S10"],
+  168: ["T20", "T19", "S11"],
+  169: ["T20", "T20", "S9"],
+  170: ["T20", "T19", "S13"]
+};
 
-  const scoreEl = document.getElementById("score");
-  const entryEl = document.getElementById("entry");
-  const o1 = document.getElementById("o1");
-  const o2 = document.getElementById("o2");
-  const o3 = document.getElementById("o3");
+  const scoreEl = document.getElementById('score');
+  const inputEl = document.getElementById('input');
+  const d1El = document.getElementById('d1');
+  const d2El = document.getElementById('d2');
+  const d3El = document.getElementById('d3');
 
-  const btn301 = document.getElementById("m301");
-  const btn501 = document.getElementById("m501");
-  const btn701 = document.getElementById("m701");
+  const modeBtns = {
+    301: document.getElementById('m301'),
+    501: document.getElementById('m501'),
+    701: document.getElementById('m701'),
+  };
 
-  let gameStart = 501;
+  let startScore = 501;
   let remaining = 501;
-  let entry = "";
+  let entry = '00';
 
-  function setActive(btn) {
-    [btn301, btn501, btn701].forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-  }
-
-  function resetGame(start) {
-    gameStart = start;
-    remaining = start;
-    entry = "";
+  function setMode(val) {
+    startScore = val;
+    remaining = val;
+    entry = '00';
+    Object.values(modeBtns).forEach(b => b.classList.remove('active'));
+    modeBtns[val].classList.add('active');
     render();
   }
 
+  function setEntry(next) {
+    // keep 0-180 (typical max), but allow up to 999 for safety
+    if (next.length === 0) next = '0';
+    if (next.length > 3) next = next.slice(-3);
+    // prevent leading zeros like 000
+    next = String(parseInt(next, 10));
+    if (isNaN(next)) next = '0';
+    if (next === '0') entry = '00';
+    else entry = next;
+    renderInputOnly();
+  }
+
+  function renderInputOnly() {
+    inputEl.textContent = entry.padStart(2, '0');
+  }
+
   function renderOuts() {
-    if (remaining <= 170 && OUTS[remaining]) {
+    // show outs only when remaining is in 2..170
+    if (remaining >= 2 && remaining <= 170 && OUTS[remaining]) {
       const [a,b,c] = OUTS[remaining];
-      o1.textContent = a || "";
-      o2.textContent = b || "";
-      o3.textContent = c || "";
+      d1El.textContent = a || '';
+      d2El.textContent = b || '';
+      d3El.textContent = c || '';
     } else {
-      o1.textContent = "";
-      o2.textContent = "";
-      o3.textContent = "";
+      d1El.textContent = '';
+      d2El.textContent = '';
+      d3El.textContent = '';
     }
   }
 
   function render() {
     scoreEl.textContent = String(remaining);
-    entryEl.textContent = entry === "" ? "00" : entry.padStart(2,"0");
+    renderInputOnly();
     renderOuts();
   }
 
-  function pushDigit(d) {
-    if (entry.length >= 3) return;
-    // prevent leading zeros like "00x"
-    if (entry === "0") entry = "";
-    entry += d;
-    render();
-  }
-
-  function del() {
-    entry = entry.slice(0, -1);
-    render();
-  }
-
   function applyTurn() {
-    const val = entry === "" ? 0 : Number(entry);
-    entry = "";
-
-    if (!Number.isFinite(val) || val < 0) {
-      render();
-      return;
-    }
-
-    // standard darts: can't score more than remaining; if bust, ignore
-    if (val > remaining) {
-      render();
-      return;
-    }
-
-    remaining -= val;
-
-    // you can decide your own rules for "double out" etc later; for now 0 ends leg.
-    if (remaining === 0) {
-      // auto-reset to same game
-      remaining = gameStart;
-    }
-
+    const val = parseInt(entry, 10);
+    if (!isFinite(val) || val < 0) return;
+    // don't allow subtracting below 0
+    const next = remaining - val;
+    remaining = next < 0 ? remaining : next;
+    entry = '00';
     render();
   }
 
-  // Wire game mode buttons
-  btn301.addEventListener("click", () => { setActive(btn301); resetGame(301); });
-  btn501.addEventListener("click", () => { setActive(btn501); resetGame(501); });
-  btn701.addEventListener("click", () => { setActive(btn701); resetGame(701); });
-
-  // Wire keypad
-  document.querySelectorAll("#pad .hit").forEach((b) => {
-    b.addEventListener("click", () => {
-      const k = b.getAttribute("data-k");
-      if (!k) return;
-      if (k === "DEL") return del();
-      if (k === "DONATE") {
-        window.open("https://venmo.com/u/Steve-Moody-8", "_blank", "noopener,noreferrer");
-        return;
-      }
-      pushDigit(k);
+  // keypad
+  document.querySelectorAll('.key').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const k = btn.getAttribute('data-k');
+      const cur = (entry === '00') ? '' : String(parseInt(entry,10));
+      setEntry(cur + k);
     });
   });
+  document.getElementById('zero').addEventListener('click', () => {
+    const cur = (entry === '00') ? '' : String(parseInt(entry,10));
+    setEntry(cur + '0');
+  });
+  document.getElementById('del').addEventListener('click', () => {
+    const cur = (entry === '00') ? '' : String(parseInt(entry,10));
+    const next = cur.slice(0, -1);
+    setEntry(next);
+  });
+  document.getElementById('apply').addEventListener('click', applyTurn);
 
-  document.getElementById("apply").addEventListener("click", applyTurn);
+  // modes
+  modeBtns[301].addEventListener('click', () => setMode(301));
+  modeBtns[501].addEventListener('click', () => setMode(501));
+  modeBtns[701].addEventListener('click', () => setMode(701));
 
-  // Initial render
+  // donate
+  document.getElementById('donate').addEventListener('click', () => {
+    window.open('https://venmo.com/u/Steve-Moody-8', '_blank', 'noopener,noreferrer');
+  });
+
+  // init
   render();
-})();
 </script>
 </body>
 </html>
