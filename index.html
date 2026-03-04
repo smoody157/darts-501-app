@@ -65,24 +65,38 @@
 
     #score {
       position: absolute;
-      top: 232px;
+      top: 248px;
       left: 0;
       width: 430px;
       font-size: 92px;
       line-height: 1;
     }
 
+    /* Masks to "break" the glow line behind the brand text */
+    #brandMaskL, #brandMaskR{
+      position:absolute;
+      top: 184px; /* aligned with the gold line behind brand */
+      height: 14px;
+      background: rgba(0,0,0,0.85);
+      border-radius: 10px;
+      z-index: 4; /* behind brand text, above background */
+      pointer-events:none;
+    }
+    #brandMaskL{ left: 14px; width: 125px; }
+    #brandMaskR{ right: 14px; width: 125px; }
+
     #brand {
       position: absolute;
-      top: 176px; /* moved down slightly per header spacing */
+      top: 176px; /* between gold borders */
       left: 0;
       width: 430px;
       text-align: center;
-      font-size: 10px; /* resized to fit between gold borders */
-      letter-spacing: 1.2px;
+      font-size: 9px; /* smaller so it fits clean */
+      letter-spacing: 1.1px;
       color: rgba(255,255,255,0.80);
       text-shadow: 0 0 8px rgba(255,255,255,0.15);
       font-weight: 700;
+      z-index: 5;
     }
 
     .dart-label {
@@ -105,12 +119,12 @@
     }
 
     /* Dart labels ABOVE values, per your request */
-    #dl1 { top: 408px; left: 40px; }
-    #dl2 { top: 408px; left: 164px; }
-    #dl3 { top: 408px; left: 288px; }
-    #d1  { top: 424px; left: 40px; }
-    #d2  { top: 424px; left: 164px; }
-    #d3  { top: 424px; left: 288px; }
+    #dl1 { top: 378px; left: 40px; }
+    #dl2 { top: 378px; left: 164px; }
+    #dl3 { top: 378px; left: 288px; }
+    #d1  { top: 394px; left: 40px; }
+    #d2  { top: 394px; left: 164px; }
+    #d3  { top: 394px; left: 288px; }
 
     #input {
       position: absolute;
@@ -132,6 +146,38 @@
       font-size: 10px;
       color: rgba(255,255,255,0.55);
       text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    }
+
+    /* Donate button text override (smaller font) */
+    #donateMask{
+      position:absolute;
+      top: 804px;
+      left: 270px;
+      width: 110px;
+      height: 60px;
+      background: rgba(0,0,0,0.55);
+      border-radius: 10px;
+      z-index: 2;
+      pointer-events:none;
+    }
+    #donateText{
+      position:absolute;
+      top: 812px;
+      left: 270px;
+      width: 110px;
+      height: 60px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-size: 12px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: rgba(255,85,170,0.95);
+      text-shadow: 0 0 10px rgba(255,85,170,0.35);
+      z-index: 3;
+      pointer-events:none;
     }
 
     /* Invisible hit zones (buttons) */
@@ -178,16 +224,6 @@
       height: 60px;
     }
 
-    /* Footer patch + text (covers any ghost footer in artwork) */
-    #footerPatch{
-      position:absolute;
-      left:0;
-      bottom:0;
-      width:430px;
-      height:0px;            /* cropped: no big black bar */
-      background: transparent;
-      pointer-events:none;
-    }
     #footer {
       position: absolute;
       left: 0;
@@ -197,6 +233,7 @@
       font-size: 9px;
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
+      background: transparent; /* explicit: no background */
     }
   </style>
 </head>
@@ -213,6 +250,8 @@
     <div id="overlay">
       <div id="version">v1.0.0</div>
 
+      <div id="brandMaskL"></div>
+      <div id="brandMaskR"></div>
       <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
@@ -254,8 +293,10 @@
       <!-- Donate hit zone (extra safety; if you have a dedicated donate area) -->
       <button id="donate" class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
 
-      <div id="footerPatch"></div>
-      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
+      <div id="donateMask"></div>
+      <div id="donateText">DONATIONS<br>WELCOME</div>
+
+<div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
     </div>
   </div>
 
