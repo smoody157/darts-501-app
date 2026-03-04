@@ -1,238 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=430, height=932, initial-scale=1.0">
 <title>Dart Calculator</title>
 
 <style>
-body{
-margin:0;
-background:#000;
-font-family:Arial, Helvetica, sans-serif;
-color:white;
-text-align:center;
-}
-
-.container{
-max-width:420px;
-margin:auto;
-position:relative;
-}
-
-.logo{
-width:100%;
-}
-
-.designed{
-margin-top:-18px;
-font-size:12px;
-letter-spacing:2px;
-color:#ccc;
-}
-
-.scorelabel{
-color:#e6c97a;
-font-weight:bold;
-letter-spacing:2px;
-margin-top:10px;
-}
-
-.score{
-font-size:90px;
-font-weight:bold;
-background:linear-gradient(#8ee7ff,#ff4fa0);
--webkit-background-clip:text;
-color:transparent;
-margin-top:5px;
-}
-
-.modes{
-display:flex;
-justify-content:center;
-gap:18px;
-margin-top:10px;
-}
-
-.modebtn{
-border:2px solid #6ad7ff;
-border-radius:14px;
-padding:8px 18px;
-color:#ffe28a;
-background:rgba(0,0,0,.5);
-font-weight:bold;
-}
-
-.darts{
-display:flex;
-justify-content:space-between;
-margin-top:18px;
-}
-
-.dartbox{
-width:30%;
-border:2px solid #6ad7ff;
-border-radius:14px;
-padding:10px;
-}
-
-.input{
-border:2px solid #e6c97a;
-border-radius:16px;
-margin:18px 10px;
-padding:14px;
-font-size:30px;
-}
-
-.pad{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-padding:0 10px;
-}
-
-.pad button{
-padding:18px;
-font-size:22px;
-border-radius:12px;
-border:none;
-background:#1a1a1a;
-color:#fff;
-}
-
-.del{
-background:#ff2e7a;
-}
-
-.donate{
-border:3px solid #ff2e7a;
-color:#ff2e7a;
-background:transparent;
-font-weight:bold;
-}
-
-.apply{
-margin-top:14px;
-padding:18px;
-border-radius:18px;
-border:none;
-background:#9dc6ff;
-color:#000;
-font-weight:bold;
-width:90%;
-}
-
-footer{
-font-size:12px;
-margin-top:12px;
-opacity:.8;
-}
+body{margin:0;background:#000;font-family:Arial, Helvetica, sans-serif;}
+#app{width:430px;height:932px;margin:auto;background:url("OUTCHARTAPP.jpeg") no-repeat center;background-size:100% 100%;position:relative;}
+.neon{background:linear-gradient(#72d6ff,#ff4fa1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;text-align:center;}
+#score{position:absolute;top:232px;width:430px;font-size:92px;}
+.dart{position:absolute;width:105px;font-size:25px;text-align:center;}
+#d1{top:424px; left:40px;}
+#d2{top:424px; left:164px;}
+#d3{top:424px; left:288px;}
+#input{position:absolute;top:515px;width:430px;font-size:52px;text-align:center;color:#72d6ff;}
+.hit{position:absolute;background:transparent;border:none;}
+.mode{top:375px;width:60px;height:40px;}
+#mode301{left:125px;}
+#mode501{left:185px;}
+#mode701{left:245px;}
+.grid{position:absolute;top:620px;left:50px;width:330px;height:240px;display:grid;grid-template-columns:repeat(3,1fr);}
+.grid button{background:transparent;border:none;}
+#apply{position:absolute;bottom:30px;left:50px;width:330px;height:70px;background:transparent;border:none;}
+#donate{position:absolute;bottom:30px;right:20px;width:120px;height:40px;background:transparent;border:none;}
+footer{position:absolute;bottom:5px;width:100%;text-align:center;font-size:10px;color:#aaa;}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div id="app">
 
-<img src="OUTCHARTAPP.jpeg" class="logo">
+<div id="score" class="neon">501</div>
 
-<div class="designed">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+<div id="d1" class="neon dart">-</div>
+<div id="d2" class="neon dart">-</div>
+<div id="d3" class="neon dart">-</div>
 
-<div class="scorelabel">SCORE REMAINING</div>
-<div class="score" id="score">501</div>
+<div id="input">---</div>
 
-<div class="modes">
-<button class="modebtn" onclick="setMode(301)">301</button>
-<button class="modebtn" onclick="setMode(501)">501</button>
-<button class="modebtn" onclick="setMode(701)">701</button>
+<button id="mode301" class="hit mode" onclick="setGame(301)"></button>
+<button id="mode501" class="hit mode" onclick="setGame(501)"></button>
+<button id="mode701" class="hit mode" onclick="setGame(701)"></button>
+
+<div class="grid">
+<button onclick="key(7)"></button>
+<button onclick="key(8)"></button>
+<button onclick="key(9)"></button>
+<button onclick="key(4)"></button>
+<button onclick="key(5)"></button>
+<button onclick="key(6)"></button>
+<button onclick="key(1)"></button>
+<button onclick="key(2)"></button>
+<button onclick="key(3)"></button>
+<button onclick="clearInput()"></button>
+<button onclick="key(0)"></button>
 </div>
 
-<div class="darts">
-<div class="dartbox">DART 1<br><span id="d1">-</span></div>
-<div class="dartbox">DART 2<br><span id="d2">-</span></div>
-<div class="dartbox">DART 3<br><span id="d3">-</span></div>
-</div>
+<button id="apply" onclick="applyScore()"></button>
+<button id="donate" onclick="donate()"></button>
 
-<div class="input" id="input">---</div>
-
-<div class="pad">
-<button onclick="num(7)">7</button>
-<button onclick="num(8)">8</button>
-<button onclick="num(9)">9</button>
-<button onclick="num(4)">4</button>
-<button onclick="num(5)">5</button>
-<button onclick="num(6)">6</button>
-<button onclick="num(1)">1</button>
-<button onclick="num(2)">2</button>
-<button onclick="num(3)">3</button>
-<button class="del" onclick="del()">DEL</button>
-<button onclick="num(0)">0</button>
-<button class="donate" onclick="donate()">DONATIONS<br>WELCOME</button>
-</div>
-
-<button class="apply" onclick="applyTurn()">APPLY TURN</button>
-
-<footer>
-Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.
-</footer>
+<footer>Dart Calculator is owned by The Dart Room. All rights reserved.</footer>
 
 </div>
 
 <script>
-
 let score=501
 let input=""
 let dart=1
 
-function update(){
+function draw(){
 document.getElementById("score").innerText=score
 document.getElementById("input").innerText=input||"---"
 }
 
-function setMode(v){
+function setGame(v){
 score=v
+input=""
 dart=1
 document.getElementById("d1").innerText="-"
 document.getElementById("d2").innerText="-"
 document.getElementById("d3").innerText="-"
-input=""
-update()
+draw()
 }
 
-function num(n){
-if(input.length<3){
-input+=n
-update()
-}
+function key(n){
+if(input.length<3){input+=n;draw()}
 }
 
-function del(){
-input=""
-update()
+function clearInput(){
+input="";draw()
 }
 
-function applyTurn(){
-
+function applyScore(){
 if(!input)return
-
 let v=parseInt(input)
-
 score=Math.max(0,score-v)
-
 document.getElementById("d"+dart).innerText=v
-
-dart++
-if(dart>3)dart=1
-
-input=""
-update()
+dart++; if(dart>3)dart=1
+input="";draw()
 }
 
 function donate(){
 window.open("https://venmo.com/u/Steve-Moody-8","_blank")
 }
 
-update()
-
+draw()
 </script>
 
 </body>
