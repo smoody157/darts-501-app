@@ -1,257 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Dart Room – Dart Calculator</title>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background:#000; overflow:hidden; font-family: Arial, Helvetica, sans-serif; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Dart Room – Out Chart App</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; outline:none; }
+  html, body { margin:0; padding:0; width:100%; height:100%; background:#000; overflow:hidden; font-family: Arial, Helvetica, sans-serif; }
 
-    /* Stage centers the background image */
-    #stage {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
+  /* Stage */
+  #stage { position:relative; width:100vw; height:100vh; background:#000; overflow:hidden; }
 
-    /* We render the background as an <img> so we can read its true size and compute a perfect math transform */
-    #bg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: auto;
-      height: auto;
-      max-width: none;
-      max-height: none;
-      opacity: 0; /* hidden; used only to compute sizing */
-      pointer-events: none;
-    }
+  /* Probe image (hidden) to read true background size */
+  #bgProbe { position:absolute; left:0; top:0; opacity:0; pointer-events:none; }
 
-    /* The visible background layer */
-    #bg-visible {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 0px; /* set by JS */
-      height: 0px; /* set by JS */
-      background-image: url("OUTCHARTAPP.jpeg");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
+  /* Visible background */
+  #bg { position:absolute; left:0; top:0; width:0px; height:0px; background-position:center; background-repeat:no-repeat; background-size:100% 100%; }
 
-    /* Overlay is in BASE coordinate space (430x932), then we apply a single transform (scale + translate) */
-    #overlay {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 430px;
-      height: 932px;
-      transform-origin: top left;
-    }
+  /* Overlay in BASE coordinate space (430x932) */
+  #overlay { position:absolute; left:0; top:0; width:430px; height:932px; transform-origin: top left; }
 
-    /* Text styles */
-    .neon {
-      background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 900;
-      text-align: center;
-      filter: drop-shadow(0 0 10px rgba(0,210,255,0.55));
-    }
+  /* Text styles */
+  .neon {
+    background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    text-align: center;
+    filter: drop-shadow(0 0 12px rgba(0,210,255,0.60));
+  }
 
-    #score {
-      position: absolute;
-      top: 232px;
-      left: 0;
-      width: 430px;
-      font-size: 92px;
-      line-height: 1;
-    }
+  /* Patch to hide baked-in header text if present */
+  #headerPatch {
+    position:absolute;
+    left: 55px;
+    top: 165px;
+    width: 320px;
+    height: 36px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 12px;
+    pointer-events:none;
+  }
 
-    #brand {
-      position: absolute;
-      top: 200px;
-      left: 0;
-      width: 430px;
-      text-align: center;
-      font-size: 12px;
-      letter-spacing: 2px;
-      color: rgba(255,255,255,0.80);
-      text-shadow: 0 0 8px rgba(255,255,255,0.15);
-      font-weight: 700;
-    }
+  #brand {
+    position:absolute;
+    left:0;
+    top: 176px;
+    width:430px;
+    text-align:center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.78);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+  }
 
-    .dart-label {
-      position: absolute;
-      width: 105px;
-      text-align: center;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.75);
-      font-weight: 800;
-      text-shadow: 0 0 8px rgba(255,255,255,0.12);
-    }
+  #score {
+    position:absolute;
+    left:0;
+    top: 262px; /* tuned down */
+    width:430px;
+    font-size:92px;
+    line-height: 1;
+  }
 
-    .dart-val {
-      position: absolute;
-      width: 105px;
-      text-align: center;
-      font-size: 25px;
-      line-height: 1;
-    }
+  /* Dart boxes: label above value */
+  .dartLabel {
+    position:absolute;
+    width:120px;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.72);
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+  }
+  .dartVal {
+    position:absolute;
+    width:120px;
+    text-align:center;
+    font-size:30px;
+    line-height:1;
+    filter: drop-shadow(0 0 12px rgba(0,210,255,0.65));
+  }
+  /* moved UP per your screenshot notes */
+  #dl1 { left: 35px; top: 372px; }
+  #dl2 { left: 155px; top: 372px; }
+  #dl3 { left: 275px; top: 372px; }
+  #d1  { left: 35px; top: 398px; }
+  #d2  { left: 155px; top: 398px; }
+  #d3  { left: 275px; top: 398px; }
 
-    /* Dart labels ABOVE values, per your request */
-    #dl1 { top: 408px; left: 40px; }
-    #dl2 { top: 408px; left: 164px; }
-    #dl3 { top: 408px; left: 288px; }
-    #d1  { top: 424px; left: 40px; }
-    #d2  { top: 424px; left: 164px; }
-    #d3  { top: 424px; left: 288px; }
+  /* Input display in the long bar */
+  #input {
+    position:absolute;
+    left:0;
+    top: 508px; /* moved up into bar */
+    width:430px;
+    text-align:center;
+    font-size:54px;
+    color:#72d6ff;
+    text-shadow: 0 0 16px rgba(0,210,255,0.65);
+    font-weight: 900;
+  }
 
-    #input {
-      position: absolute;
-      top: 515px;
-      left: 0;
-      width: 430px;
-      font-size: 52px;
-      text-align: center;
-      color: #72d6ff;
-      text-shadow: 0 0 15px rgba(0,210,255,0.65);
-      font-weight: 900;
-    }
+  /* Invisible hit zones */
+  .hit { position:absolute; background:transparent; border:0; padding:0; margin:0; cursor:pointer; }
 
-    #version {
-      position: absolute;
-      top: 18px;
-      right: 14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.55);
-      text-shadow: 0 0 6px rgba(0,0,0,0.45);
-    }
+  /* Mode buttons (make them cover the full rounded squares) */
+  .mode { top: 336px; width: 74px; height: 46px; }
+  #m301 { left: 110px; }
+  #m501 { left: 178px; }
+  #m701 { left: 246px; }
 
-    /* Invisible hit zones (buttons) */
-    .hit {
-      position: absolute;
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-    }
+  /* Keypad surface exactly: 330x240 => each key 110x60 */
+  #pad {
+    position:absolute;
+    top: 610px;
+    left: 50px;
+    width: 330px;
+    height: 240px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0;
+  }
+  #pad .hit { position:relative; width:100%; height:100%; }
 
-    /* Mode buttons - aligned to your original coords */
-    .mode { top: 375px; width: 60px; height: 40px; }
-    #m301 { left: 125px; }
-    #m501 { left: 185px; }
-    #m701 { left: 245px; }
+  /* Apply button */
+  #apply { position:absolute; left: 50px; top: 862px; width: 330px; height: 58px; }
 
-    /* Keypad grid area (3 columns). We map each cell precisely. */
-    #pad {
-      position: absolute;
-      top: 620px;
-      left: 50px;
-      width: 330px;
-      height: 240px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: 1fr;
-      gap: 0px;
-    }
-    #pad .hit { position: relative; width: 100%; height: 100%; }
+  /* Donate button (right side of bottom row) */
+  #donate { position:absolute; left: 270px; top: 790px; width: 110px; height: 60px; }
 
-    /* Apply button */
-    #apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
+  /* Version */
+  #version {
+    position:absolute;
+    right: 14px;
+    top: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+    text-shadow: 0 0 10px rgba(0,0,0,0.6);
+  }
 
-    /* Donate button hit zone (mirror side of DEL, sized to match artwork button) */
-    #donate {
-      position: absolute;
-      /* tuned to sit over the DONATIONS WELCOME key on your artwork;
-         adjust ONLY if your artwork changes */
-      top: 800px;
-      left: 270px;
-      width: 110px;
-      height: 60px;
-    }
-
-    /* Footer patch + text (covers any ghost footer in artwork) */
-    #footerPatch{
-      position:absolute;
-      left:0;
-      bottom:0;
-      width:430px;
-      height:28px;
-      background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
-      pointer-events:none;
-    }
-    #footer {
-      position: absolute;
-      left: 0;
-      bottom: 5px;
-      width: 430px;
-      text-align: center;
-      font-size: 10px;
-      color: rgba(255,255,255,0.70);
-      text-shadow: 0 0 8px rgba(0,0,0,0.55);
-    }
-  </style>
+  /* Footer patch + footer */
+  #footerPatch {
+    position:absolute; left:0; top: 920px; width:430px; height: 20px;
+    background: rgba(0,0,0,0.85);
+    pointer-events:none;
+  }
+  #footer {
+    position:absolute; left:0; top: 922px; width:430px;
+    font-size:10px; text-align:center;
+    color: rgba(255,255,255,0.72);
+    text-shadow: 0 0 10px rgba(0,0,0,0.6);
+  }
+</style>
 </head>
-
 <body>
   <div id="stage">
-    <!-- hidden loader img for true dimensions -->
-    <img id="bg" src="OUTCHARTAPP.jpeg" alt="bg" />
+    <img id="bgProbe" src="OUTCHARTAPP.jpeg" alt="bg" />
+    <div id="bg"></div>
 
-    <!-- visible background -->
-    <div id="bg-visible"></div>
-
-    <!-- overlay in base coordinate space -->
     <div id="overlay">
-      <div id="version">v1.1.0</div>
+      <div id="version">v1.2.0</div>
 
+      <div id="headerPatch"></div>
       <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
 
-      <div id="dl1" class="dart-label">DART 1</div>
-      <div id="dl2" class="dart-label">DART 2</div>
-      <div id="dl3" class="dart-label">DART 3</div>
+      <div id="dl1" class="dartLabel">DART 1</div>
+      <div id="dl2" class="dartLabel">DART 2</div>
+      <div id="dl3" class="dartLabel">DART 3</div>
 
-      <div id="d1" class="neon dart-val">-</div>
-      <div id="d2" class="neon dart-val">-</div>
-      <div id="d3" class="neon dart-val">-</div>
+      <div id="d1" class="neon dartVal"></div>
+      <div id="d2" class="neon dartVal"></div>
+      <div id="d3" class="neon dartVal"></div>
 
       <div id="input">---</div>
 
-      <!-- Mode hit zones -->
-      <button id="m301" class="hit mode" aria-label="301" onclick="APP.set(301)"></button>
-      <button id="m501" class="hit mode" aria-label="501" onclick="APP.set(501)"></button>
-      <button id="m701" class="hit mode" aria-label="701" onclick="APP.set(701)"></button>
+      <!-- Mode -->
+      <button id="m301" class="hit mode" aria-label="301" onclick="APP.setMode(301)"></button>
+      <button id="m501" class="hit mode" aria-label="501" onclick="APP.setMode(501)"></button>
+      <button id="m701" class="hit mode" aria-label="701" onclick="APP.setMode(701)"></button>
 
-      <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
+      <!-- Keypad (last cell is Donate) -->
       <div id="pad" aria-label="Keypad">
-        <button class="hit" onclick="APP.key(7)"></button>
-        <button class="hit" onclick="APP.key(8)"></button>
-        <button class="hit" onclick="APP.key(9)"></button>
-        <button class="hit" onclick="APP.key(4)"></button>
-        <button class="hit" onclick="APP.key(5)"></button>
-        <button class="hit" onclick="APP.key(6)"></button>
-        <button class="hit" onclick="APP.key(1)"></button>
-        <button class="hit" onclick="APP.key(2)"></button>
-        <button class="hit" onclick="APP.key(3)"></button>
-        <button class="hit" onclick="APP.clr()"></button>
-        <button class="hit" onclick="APP.key(0)"></button>
-        <button class="hit" onclick="APP.donate()"></button>
+        <button class="hit" aria-label="7" onclick="APP.key(7)"></button>
+        <button class="hit" aria-label="8" onclick="APP.key(8)"></button>
+        <button class="hit" aria-label="9" onclick="APP.key(9)"></button>
+        <button class="hit" aria-label="4" onclick="APP.key(4)"></button>
+        <button class="hit" aria-label="5" onclick="APP.key(5)"></button>
+        <button class="hit" aria-label="6" onclick="APP.key(6)"></button>
+        <button class="hit" aria-label="1" onclick="APP.key(1)"></button>
+        <button class="hit" aria-label="2" onclick="APP.key(2)"></button>
+        <button class="hit" aria-label="3" onclick="APP.key(3)"></button>
+        <button class="hit" aria-label="DEL" onclick="APP.clr()"></button>
+        <button class="hit" aria-label="0" onclick="APP.key(0)"></button>
+        <button class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
       </div>
 
-      <!-- Apply hit zone -->
-      <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
-
-      <!-- Donate hit zone (extra safety; if you have a dedicated donate area) -->
+      <button id="apply" class="hit" aria-label="Apply" onclick="APP.apply()"></button>
       <button id="donate" class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
 
       <div id="footerPatch"></div>
@@ -260,75 +211,7 @@
   </div>
 
 <script>
-/**
- * MATH-LOCKED LAYOUT (NO GUESSING):
- * - Background image provides the coordinate system.
- * - Overlay is built in base coordinates (430x932).
- * - We compute ONE transform to fit the background into the viewport.
- * - All hitboxes/text move together, so nothing “floats”.
- */
-(function fitToBackground(){
-  const bg = document.getElementById('bg');
-  const bgVisible = document.getElementById('bg-visible');
-  const overlay = document.getElementById('overlay');
-  const stage = document.getElementById('stage');
-
-  function applyFit() {
-    const Wb = bg.naturalWidth || 430;
-    const Hb = bg.naturalHeight || 932;
-
-    const Wv = stage.clientWidth;
-    const Hv = stage.clientHeight;
-
-    // Fit entire image into viewport (contain)
-    const scale = Math.min(Wv / Wb, Hv / Hb);
-
-    const drawW = Math.round(Wb * scale);
-    const drawH = Math.round(Hb * scale);
-
-    const offsetX = Math.round((Wv - drawW) / 2);
-    const offsetY = Math.round((Hv - drawH) / 2);
-
-    // Visible background sized/positioned
-    bgVisible.style.left = offsetX + 'px';
-    bgVisible.style.top = offsetY + 'px';
-    bgVisible.style.width = drawW + 'px';
-    bgVisible.style.height = drawH + 'px';
-
-    // If the jpeg name is wrong, fall back to outs.jpg automatically
-    // (GitHub is case-sensitive.)
-    bgVisible.style.backgroundImage = "url('OUTCHARTAPP.jpeg'), url('outs.jpg')";
-
-    // Overlay transform: translate to offset, scale to match drawn bg,
-    // and also correct from base (430x932) to actual bg pixels (Wb,Hb)
-    // by scaling base-to-bg first, then viewport scale.
-    const baseW = 430, baseH = 932;
-    const sx = (Wb / baseW) * scale;
-    const sy = (Hb / baseH) * scale;
-
-    overlay.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${sx}, ${sy})`;
-  }
-
-  function onReady(){
-    applyFit();
-    window.addEventListener('resize', applyFit, { passive:true });
-  }
-
-  bg.addEventListener('load', onReady);
-
-  // If OUTCHARTAPP.jpeg fails to load, fall back to outs.jpg
-  bg.addEventListener('error', () => {
-    bg.src = 'outs.jpg';
-  });
-
-  // In some caches, load may have already fired
-  if (bg.complete) {
-    if (bg.naturalWidth) onReady();
-    else bg.src = 'outs.jpg';
-  }
-})();
-
-/* ====== OUTS (embedded directly from your Excel chart) ====== */
+/* ====== OUTS embedded from your Excel (170 → 2) ====== */
 const OUTS = {
   170: [
     "-",
@@ -1177,78 +1060,126 @@ const OUTS = {
   ]
 };
 
-/* APP LOGIC (ALL BUTTONS ACTIVE) */
+/* ====== Math fit: background and overlay use the same translate + scale ====== */
+(function fitToBackground() {
+  const probe = document.getElementById('bgProbe');
+  const bg = document.getElementById('bg');
+  const overlay = document.getElementById('overlay');
+  const stage = document.getElementById('stage');
+
+  function applyFit() {
+    const Wb = probe.naturalWidth || 430;
+    const Hb = probe.naturalHeight || 932;
+    const Wv = stage.clientWidth;
+    const Hv = stage.clientHeight;
+
+    const scale = Math.min(Wv / Wb, Hv / Hb);
+    const drawW = Math.round(Wb * scale);
+    const drawH = Math.round(Hb * scale);
+
+    const offsetX = Math.round((Wv - drawW) / 2);
+    const offsetYraw = Math.round((Hv - drawH) / 2);
+    const offsetY = offsetYraw - 22; // move whole art/UI up to remove top gap
+
+    bg.style.left = offsetX + 'px';
+    bg.style.top = offsetY + 'px';
+    bg.style.width = drawW + 'px';
+    bg.style.height = drawH + 'px';
+    bg.style.backgroundImage = "url('OUTCHARTAPP.jpeg'), url('outs.jpg')";
+    bg.style.backgroundSize = '100% 100%';
+
+    // Map base (430x932) to real bg (Wb,Hb) then to viewport scale
+    const baseW = 430, baseH = 932;
+    const sx = (Wb / baseW) * scale;
+    const sy = (Hb / baseH) * scale;
+
+    overlay.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${sx}, ${sy})`;
+  }
+
+  probe.addEventListener('load', () => {
+    applyFit();
+    window.addEventListener('resize', applyFit, { passive:true });
+  });
+
+  probe.addEventListener('error', () => {
+    probe.src = 'outs.jpg';
+  });
+
+  if (probe.complete) {
+    if (probe.naturalWidth) {
+      applyFit();
+      window.addEventListener('resize', applyFit, { passive:true });
+    } else {
+      probe.src = 'outs.jpg';
+    }
+  }
+})();
+
+/* ====== App Logic ====== */
 const APP = {
   mode: 501,
-  s: 501,
-  i: "",
+  score: 501,
+  input: "",
 
-  normalize(x) {
-    if (!x) return "-";
-    const t = String(x).trim();
-    return (t === "—") ? "-" : t;
-  },
-
-  renderOuts() {
-    // Only show checkout suggestions from 170 down to 2.
-    if (this.s > 170 || this.s < 2) {
-      document.getElementById('d1').innerText = "";
-      document.getElementById('d2').innerText = "";
-      document.getElementById('d3').innerText = "";
-      return;
-    }
-    const p = OUTS[this.s] || ["-","-","-"];
-    const a = this.normalize(p[0]);
-    const b = this.normalize(p[1]);
-    const c = this.normalize(p[2]);
-    document.getElementById('d1').innerText = (a === "-" ? "" : a);
-    document.getElementById('d2').innerText = (b === "-" ? "" : b);
-    document.getElementById('d3').innerText = (c === "-" ? "" : c);
-  },
-
-  draw() {
-    document.getElementById('score').innerText = this.s;
-    document.getElementById('input').innerText = this.i || "---";
-    this.renderOuts();
-  },
-
-  set(n) {
+  setMode(n) {
     this.mode = n;
-    this.s = n;
-    this.i = "";
+    this.score = n;
+    this.input = "";
     this.draw();
   },
 
   key(n) {
-    if (this.i.length < 3) {
-      this.i += String(n);
+    if (this.input.length < 3) {
+      this.input += String(n);
       this.draw();
     }
   },
 
   clr() {
-    this.i = "";
+    this.input = "";
     this.draw();
   },
 
   apply() {
-    const v = parseInt(this.i, 10);
+    const v = parseInt(this.input, 10);
     if (!isNaN(v)) {
-      const next = this.s - v;
-      // Bust rules: cannot go below 0 or to 1.
-      if (next < 0 || next === 1) {
-        this.i = "";
-        this.draw();
-        return;
+      const next = this.score - v;
+      // bust: cannot go below 0 or to 1
+      if (next >= 0 && next !== 1) {
+        this.score = next;
       }
-      this.s = next;
     }
-    this.i = "";
+    this.input = "";
     this.draw();
   },
 
   donate() {
     window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
+  },
+
+  drawOuts() {
+    // Blank until you are in checkout range
+    if (this.score > 170 || this.score < 2) {
+      document.getElementById('d1').innerText = "";
+      document.getElementById('d2').innerText = "";
+      document.getElementById('d3').innerText = "";
+      return;
+    }
+
+    const p = OUTS[this.score] || ["-","-","-"];
+    const a = (p[0] && p[0] !== "-" && p[0] !== "—") ? String(p[0]).trim() : "";
+    const b = (p[1] && p[1] !== "-" && p[1] !== "—") ? String(p[1]).trim() : "";
+    const c = (p[2] && p[2] !== "-" && p[2] !== "—") ? String(p[2]).trim() : "";
+
+    document.getElementById('d1').innerText = a;
+    document.getElementById('d2').innerText = b;
+    document.getElementById('d3').innerText = c;
+  },
+
+  draw() {
+    document.getElementById('score').innerText = this.score;
+    document.getElementById('input').innerText = this.input || "---";
+    this.drawOuts();
   }
 };
 
