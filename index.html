@@ -1,112 +1,394 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=430, height=932, initial-scale=1.0">
-<title>Dart Calculator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Dart Room – Dart Calculator</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; background:#000; overflow:hidden; font-family: Arial, Helvetica, sans-serif; }
 
-<style>
-body{margin:0;background:#000;font-family:Arial,Helvetica,sans-serif;}
-#app{width:430px;height:932px;margin:auto;background:url('OUTCHARTAPP.jpeg') center/100% 100% no-repeat;position:relative;}
-.neon{background:linear-gradient(#72d6ff,#ff4fa1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;text-align:center;}
-#score{position:absolute;top:232px;width:430px;font-size:92px;}
-.dart{position:absolute;width:105px;font-size:25px;text-align:center;}
-#d1{top:424px;left:40px;}
-#d2{top:424px;left:164px;}
-#d3{top:424px;left:288px;}
-#input{position:absolute;top:515px;width:430px;font-size:52px;text-align:center;color:#72d6ff;}
-.hit{position:absolute;background:transparent;border:none;}
-.mode{top:375px;width:60px;height:40px;}
-#mode301{left:125px;}
-#mode501{left:185px;}
-#mode701{left:245px;}
-.grid{position:absolute;top:620px;left:50px;width:330px;height:240px;display:grid;grid-template-columns:repeat(3,1fr);}
-.grid button{background:transparent;border:none;}
-#apply{position:absolute;bottom:30px;left:50px;width:330px;height:70px;background:transparent;border:none;}
-#donate{position:absolute;bottom:30px;right:20px;width:120px;height:40px;background:transparent;border:none;}
-footer{position:absolute;bottom:5px;width:100%;text-align:center;font-size:10px;color:#aaa;}
-</style>
+    /* Stage centers the background image */
+    #stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* We render the background as an <img> so we can read its true size and compute a perfect math transform */
+    #bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+      opacity: 0; /* hidden; used only to compute sizing */
+      pointer-events: none;
+    }
+
+    /* The visible background layer */
+    #bg-visible {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0px; /* set by JS */
+      height: 0px; /* set by JS */
+      background-image: url("OUTCHARTAPP.jpeg");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* Overlay is in BASE coordinate space (430x932), then we apply a single transform (scale + translate) */
+    #overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 430px;
+      height: 932px;
+      transform-origin: top left;
+    }
+
+    /* Text styles */
+    .neon {
+      background: linear-gradient(to bottom, #72d6ff 0%, #ff4fa1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+      text-align: center;
+      filter: drop-shadow(0 0 10px rgba(0,210,255,0.55));
+    }
+
+    #score {
+      position: absolute;
+      top: 232px;
+      left: 0;
+      width: 430px;
+      font-size: 92px;
+      line-height: 1;
+    }
+
+    #brand {
+      position: absolute;
+      top: 200px;
+      left: 0;
+      width: 430px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.80);
+      text-shadow: 0 0 8px rgba(255,255,255,0.15);
+      font-weight: 700;
+    }
+
+    .dart-label {
+      position: absolute;
+      width: 105px;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 800;
+      text-shadow: 0 0 8px rgba(255,255,255,0.12);
+    }
+
+    .dart-val {
+      position: absolute;
+      width: 105px;
+      text-align: center;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    /* Dart labels ABOVE values, per your request */
+    #dl1 { top: 408px; left: 40px; }
+    #dl2 { top: 408px; left: 164px; }
+    #dl3 { top: 408px; left: 288px; }
+    #d1  { top: 424px; left: 40px; }
+    #d2  { top: 424px; left: 164px; }
+    #d3  { top: 424px; left: 288px; }
+
+    #input {
+      position: absolute;
+      top: 515px;
+      left: 0;
+      width: 430px;
+      font-size: 52px;
+      text-align: center;
+      color: #72d6ff;
+      text-shadow: 0 0 15px rgba(0,210,255,0.65);
+      font-weight: 900;
+    }
+
+    #version {
+      position: absolute;
+      top: 18px;
+      right: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.55);
+      text-shadow: 0 0 6px rgba(0,0,0,0.45);
+    }
+
+    /* Invisible hit zones (buttons) */
+    .hit {
+      position: absolute;
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* Mode buttons - aligned to your original coords */
+    .mode { top: 375px; width: 60px; height: 40px; }
+    #m301 { left: 125px; }
+    #m501 { left: 185px; }
+    #m701 { left: 245px; }
+
+    /* Keypad grid area (3 columns). We map each cell precisely. */
+    #pad {
+      position: absolute;
+      top: 620px;
+      left: 50px;
+      width: 330px;
+      height: 240px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 1fr;
+      gap: 0px;
+    }
+    #pad .hit { position: relative; width: 100%; height: 100%; }
+
+    /* Apply button */
+    #apply { bottom: 30px; left: 50px; width: 330px; height: 70px; }
+
+    /* Donate button hit zone (mirror side of DEL, sized to match artwork button) */
+    #donate {
+      position: absolute;
+      /* tuned to sit over the DONATIONS WELCOME key on your artwork;
+         adjust ONLY if your artwork changes */
+      top: 800px;
+      left: 270px;
+      width: 110px;
+      height: 60px;
+    }
+
+    /* Footer patch + text (covers any ghost footer in artwork) */
+    #footerPatch{
+      position:absolute;
+      left:0;
+      bottom:0;
+      width:430px;
+      height:28px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+      pointer-events:none;
+    }
+    #footer {
+      position: absolute;
+      left: 0;
+      bottom: 5px;
+      width: 430px;
+      text-align: center;
+      font-size: 10px;
+      color: rgba(255,255,255,0.70);
+      text-shadow: 0 0 8px rgba(0,0,0,0.55);
+    }
+  </style>
 </head>
 
 <body>
+  <div id="stage">
+    <!-- hidden loader img for true dimensions -->
+    <img id="bg" src="OUTCHARTAPP.jpeg" alt="bg" />
 
-<div id="app">
+    <!-- visible background -->
+    <div id="bg-visible"></div>
 
-<div id="score" class="neon">501</div>
+    <!-- overlay in base coordinate space -->
+    <div id="overlay">
+      <div id="version">v1.0.0</div>
 
-<div id="d1" class="neon dart">-</div>
-<div id="d2" class="neon dart">-</div>
-<div id="d3" class="neon dart">-</div>
+      <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
-<div id="input">---</div>
+      <div id="score" class="neon">501</div>
 
-<button id="mode301" class="hit mode" onclick="setGame(301)"></button>
-<button id="mode501" class="hit mode" onclick="setGame(501)"></button>
-<button id="mode701" class="hit mode" onclick="setGame(701)"></button>
+      <div id="dl1" class="dart-label">DART 1</div>
+      <div id="dl2" class="dart-label">DART 2</div>
+      <div id="dl3" class="dart-label">DART 3</div>
 
-<div class="grid">
-<button onclick="key(7)"></button>
-<button onclick="key(8)"></button>
-<button onclick="key(9)"></button>
-<button onclick="key(4)"></button>
-<button onclick="key(5)"></button>
-<button onclick="key(6)"></button>
-<button onclick="key(1)"></button>
-<button onclick="key(2)"></button>
-<button onclick="key(3)"></button>
-<button onclick="clearInput()"></button>
-<button onclick="key(0)"></button>
-</div>
+      <div id="d1" class="neon dart-val">-</div>
+      <div id="d2" class="neon dart-val">-</div>
+      <div id="d3" class="neon dart-val">-</div>
 
-<button id="apply" onclick="applyScore()"></button>
-<button id="donate" onclick="donate()"></button>
+      <div id="input">---</div>
 
-<footer>Dart Calculator is owned by The Dart Room. All rights reserved.</footer>
+      <!-- Mode hit zones -->
+      <button id="m301" class="hit mode" aria-label="301" onclick="APP.set(301)"></button>
+      <button id="m501" class="hit mode" aria-label="501" onclick="APP.set(501)"></button>
+      <button id="m701" class="hit mode" aria-label="701" onclick="APP.set(701)"></button>
 
-</div>
+      <!-- Keypad hit zones (invisible, aligned to artwork keypad grid) -->
+      <div id="pad" aria-label="Keypad">
+        <button class="hit" onclick="APP.key(7)"></button>
+        <button class="hit" onclick="APP.key(8)"></button>
+        <button class="hit" onclick="APP.key(9)"></button>
+        <button class="hit" onclick="APP.key(4)"></button>
+        <button class="hit" onclick="APP.key(5)"></button>
+        <button class="hit" onclick="APP.key(6)"></button>
+        <button class="hit" onclick="APP.key(1)"></button>
+        <button class="hit" onclick="APP.key(2)"></button>
+        <button class="hit" onclick="APP.key(3)"></button>
+        <button class="hit" onclick="APP.clr()"></button>
+        <button class="hit" onclick="APP.key(0)"></button>
+        <button class="hit" onclick="APP.donate()"></button>
+      </div>
+
+      <!-- Apply hit zone -->
+      <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
+
+      <!-- Donate hit zone (extra safety; if you have a dedicated donate area) -->
+      <button id="donate" class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
+
+      <div id="footerPatch"></div>
+      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
+    </div>
+  </div>
 
 <script>
-let score=501
-let input=""
-let dart=1
+/**
+ * MATH-LOCKED LAYOUT (NO GUESSING):
+ * - Background image provides the coordinate system.
+ * - Overlay is built in base coordinates (430x932).
+ * - We compute ONE transform to fit the background into the viewport.
+ * - All hitboxes/text move together, so nothing “floats”.
+ */
+(function fitToBackground(){
+  const bg = document.getElementById('bg');
+  const bgVisible = document.getElementById('bg-visible');
+  const overlay = document.getElementById('overlay');
+  const stage = document.getElementById('stage');
 
-function draw(){
-document.getElementById("score").innerText=score
-document.getElementById("input").innerText=input||"---"
-}
+  function applyFit() {
+    const Wb = bg.naturalWidth || 430;
+    const Hb = bg.naturalHeight || 932;
 
-function setGame(v){
-score=v
-input=""
-dart=1
-document.getElementById("d1").innerText="-"
-document.getElementById("d2").innerText="-"
-document.getElementById("d3").innerText="-"
-draw()
-}
+    const Wv = stage.clientWidth;
+    const Hv = stage.clientHeight;
 
-function key(n){
-if(input.length<3){input+=n;draw()}
-}
+    // Fit entire image into viewport (contain)
+    const scale = Math.min(Wv / Wb, Hv / Hb);
 
-function clearInput(){
-input="";draw()
-}
+    const drawW = Math.round(Wb * scale);
+    const drawH = Math.round(Hb * scale);
 
-function applyScore(){
-if(!input)return
-let v=parseInt(input)
-score=Math.max(0,score-v)
-document.getElementById("d"+dart).innerText=v
-dart++;if(dart>3)dart=1
-input="";draw()
-}
+    const offsetX = Math.round((Wv - drawW) / 2);
+    const offsetY = Math.round((Hv - drawH) / 2);
 
-function donate(){
-window.open("https://venmo.com/u/Steve-Moody-8","_blank")
-}
+    // Visible background sized/positioned
+    bgVisible.style.left = offsetX + 'px';
+    bgVisible.style.top = offsetY + 'px';
+    bgVisible.style.width = drawW + 'px';
+    bgVisible.style.height = drawH + 'px';
 
-draw()
+    // If the jpeg name is wrong, fall back to outs.jpg automatically
+    // (GitHub is case-sensitive.)
+    bgVisible.style.backgroundImage = "url('OUTCHARTAPP.jpeg'), url('outs.jpg')";
+
+    // Overlay transform: translate to offset, scale to match drawn bg,
+    // and also correct from base (430x932) to actual bg pixels (Wb,Hb)
+    // by scaling base-to-bg first, then viewport scale.
+    const baseW = 430, baseH = 932;
+    const sx = (Wb / baseW) * scale;
+    const sy = (Hb / baseH) * scale;
+
+    overlay.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${sx}, ${sy})`;
+  }
+
+  function onReady(){
+    applyFit();
+    window.addEventListener('resize', applyFit, { passive:true });
+  }
+
+  bg.addEventListener('load', onReady);
+
+  // If OUTCHARTAPP.jpeg fails to load, fall back to outs.jpg
+  bg.addEventListener('error', () => {
+    bg.src = 'outs.jpg';
+  });
+
+  // In some caches, load may have already fired
+  if (bg.complete) {
+    if (bg.naturalWidth) onReady();
+    else bg.src = 'outs.jpg';
+  }
+})();
+
+/* APP LOGIC (ALL BUTTONS ACTIVE) */
+const APP = {
+  s: 501,
+  i: "",
+  dart: 1,
+
+  draw(){
+    document.getElementById('score').innerText = this.s;
+    document.getElementById('input').innerText = this.i || "---";
+  },
+
+  set(n){
+    this.s = n;
+    this.i = "";
+    this.dart = 1;
+    document.getElementById('d1').innerText = "-";
+    document.getElementById('d2').innerText = "-";
+    document.getElementById('d3').innerText = "-";
+    this.draw();
+  },
+
+  key(n){
+    if (this.i.length < 3) {
+      this.i += String(n);
+      this.draw();
+    }
+  },
+
+  clr(){
+    this.i = "";
+    this.draw();
+  },
+
+  apply(){
+    const v = parseInt(this.i, 10);
+    if (!isNaN(v)) {
+      // basic darts bust rules: cannot go below 0 or to 1
+      const next = this.s - v;
+      if (next < 0 || next === 1) {
+        // bust: do nothing but clear input
+        this.i = "";
+        this.draw();
+        return;
+      }
+      this.s = next;
+
+      // track dart values in the three boxes
+      document.getElementById('d' + this.dart).innerText = v;
+      this.dart += 1;
+      if (this.dart > 3) this.dart = 1;
+    }
+    this.i = "";
+    this.draw();
+  },
+
+  donate(){
+    window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
+  }
+};
+
+APP.draw();
 </script>
-
 </body>
 </html>
