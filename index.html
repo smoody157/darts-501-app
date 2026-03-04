@@ -49,20 +49,21 @@
     text-align:center;
     font-size: 11px;
   }
+  #scoreText{position:absolute;left:0;right:0;top:200px;text-align:center;font-size:18px;letter-spacing:3px;color:#77d9ff;text-transform:uppercase;opacity:.9;}
 
   /* ===== SCORE ===== */
   #score {
     position:absolute;
     left:0;
-    top: 250px;          /* tuned to avoid overlapping the mode buttons */
+    top: 220px;          /* tuned to avoid overlapping the mode buttons */
     width:430px;
-    font-size:92px;
+    font-size: 86px;
     line-height:1;
   }
 
   /* ===== MODE HITZONES (301/501/701) ===== */
   .hit { position:absolute; background:transparent; border:0; padding:0; margin:0; cursor:pointer; }
-  .mode { top: 328px; width: 74px; height: 46px; }
+  .mode { top: 315px; width: 74px; height: 46px; }
   #m301 { left: 110px; }
   #m501 { left: 178px; }
   #m701 { left: 246px; }
@@ -196,12 +197,11 @@
       <div id="inputWrap"><div id="input">00</div></div>
 
       <!-- Mode hitzones -->
-      <button id="m301" class="hit mode" aria-label="301" onclick="APP.setMode(301)"></button>
-      <button id="m501" class="hit mode" aria-label="501" onclick="APP.setMode(501)"></button>
-      <button id="m701" class="hit mode" aria-label="701" onclick="APP.setMode(701)"></button>
+      <button id="m301" class="hit abs mode" aria-label="301" onclick="APP.setMode(301)"></button>
+      <button id="m501" class="hit abs mode" aria-label="501" onclick="APP.setMode(501)"></button>
+      <button id="m701" class="hit abs mode" aria-label="701" onclick="APP.setMode(701)"></button>
 
-      <!-- Keypad (12 cells, last is Donate) -->
-      <div id="pad" aria-label="Keypad">
+      <!-- Keypad (12 cells, last is Donate<div id="pad" aria-label="Keypad">
         <button class="hit" aria-label="7" onclick="APP.key(7)"></button>
         <button class="hit" aria-label="8" onclick="APP.key(8)"></button>
         <button class="hit" aria-label="9" onclick="APP.key(9)"></button>
@@ -217,12 +217,11 @@
       </div>
 
       <button id="apply" class="hit" aria-label="Apply" onclick="APP.apply()"></button>
-      <button id="donate" class="hit" aria-label="Donations Welcome" onclick="APP.donate()"></button>
-
-      <div id="footerPatch"></div>
+<div id="footerPatch"></div>
       <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
     </div>
-  </div>
+  ) -->
+      </div>
 
 <script>
 /* ====== OUTS embedded from your Excel (170 → 2) ====== */
@@ -1190,3 +1189,5 @@ APP.draw();
 </script>
 </body>
 </html>
+  #pad button[aria-label="Donations Welcome"]{border-radius:14px;}
+  #pad button[aria-label="Donations Welcome"]::after{content:"DONATIONS\A WELCOME";white-space:pre;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;line-height:14px;letter-spacing:1px;color:#ff4aa8;text-shadow:0 0 10px rgba(255,74,168,.8);pointer-events:none;}
