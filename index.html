@@ -190,6 +190,34 @@
       color: rgba(255,255,255,0.70);
       text-shadow: 0 0 8px rgba(0,0,0,0.55);
     }
+  
+    #header{
+      position:absolute;
+      left:0;
+      top:44px; /* snug to the logo frame border */
+      width:430px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 14px;
+      font-size:10px;
+      color: rgba(255,255,255,0.70);
+      text-shadow: 0 0 8px rgba(0,0,0,0.55);
+      letter-spacing: 0.5px;
+      pointer-events:none;
+    }
+    #header .verBlue{ color: rgba(70,160,255,0.95); text-shadow: 0 0 10px rgba(70,160,255,0.45); }
+
+    /* Footer mirrored layout */
+    #footer{
+      bottom:3px;
+      display:flex;
+      justify-content:space-between;
+      padding:0 14px;
+      letter-spacing: 0.5px;
+    }
+    #footer span{ white-space:nowrap; }
+
   </style>
 </head>
 
@@ -203,9 +231,14 @@
 
     <!-- overlay in base coordinate space -->
     <div id="overlay">
-      <div id="version">v1.1.8 RESTORE</div>
 
-      <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+      <div id="header">
+        <span class="hL">THE DART ROOM</span>
+        <span class="hC"><span class="verBlue">v1.1.9</span></span>
+        <span class="hR">DART CALCULATOR</span>
+      </div>
+
+<div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
       <div id="score" class="neon">501</div>
 
@@ -243,7 +276,7 @@
       <!-- Apply hit zone -->
       <button id="apply" class="hit" aria-label="Apply Turn" onclick="APP.apply()"></button>
 <div id="footerPatch"></div>
-      <div id="footer">Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</div>
+      <div id="footer"><span class="fL">DART CALCULATOR</span><span class="fC">© THE DART ROOM</span><span class="fR">ALL RIGHTS RESERVED</span></div>
     </div>
   </div>
 
