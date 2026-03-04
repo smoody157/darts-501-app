@@ -1,570 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Dart Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dart Calculator</title>
+<style>
+body{margin:0;background:#000;font-family:Arial,Helvetica,sans-serif;}
+#app{width:100vw;height:100vh;background:url('OUTCHARTAPP.jpeg') center/contain no-repeat;position:relative;color:white;}
 
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-    html, body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      background: #000;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+#brand{
+position:absolute;
+top:15%;
+width:100%;
+text-align:center;
+font-size:14px;
+letter-spacing:2px;
+color:#e5e5e5;
+}
 
-    /* Stage */
-    #stage {
-      width: 100vw; height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-      background: #000;
-    }
+#score{
+position:absolute;
+top:22%;
+width:100%;
+text-align:center;
+font-size:82px;
+font-weight:900;
+background:linear-gradient(#8cecff,#ff4fa1);
+-webkit-background-clip:text;
+color:transparent;
+}
 
-    /* Scaled wrapper */
-    #appScale {
-      position: relative;
-      transform-origin: top left;
-    }
+.mode{
+position:absolute;
+top:36%;
+width:100%;
+display:flex;
+justify-content:center;
+gap:24px;
+}
 
-    /* App canvas */
-    #app {
-      position: relative;
-      width: var(--w, 430px);
-      height: var(--h, 932px);
+.mode button{
+padding:10px 22px;
+font-weight:bold;
+border-radius:14px;
+border:2px solid #6ad7ff;
+background:rgba(0,0,0,0.6);
+color:#ffe28a;
+box-shadow:0 0 10px #6ad7ff;
+}
 
-      /* IMPORTANT: use repo image name exactly, with fallback */
-      background-image:
-        url("./OUTCHARTAPP.jpeg"),
-        url("./outs.jpg");
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      background-position: center center;
-      isolation: isolate; /* clean stacking */
-    }
+#darts{
+position:absolute;
+top:46%;
+width:100%;
+display:flex;
+justify-content:space-around;
+}
 
-    /* VERSION (top right) */
-    #version {
-      position: absolute;
-      top: calc(var(--h) * (10 / 932));
-      right: calc(var(--w) * (14 / 430));
-      font-size: 11px;
-      color: rgba(255,255,255,0.45);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      z-index: 50;
-      pointer-events: none;
-    }
+.dart{text-align:center;font-weight:bold;}
 
-    /* CREDIT between yellow rules */
-    #credit {
-      position: absolute;
-      top: calc(var(--h) * (148 / 932));
-      left: 0;
-      width: var(--w);
-      text-align: center;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 1.2px;
-      color: rgba(255,255,255,0.55);
-      text-shadow: 0 0 10px rgba(0,0,0,0.75);
-      text-transform: uppercase;
-      z-index: 20;
-      pointer-events: none;
-    }
+#input{
+position:absolute;
+top:58%;
+width:100%;
+text-align:center;
+font-size:40px;
+}
 
-    /* SCORE REMAINING (inside frame) */
-    #scoreRemaining {
-      position: absolute;
-      top: calc(var(--h) * (166 / 932));
-      left: 0;
-      width: var(--w);
-      text-align: center;
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: 2.2px;
-      color: rgba(255,214,120,0.95);
-      text-shadow:
-        0 0 8px rgba(255,180,0,0.22),
-        0 0 16px rgba(255,180,0,0.14);
-      text-transform: uppercase;
-      z-index: 20;
-      pointer-events: none;
-    }
+#pad{
+position:absolute;
+top:64%;
+width:100%;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+padding:0 40px;
+}
 
-    /* Granular neon text */
-    .neon {
-      background: linear-gradient(
-        180deg,
-        rgba(140,235,255,1) 0%,
-        rgba(70,205,255,1) 40%,
-        rgba(255,79,161,1) 78%,
-        rgba(255,40,115,1) 100%
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow:
-        0 0 1px rgba(255,255,255,0.35),
-        0 0 4px rgba(0,210,255,0.55),
-        0 0 10px rgba(0,210,255,0.45),
-        0 0 18px rgba(255,79,161,0.25),
-        0 0 30px rgba(255,40,115,0.16);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-    }
+#pad button{
+padding:20px;
+font-size:24px;
+border-radius:14px;
+border:none;
+background:rgba(255,255,255,.1);
+color:white;
+}
 
-    /* MAIN SCORE */
-    #score {
-      position: absolute;
-      top: calc(var(--h) * (196 / 932));
-      left: 0;
-      width: var(--w);
-      text-align: center;
-      font-weight: 900;
-      font-size: calc(var(--h) * (94 / 932));
-      letter-spacing: 1px;
-      z-index: 25;
-      pointer-events: none;
-    }
+#donate{
+border:3px solid #ff3a8b !important;
+color:#ff3a8b !important;
+font-weight:bold;
+}
 
-    /* MODE BUTTONS (inside frame) */
-    #modes {
-      position: absolute;
-      top: calc(var(--h) * (294 / 932));
-      left: calc(var(--w) * (86 / 430));
-      width: calc(var(--w) * (258 / 430));
-      height: calc(var(--h) * (50 / 932));
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: calc(var(--w) * (16 / 430));
-      z-index: 40;
-    }
+#apply{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+padding:18px 80px;
+border-radius:20px;
+border:none;
+background:#9ecbff;
+color:black;
+font-weight:bold;
+}
 
-    .modeBtn {
-      position: relative;
-      border: none;
-      border-radius: 18px;
-      background: rgba(0,0,0,0.0);
-      cursor: pointer;
-
-      background-image: linear-gradient(90deg, rgba(120,220,255,1) 0%, rgba(255,214,120,1) 55%, rgba(120,220,255,1) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: 1px;
-
-      text-shadow:
-        0 0 8px rgba(0,210,255,0.18),
-        0 0 14px rgba(255,180,0,0.14);
-    }
-
-    .modeBtn::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 14px;
-      padding: 2px;
-      background: linear-gradient(90deg, rgba(120,220,255,0.75) 0%, rgba(255,214,120,0.75) 55%, rgba(120,220,255,0.75) 100%);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      box-shadow:
-        0 0 10px rgba(0, 210, 255, 0.18),
-        0 0 18px rgba(255, 180, 0, 0.10);
-    }
-
-    .modeBtn.active::before {
-      background: linear-gradient(90deg, rgba(120,220,255,0.95) 0%, rgba(255,214,120,0.95) 55%, rgba(120,220,255,0.95) 100%);
-      box-shadow:
-        0 0 14px rgba(0,210,255,0.35),
-        0 0 26px rgba(255,180,0,0.18);
-    }
-
-    /* DART BOXES */
-    .dartBox {
-      position: absolute;
-      top: calc(var(--h) * (356 / 932));
-      width: calc(var(--w) * (120 / 430));
-      height: calc(var(--h) * (106 / 932));
-      text-align: center;
-      z-index: 30;
-      pointer-events: none;
-    }
-    #box1 { left: calc(var(--w) * (25 / 430)); }
-    #box2 { left: calc(var(--w) * (155 / 430)); }
-    #box3 { left: calc(var(--w) * (285 / 430)); }
-
-    .dartLabel {
-      position: absolute;
-      top: calc(var(--h) * (16 / 932));
-      left: 0;
-      width: 100%;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.60);
-      text-shadow: 0 0 10px rgba(0,0,0,0.75);
-    }
-
-    .dartValue {
-      position: absolute;
-      top: calc(var(--h) * (44 / 932));
-      left: 0;
-      width: 100%;
-      font-size: 28px;
-      font-weight: 900;
-    }
-
-    /* INPUT */
-    #input {
-      position: absolute;
-      top: calc(var(--h) * (486 / 932));
-      left: 0;
-      width: var(--w);
-      text-align: center;
-      font-size: 52px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      z-index: 30;
-      pointer-events: none;
-    }
-
-    /* Keypad hit grid */
-    #pad {
-      position: absolute;
-      left: calc(var(--w) * (50 / 430));
-      top:  calc(var(--h) * (552 / 932));
-      width:  calc(var(--w) * (330 / 430));
-      height: calc(var(--h) * (276 / 932));
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      z-index: 35;
-    }
-
-    #pad button {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      border-radius: 18px;
-    }
-    #pad button:active { background: rgba(255,255,255,0.06); }
-
-    /* Donate key */
-    #donateKey { position: relative; border-radius: 18px; }
-    #donateKey::before {
-      content:"";
-      position:absolute;
-      inset: 0;
-      border-radius: 14px;
-      border: 3px solid rgba(255, 0, 120, 0.60);
-      box-shadow:
-        0 0 14px rgba(255, 0, 120, 0.28),
-        0 0 26px rgba(255, 0, 120, 0.14);
-      pointer-events:none;
-    }
-    #donateKey span {
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: #ff3a8b;
-      text-shadow:
-        0 0 10px rgba(255,0,120,0.40),
-        0 0 18px rgba(255,0,120,0.22);
-      pointer-events:none;
-      line-height: 1.05;
-    }
-
-    /* Apply button hit */
-    #applyHit {
-      position: absolute;
-      left: calc(var(--w) * (50 / 430));
-      bottom: calc(var(--h) * (34 / 932));
-      width:  calc(var(--w) * (330 / 430));
-      height: calc(var(--h) * (72 / 932));
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      border-radius: 18px;
-      z-index: 35;
-    }
-    #applyHit:active { background: rgba(255,255,255,0.06); }
-
-    /* Footer text */
-    #footer {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: var(--w);
-      height: calc(var(--h) * (56 / 932));
-      z-index: 60;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 16px;
-      text-align: center;
-      pointer-events: none;
-    }
-
-    #footer::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.0) 100%);
-      pointer-events: none;
-    }
-    #footer span {
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.62);
-      text-shadow: 0 0 10px rgba(0,0,0,0.75);
-      line-height: 1.15;
-    }
-  </style>
+footer{
+position:absolute;
+bottom:0;
+width:100%;
+text-align:center;
+font-size:12px;
+opacity:.85;
+}
+</style>
 </head>
 
 <body>
-  <div id="stage">
-    <div id="appScale">
-      <div id="app">
-        <div id="version">v1.0.1</div>
-        <div id="credit">DESIGNED BY STEVE’S GRAPHIC DESIGNS</div>
+<div id="app">
 
-        <div id="scoreRemaining">SCORE REMAINING</div>
-        <div id="score" class="neon">501</div>
+<div id="brand">Designed by Steve's Graphic Designs</div>
 
-        <div id="modes" aria-label="Game Mode">
-          <button class="modeBtn" id="btn301" onclick="APP.setMode(301)">301</button>
-          <button class="modeBtn active" id="btn501" onclick="APP.setMode(501)">501</button>
-          <button class="modeBtn" id="btn701" onclick="APP.setMode(701)">701</button>
-        </div>
+<div id="score">501</div>
 
-        <div class="dartBox" id="box1">
-          <div class="dartLabel">DART 1</div>
-          <div class="dartValue neon" id="d1">-</div>
-        </div>
-        <div class="dartBox" id="box2">
-          <div class="dartLabel">DART 2</div>
-          <div class="dartValue neon" id="d2">-</div>
-        </div>
-        <div class="dartBox" id="box3">
-          <div class="dartLabel">DART 3</div>
-          <div class="dartValue neon" id="d3">-</div>
-        </div>
+<div class="mode">
+<button onclick="setMode(301)">301</button>
+<button onclick="setMode(501)">501</button>
+<button onclick="setMode(701)">701</button>
+</div>
 
-        <div id="input" class="neon">---</div>
+<div id="darts">
+<div class="dart">DART 1<br>-</div>
+<div class="dart">DART 2<br>-</div>
+<div class="dart">DART 3<br>-</div>
+</div>
 
-        <div id="pad" aria-label="Keypad">
-          <button onclick="APP.key(7)" aria-label="7"></button>
-          <button onclick="APP.key(8)" aria-label="8"></button>
-          <button onclick="APP.key(9)" aria-label="9"></button>
+<div id="input">---</div>
 
-          <button onclick="APP.key(4)" aria-label="4"></button>
-          <button onclick="APP.key(5)" aria-label="5"></button>
-          <button onclick="APP.key(6)" aria-label="6"></button>
+<div id="pad">
+<button onclick="key(7)">7</button>
+<button onclick="key(8)">8</button>
+<button onclick="key(9)">9</button>
+<button onclick="key(4)">4</button>
+<button onclick="key(5)">5</button>
+<button onclick="key(6)">6</button>
+<button onclick="key(1)">1</button>
+<button onclick="key(2)">2</button>
+<button onclick="key(3)">3</button>
+<button onclick="del()">DEL</button>
+<button onclick="key(0)">0</button>
+<button id="donate" onclick="donate()">DONATIONS<br>WELCOME</button>
+</div>
 
-          <button onclick="APP.key(1)" aria-label="1"></button>
-          <button onclick="APP.key(2)" aria-label="2"></button>
-          <button onclick="APP.key(3)" aria-label="3"></button>
+<button id="apply" onclick="apply()">APPLY TURN</button>
 
-          <button onclick="APP.clr()" aria-label="Delete"></button>
-          <button onclick="APP.key(0)" aria-label="0"></button>
+<footer>Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</footer>
 
-          <button id="donateKey" onclick="APP.donate()" aria-label="Donations Welcome">
-            <span>DONATIONS<br/>WELCOME</span>
-          </button>
-        </div>
-
-        <button id="applyHit" onclick="APP.apply()" aria-label="Apply Turn"></button>
-
-        <div id="footer">
-          <span>Dart Calculator is owned by The Dart Room. © The Dart Room. All Rights Reserved.</span>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
 <script>
-/* OUT ENGINE (Double-out, bull=50) */
-function buildDarts() {
-  const darts = [];
-  for (let n = 1; n <= 20; n++) darts.push({ lab: "S"+n, val: n });
-  darts.push({ lab: "SB", val: 25 });
-  for (let n = 1; n <= 20; n++) darts.push({ lab: "D"+n, val: n*2, fin: true });
-  darts.push({ lab: "DB", val: 50, fin: true });
-  for (let n = 1; n <= 20; n++) darts.push({ lab: "T"+n, val: n*3 });
-  return darts;
-}
-const DARTS = buildDarts();
-const FINISHERS = DARTS.filter(d => d.fin);
+let score=501;
+let input="";
 
-function isBull(lab) { return lab === "SB" || lab === "DB"; }
-function finPref(lab) {
-  const order = ["D20","D16","D18","D10","D12","D8","DB"];
-  const i = order.indexOf(lab);
-  return i === -1 ? 99 : i;
-}
-function rankPath(path) {
-  const dartsUsed = path.length;
-  const v1 = (path[0] ? path[0].val : 0);
-  const v2 = (path[1] ? path[1].val : 0);
-  const v3 = (path[2] ? path[2].val : 0);
-  const bulls = path.reduce((a,d)=>a+(isBull(d.lab)?1:0),0);
-  return [dartsUsed, bulls, finPref(path[path.length-1].lab), -v1, -v2, -v3];
-}
-function better(a, b) {
-  for (let i=0;i<a.length;i++){ if (a[i] < b[i]) return true; if (a[i] > b[i]) return false; }
-  return false;
-}
-function computeOuts() {
-  const outs = {};
-  for (let target=2; target<=170; target++){
-    let best=null, bestRank=null;
-
-    for (const f of FINISHERS){
-      if (f.val===target){
-        const r=rankPath([f]);
-        if (!best || better(r,bestRank)){ best=[f]; bestRank=r; }
-      }
-    }
-    for (const a of DARTS){
-      for (const f of FINISHERS){
-        if (a.val+f.val===target){
-          const r=rankPath([a,f]);
-          if (!best || better(r,bestRank)){ best=[a,f]; bestRank=r; }
-        }
-      }
-    }
-    for (const a of DARTS){
-      for (const b of DARTS){
-        const partial=a.val+b.val;
-        if (partial>=target) continue;
-        for (const f of FINISHERS){
-          if (partial+f.val===target){
-            const r=rankPath([a,b,f]);
-            if (!best || better(r,bestRank)){ best=[a,b,f]; bestRank=r; }
-          }
-        }
-      }
-    }
-    if (best){
-      const labs=best.map(d=>d.lab);
-      while (labs.length<3) labs.push("-");
-      outs[target]=labs;
-    }
-  }
-  return outs;
-}
-const OUTS = computeOuts();
-
-const APP = {
-  score: 501,
-  input: "",
-  venmoUrl: "https://venmo.com/u/Steve-Moody-8",
-
-  draw() {
-    document.getElementById("score").textContent = String(this.score);
-    document.getElementById("input").textContent = this.input.length ? this.input : "---";
-
-    const p = OUTS[this.score] || ["-","-","-"];
-    document.getElementById("d1").textContent = p[0] || "-";
-    document.getElementById("d2").textContent = p[1] || "-";
-    document.getElementById("d3").textContent = p[2] || "-";
-  },
-
-  setMode(n) {
-    this.score = n;
-    this.input = "";
-    document.getElementById("btn301").classList.toggle("active", n===301);
-    document.getElementById("btn501").classList.toggle("active", n===501);
-    document.getElementById("btn701").classList.toggle("active", n===701);
-    this.draw();
-  },
-
-  key(n) {
-    if (this.input.length >= 3) return;
-    if (this.input.length === 0 && n === 0) return;
-    this.input += String(n);
-    this.draw();
-  },
-
-  clr() {
-    this.input = "";
-    this.draw();
-  },
-
-  apply() {
-    const v = parseInt(this.input, 10);
-    if (!Number.isNaN(v)) {
-      const next = this.score - v;
-      if (next >= 0 && next !== 1) this.score = next;
-    }
-    this.input = "";
-    this.draw();
-  },
-
-  donate() {
-    try { window.open(this.venmoUrl, "_blank", "noopener"); } catch (e) {}
-  }
-};
-
-/* Fit to device (and to actual background image dimensions) */
-function setDimsFromBg() {
-  const img = new Image();
-  img.onload = () => {
-    const w = img.naturalWidth || 430;
-    const h = img.naturalHeight || 932;
-
-    const app = document.getElementById("app");
-    app.style.setProperty("--w", w + "px");
-    app.style.setProperty("--h", h + "px");
-
-    const scaleWrap = document.getElementById("appScale");
-    scaleWrap.style.width = w + "px";
-    scaleWrap.style.height = h + "px";
-
-    fit();
-  };
-  img.onerror = () => { fit(); };
-  img.src = "./OUTCHARTAPP.jpeg";
+function draw(){
+document.getElementById("score").innerText=score;
+document.getElementById("input").innerText=input||"---";
 }
 
-function fit() {
-  const scaleWrap = document.getElementById("appScale");
-  const app = document.getElementById("app");
-  const w = parseFloat(getComputedStyle(app).getPropertyValue("--w")) || 430;
-  const h = parseFloat(getComputedStyle(app).getPropertyValue("--h")) || 932;
-
-  const scale = Math.min(window.innerWidth / w, window.innerHeight / h);
-  const supportsZoom = (window.CSS && CSS.supports && CSS.supports("zoom","1"));
-  if (supportsZoom) {
-    scaleWrap.style.zoom = String(scale);
-    scaleWrap.style.transform = "";
-  } else {
-    scaleWrap.style.zoom = "";
-    scaleWrap.style.transform = "scale(" + scale + ")";
-  }
+function setMode(v){
+score=v;
+input="";
+draw();
 }
 
-window.addEventListener("resize", fit, { passive:true });
-setDimsFromBg();
-APP.draw();
+function key(n){
+if(input.length<3) input+=n;
+draw();
+}
+
+function del(){
+input="";
+draw();
+}
+
+function apply(){
+let v=parseInt(input||0);
+score=Math.max(0,score-v);
+input="";
+draw();
+}
+
+function donate(){
+window.open("https://venmo.com/u/Steve-Moody-8","_blank");
+}
+
+draw();
 </script>
+
 </body>
 </html>
