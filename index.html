@@ -5,7 +5,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Dart Calculator</title>
 
+<!--
+  X/Y quick guide:
+  - "left"  = X  (higher = move RIGHT, lower = move LEFT)
+  - "top"   = Y  (higher = move DOWN, lower = move UP)
+-->
+
 <style>
+  :root {
+    /* ===== CONFIG ===== */
+    --baseW: 430;
+    --baseH: 932;
+
+    /* ===== TEXT POSITIONS (PX in the 430x932 design space) ===== */
+    --topbarTop: 26px;
+    --topbarLeft: 14px;
+    --topbarW: 402px;
+
+    --brandTop: 168px;
+
+    --scoreLabelTop: 188px;
+    --scoreTop: 205px;
+
+    /* Dart boxes */
+    --dartLabelTop: 372px;
+    --dartValTop: 392px;
+    --dart1Left: 36px;
+    --dart2Left: 164px;
+    --dart3Left: 292px;
+
+    /* Input display (small rectangle) */
+    --inputTop: 486px;
+    --inputLeft: 132px;
+    --inputW: 166px;
+    --inputH: 46px;
+
+    /* Mode buttons (301/501/701) */
+    --modeTop: 305px;
+    --modeW: 110px;
+    --modeH: 48px;
+    --m301Left: 52px;
+    --m501Left: 160px;
+    --m701Left: 268px;
+
+    /* Keypad area (grid overlay) */
+    --padLeft: 50px;
+    --padTop: 560px;
+    --padW: 330px;
+    --padH: 300px;
+
+    /* Apply */
+    --applyLeft: 50px;
+    --applyTop: 870px;
+    --applyW: 330px;
+    --applyH: 54px;
+
+    /* Donate patch (covers baked-in background text) */
+    --donateMaskTop: 560px;
+    --donateMaskLeft: 50px;
+    --donateMaskTX: 224px; /* translate X inside pad */
+    --donateMaskTY: 229px; /* translate Y inside pad */
+    --donateMaskW: 102px;
+    --donateMaskH: 67px;
+
+    /* Footer */
+    --footerBottom: 10px;
+  }
+
   html, body {
     margin:0; padding:0; width:100%; height:100%;
     background:#000; overflow:hidden;
@@ -14,329 +80,969 @@
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   }
 
-  /* ====== STAGE / BACKGROUND ====== */
-  #stage { position:fixed; inset:0; background:#000; overflow:hidden; }
-  #bg { position:absolute; inset:0; background:#000 center/contain no-repeat; }
+  #wrap {
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
 
-  /* ====== OVERLAYS (NEVER BLOCK TAPS) ====== */
-  .overlay {
+  /* Stage is always 430x932, then scaled to the phone */
+  #stage {
+    position:relative;
+    width:430px; height:932px;
+    transform-origin: top left;
+    transform: scale(var(--s, 1));
+    background: url('OUTCHARTAPP.jpeg') no-repeat 0 0 / 430px 932px;
+  }
+
+  /* non-interactive text layer */
+  #overlay {
+    position:absolute; inset:0;
+    pointer-events:none;
+  }
+
+  /* ===== Header ===== */
+  #topbar{
     position:absolute;
+    top: var(--topbarTop);
+    left: var(--topbarLeft);
+    width: var(--topbarW);
+    display:flex; align-items:center; justify-content:space-between;
+    z-index: 20;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  #topLeft, #topRight{
+    color: rgba(0,0,0,0.85); /* matches the art */
+    font-weight: 900;
+    white-space:nowrap;
+  }
+  #topCenter{
+    color: rgba(255,255,255,0.98);
+    font-weight: 900;
+    white-space:nowrap;
+  }
+
+  /* ===== Brand line ===== */
+  #brand {
+    position:absolute;
+    top: var(--brandTop);
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+    z-index: 10;
+  }
+
+  /* ===== SCORE REMAINING label ===== */
+  #scoreLabel {
+    position:absolute;
+    top: var(--scoreLabelTop);
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: rgba(130,220,255,0.85);
+    text-shadow: 0 0 12px rgba(0,210,255,0.20), 0 0 12px rgba(0,0,0,0.55);
+    font-weight: 900;
+    z-index: 10;
+  }
+
+  /* ===== Remaining score (big number) ===== */
+  #score {
+    position:absolute;
+    top: var(--scoreTop);
+    left: 0;
+    width: 430px;
+    text-align:center;
+    font-size: 86px;
+    line-height: 1;
+    background: linear-gradient(to bottom, rgba(100,210,255,0.98), rgba(255,85,170,0.98));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 18px rgba(255,255,255,0.10), 0 0 18px rgba(0,0,0,0.55);
+    font-weight: 900;
+    z-index: 10;
+  }
+
+  /* ===== Dart labels/values ===== */
+  .dart-label, .dart-val {
+    position:absolute;
+    width: 120px;
+    text-align:center;
+    z-index: 10;
+  }
+  .dart-label {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.70);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+  }
+  .dart-val {
+    font-size: 24px;
+    letter-spacing: 1px;
+    background: linear-gradient(to bottom, rgba(255,85,170,0.95), rgba(130,220,255,0.95));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color: transparent;
+    text-shadow: 0 0 12px rgba(0,210,255,0.18);
+    font-weight: 900;
+  }
+
+  #dl1 { top: var(--dartLabelTop); left: var(--dart1Left); }
+  #d1  { top: var(--dartValTop);   left: var(--dart1Left); }
+
+  #dl2 { top: var(--dartLabelTop); left: var(--dart2Left); }
+  #d2  { top: var(--dartValTop);   left: var(--dart2Left); }
+
+  #dl3 { top: var(--dartLabelTop); left: var(--dart3Left); }
+  #d3  { top: var(--dartValTop);   left: var(--dart3Left); }
+
+  /* ===== Input display (typed score) ===== */
+  #input {
+    position:absolute;
+    top: var(--inputTop);
+    left: var(--inputLeft);
+    width: var(--inputW);
+    height: var(--inputH);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 30px;
+    color: rgba(255,255,255,0.92);
+    text-shadow: 0 0 10px rgba(0,0,0,0.55);
+    font-weight: 900;
+    letter-spacing: 3px;
+    z-index: 10;
+  }
+
+  /* ===== Mode buttons (interactive) ===== */
+  .mode {
+    position:absolute;
+    top: var(--modeTop);
+    width: var(--modeW);
+    height: var(--modeH);
+    background: transparent;
+    border: none;
+    outline: none;
+    z-index: 50;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+  #m301 { left: var(--m301Left); }
+  #m501 { left: var(--m501Left); }
+  #m701 { left: var(--m701Left); }
+
+  /* ===== Keypad touch layer ===== */
+  #pad {
+    position:absolute;
+    left: var(--padLeft);
+    top: var(--padTop);
+    width: var(--padW);
+    height: var(--padH);
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap:0;
+    z-index: 60;
+    pointer-events:auto;
+  }
+  #pad button {
+    width:100%; height:100%;
+    background: transparent;
+    border:none; outline:none;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+
+  /* ===== Apply ===== */
+  #apply {
+    position:absolute;
+    left: var(--applyLeft);
+    top: var(--applyTop);
+    width: var(--applyW);
+    height: var(--applyH);
+    background: transparent;
+    border:none; outline:none;
+    z-index: 70;
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+
+  /* ===== Donate patch + click target ===== */
+  #donateMask{
+    position:absolute;
+    top: var(--donateMaskTop);
+    left: var(--donateMaskLeft);
+    transform: translate(var(--donateMaskTX), var(--donateMaskTY));
+    width: var(--donateMaskW);
+    height: var(--donateMaskH);
+    border-radius: 12px;
+    background: rgba(0,0,0,0.62);
+    mix-blend-mode: multiply;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    opacity: 0.92;
+    z-index: 11;
+    pointer-events:none; /* never blocks taps */
+  }
+  #donateBtn{
+    position:absolute;
+    top: var(--donateMaskTop);
+    left: var(--donateMaskLeft);
+    transform: translate(var(--donateMaskTX), var(--donateMaskTY));
+    width: var(--donateMaskW);
+    height: var(--donateMaskH);
+    background: transparent;
+    border:none;
+    z-index: 65; /* above keypad */
+    pointer-events:auto;
+    touch-action: manipulation;
+  }
+  #donateText{
+    position:absolute;
+    top: var(--donateMaskTop);
+    left: var(--donateMaskLeft);
+    transform: translate(var(--donateMaskTX), var(--donateMaskTY));
+    width: var(--donateMaskW);
+    height: var(--donateMaskH);
     display:flex;
     align-items:center;
     justify-content:center;
     text-align:center;
+    font-size: 10px; /* YOU CAN EDIT THIS */
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: 0.15px;
+    color: rgba(255,85,170,0.95);
+    z-index: 12;
     pointer-events:none;
   }
 
-  /* ====== TEXT STYLES ====== */
-  #version {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    color: rgba(255,255,255,0.92);
-    text-shadow: 0 0 10px rgba(0,0,0,0.45);
-    font-weight: 900;
-    letter-spacing: 0.08em;
-  }
-
-  #brand {
-    color: rgba(255,255,255,0.78);
-    text-shadow: 0 0 10px rgba(0,0,0,0.55);
-    font-weight: 800;
-    letter-spacing: 0.12em;
-  }
-
-  /* Current score (blue -> pink) */
-  #score {
-    background: linear-gradient(180deg, rgba(110,210,255,1) 0%, rgba(255,105,200,1) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 22px rgba(255,255,255,0.08), 0 0 26px rgba(0,0,0,0.60);
-    font-weight: 900;
-  }
-
-  /* Dart suggestions (pink -> blue) */
-  .dart {
-    background: linear-gradient(180deg, rgba(255,105,200,1) 0%, rgba(110,210,255,1) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 16px rgba(0,210,255,0.18), 0 0 18px rgba(0,0,0,0.55);
-    font-weight: 900;
-    letter-spacing: 0.04em;
-  }
-
-  /* Typed input */
-  #input {
-    color: rgba(255,255,255,0.92);
-    text-shadow: 0 0 12px rgba(0,0,0,0.70);
-    font-weight: 900;
-    letter-spacing: 0.14em;
-    line-height: 1;
-  }
-
-  /* ====== TAP ZONES ====== */
-  .tap {
+  /* ===== Footer ===== */
+  #footer {
     position:absolute;
-    background: transparent;
-    border:none;
-    outline:none;
-    padding:0;
-    margin:0;
-    pointer-events:auto;
-    touch-action: manipulation;
-  }
-
-  /* Keypad grid (tap zones only) */
-  #pad {
-    position:absolute;
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    gap: 0;
-    pointer-events:auto;
-  }
-  #pad button {
-    width:100%;
-    height:100%;
-    background: transparent;
-    border:none;
-    outline:none;
-    pointer-events:auto;
-    touch-action: manipulation;
+    left:0;
+    bottom: var(--footerBottom);
+    width:430px;
+    text-align:center;
+    font-size: 9px;
+    color: rgba(255,90,90,0.85);
+    text-shadow: 0 0 8px rgba(0,0,0,0.55);
+    z-index: 10;
+    pointer-events:none;
   }
 </style>
 </head>
 
 <body>
-  <div id="stage">
-    <div id="bg"></div>
+  <div id="wrap">
+    <div id="stage">
+      <div id="overlay">
+        <div id="topbar" aria-hidden="true">
+          <div id="topLeft">THE DART CALCULATOR</div>
+          <div id="topCenter">v1.2.3</div>
+          <div id="topRight">THE DART ROOM</div>
+        </div>
 
-    <!-- Minimal overlays not baked into background -->
-    <div id="version" class="overlay">v1.2.2</div>
-    <div id="brand" class="overlay">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
+        <div id="brand">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
-    <div id="score" class="overlay">501</div>
-    <div id="d1" class="overlay dart">-</div>
-    <div id="d2" class="overlay dart">-</div>
-    <div id="d3" class="overlay dart">-</div>
-    <div id="input" class="overlay">---</div>
+        <div id="scoreLabel">SCORE REMAINING</div>
+        <div id="score">501</div>
 
-    <!-- Mode buttons -->
-    <button id="m301" class="tap" aria-label="301"></button>
-    <button id="m501" class="tap" aria-label="501"></button>
-    <button id="m701" class="tap" aria-label="701"></button>
+        <div id="dl1" class="dart-label">DART 1</div>
+        <div id="dl2" class="dart-label">DART 2</div>
+        <div id="dl3" class="dart-label">DART 3</div>
 
-    <!-- Keypad -->
-    <div id="pad" aria-label="Keypad">
-      <button data-k="7" aria-label="7"></button>
-      <button data-k="8" aria-label="8"></button>
-      <button data-k="9" aria-label="9"></button>
-      <button data-k="4" aria-label="4"></button>
-      <button data-k="5" aria-label="5"></button>
-      <button data-k="6" aria-label="6"></button>
-      <button data-k="1" aria-label="1"></button>
-      <button data-k="2" aria-label="2"></button>
-      <button data-k="3" aria-label="3"></button>
-      <button data-k="DEL" aria-label="Delete"></button>
-      <button data-k="0" aria-label="0"></button>
-      <button data-k="DONATE" aria-label="Donate"></button>
+        <div id="d1" class="dart-val">-</div>
+        <div id="d2" class="dart-val">-</div>
+        <div id="d3" class="dart-val">-</div>
+
+        <div id="input">---</div>
+
+        <div id="donateMask" aria-hidden="true"></div>
+        <div id="donateText" aria-hidden="true">DONATIONS<br/>WELCOME</div>
+
+        <div id="footer">Night Games is owned by The Dart Room. © 2026 The Dart Room. All rights reserved.</div>
+      </div>
+
+      <!-- TOUCH LAYERS (transparent buttons) -->
+      <button id="m301" class="mode" aria-label="Start 301"></button>
+      <button id="m501" class="mode" aria-label="Start 501"></button>
+      <button id="m701" class="mode" aria-label="Start 701"></button>
+
+      <div id="pad" aria-label="Keypad">
+        <button data-k="7" aria-label="7"></button>
+        <button data-k="8" aria-label="8"></button>
+        <button data-k="9" aria-label="9"></button>
+
+        <button data-k="4" aria-label="4"></button>
+        <button data-k="5" aria-label="5"></button>
+        <button data-k="6" aria-label="6"></button>
+
+        <button data-k="1" aria-label="1"></button>
+        <button data-k="2" aria-label="2"></button>
+        <button data-k="3" aria-label="3"></button>
+
+        <button data-k="DEL" aria-label="Delete"></button>
+        <button data-k="0" aria-label="0"></button>
+        <button data-k="DONATE" aria-label="Donate"></button>
+      </div>
+
+      <button id="apply" aria-label="Apply Turn"></button>
+      <button id="donateBtn" aria-label="Donate"></button>
     </div>
-
-    <!-- Apply -->
-    <button id="apply" class="tap" aria-label="Apply Turn"></button>
   </div>
 
 <script>
-  /* ====== CONFIG ====== */
-  const BG_SRC = "https://raw.githubusercontent.com/smoody157/darts-501-app/main/IMG_7603.jpeg";
-  const LAYOUT = {"version":{"x":0.5,"y":0.045,"w":0.6,"h":0.04},"brand":{"x":0.5,"y":0.195,"w":0.92,"h":0.03},"score":{"x":0.5,"y":0.295,"w":0.9,"h":0.12},"d1":{"x":0.24,"y":0.44,"w":0.24,"h":0.07},"d2":{"x":0.5,"y":0.44,"w":0.24,"h":0.07},"d3":{"x":0.76,"y":0.44,"w":0.24,"h":0.07},"input":{"x":0.5,"y":0.535,"w":0.82,"h":0.08},"m301":{"x":0.415,"y":0.335,"w":0.13,"h":0.05},"m501":{"x":0.5,"y":0.335,"w":0.13,"h":0.05},"m701":{"x":0.585,"y":0.335,"w":0.13,"h":0.05},"pad":{"x":0.5,"y":0.725,"w":0.86,"h":0.29},"apply":{"x":0.5,"y":0.885,"w":0.86,"h":0.07}};
-
-  /* ====== OUT CHART (ACCURATE FROM YOUR XLSM) ====== */
-  const OUT_SHOT = [null,null,"D1","S1","D2","S1","D3","S3","D4","S1","D5","S3","D6","S5","D7","S7","D8","S9","D9","S3","D10","S5","D11","S7","D12","S9","D13","S11","D14","S13","D15","S15","D16","S1","D17","S3","D18","S5","D19","S7","D20","S9","S10","S11","S12","S13","S6","S7","S8","S9","S10","S11","S12","S13","S14","S15","S16","S17","S18","S19","S20","SB","T10","T13","T16","SB","T14","T17","T16","T15","T10","T13","T16","T19","T14","T17","T16","T19","T18","T19","D20","T19","DB","T17","T20","T15","T18","T17","T20","T19","T18","T17","T20","T19","T18","T19","T20","T19","T20","T19","T20","T19","T20","T19","T16","DB","T20","T19","T19","T20","T19","T19","T20","T19","T18","T19","T20","T20","T20","T19","T20","T20","T18","T19","T20","DB","T19","T20","T18","T19","T20","T17","DB","T20","T18","DB","T20","T20","T19","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T19","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20","T20"];
-  const OUT_REM  = [null,null,0,2,0,4,0,4,0,8,0,8,0,8,0,8,0,8,0,16,0,16,0,16,0,16,0,16,0,16,0,16,0,32,0,32,0,32,0,32,0,32,32,32,32,32,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,36,32,24,16,40,24,16,20,24,40,32,24,16,32,24,28,20,24,22,40,24,32,32,24,40,32,36,28,32,36,40,32,36,40,38,36,40,38,42,40,44,42,46,56,55,46,50,51,49,53,54,52,56,60,58,56,57,58,62,60,61,68,66,64,75,69,67,74,72,70,80,82,73,80,85,76,77,81,82,80,81,82,83,84,85,86,87,88,89,93,91,92,93,97,95,96,97,98,99,100,101,102,103,107,105,106,107,108,109,110,111,112,113,114,115,116,117,118,122,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,182,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,202,200,201,202,203,204,208,206,207,211,209,210,214,212,219,217,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,242,240,241,248,246,244,245,249,247,248,252,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345,346,347,348,349,350,351,352,353,354,355,356,357,358,359,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390,391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441];
-
-  function fmtShot(s){
-    if (!s) return "-";
-    s = String(s).trim().toUpperCase();
-    if (s === "SB" || s === "S25") return "B";
-    if (s === "DB" || s === "BULL" || s === "D25") return "DB";
-    return s;
+/* ============================================================================
+   1) SCALE TO FIT PHONE
+   ========================================================================== */
+(function fitStage() {
+  const stage = document.getElementById('stage');
+  function resize() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const s = Math.min(vw / 430, vh / 932);
+    stage.style.setProperty('--s', String(s));
   }
+  window.addEventListener('resize', resize, {passive:true});
+  resize();
+})();
 
-  /* ====== IMAGE FIT (MATCHES BACKGROUND 'CONTAIN' EXACTLY) ====== */
-  const IMG = new Image();
-  IMG.decoding = "async";
-  IMG.src = BG_SRC;
+/* ============================================================================
+   2) OUT CHART (from SUGGESTED501OUTS.xlsm)
+      - OUT_SHOT[n] = "T20" / "D16" / "B" / "DB" ...
+      - OUT_REM[n]  = next remaining after that shot
+      - For scores >170 we use a default setup of T20 (rem = cur - 60)
+   ========================================================================== */
+const OUT_SHOT = Array(702).fill(null);
+const OUT_REM  = Array(702).fill(null);
 
-  function place(id, rect, imgW, imgH, offX, offY){
-    const el = document.getElementById(id);
-    if (!el) return;
-    const w = rect.w * imgW;
-    const h = rect.h * imgH;
-    const x = offX + (rect.x * imgW) - (w/2);
-    const y = offY + (rect.y * imgH) - (h/2);
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-    el.style.width = w + "px";
-    el.style.height = h + "px";
-  }
+OUT_SHOT[2] = "D1"; OUT_REM[2] = 0;
+OUT_SHOT[3] = "S1"; OUT_REM[3] = 2;
+OUT_SHOT[4] = "D2"; OUT_REM[4] = 0;
+OUT_SHOT[5] = "S1"; OUT_REM[5] = 4;
+OUT_SHOT[6] = "D3"; OUT_REM[6] = 0;
+OUT_SHOT[7] = "S3"; OUT_REM[7] = 4;
+OUT_SHOT[8] = "D4"; OUT_REM[8] = 0;
+OUT_SHOT[9] = "S1"; OUT_REM[9] = 8;
+OUT_SHOT[10] = "D5"; OUT_REM[10] = 0;
+OUT_SHOT[11] = "S3"; OUT_REM[11] = 8;
+OUT_SHOT[12] = "D6"; OUT_REM[12] = 0;
+OUT_SHOT[13] = "S5"; OUT_REM[13] = 8;
+OUT_SHOT[14] = "D7"; OUT_REM[14] = 0;
+OUT_SHOT[15] = "S7"; OUT_REM[15] = 8;
+OUT_SHOT[16] = "D8"; OUT_REM[16] = 0;
+OUT_SHOT[17] = "S9"; OUT_REM[17] = 8;
+OUT_SHOT[18] = "D9"; OUT_REM[18] = 0;
+OUT_SHOT[19] = "S3"; OUT_REM[19] = 16;
+OUT_SHOT[20] = "D10"; OUT_REM[20] = 0;
+OUT_SHOT[21] = "S5"; OUT_REM[21] = 16;
+OUT_SHOT[22] = "D11"; OUT_REM[22] = 0;
+OUT_SHOT[23] = "S7"; OUT_REM[23] = 16;
+OUT_SHOT[24] = "D12"; OUT_REM[24] = 0;
+OUT_SHOT[25] = "S9"; OUT_REM[25] = 16;
+OUT_SHOT[26] = "D13"; OUT_REM[26] = 0;
+OUT_SHOT[27] = "S11"; OUT_REM[27] = 16;
+OUT_SHOT[28] = "D14"; OUT_REM[28] = 0;
+OUT_SHOT[29] = "S13"; OUT_REM[29] = 16;
+OUT_SHOT[30] = "D15"; OUT_REM[30] = 0;
+OUT_SHOT[31] = "S15"; OUT_REM[31] = 16;
+OUT_SHOT[32] = "D16"; OUT_REM[32] = 0;
+OUT_SHOT[33] = "S1"; OUT_REM[33] = 32;
+OUT_SHOT[34] = "D17"; OUT_REM[34] = 0;
+OUT_SHOT[35] = "S3"; OUT_REM[35] = 32;
+OUT_SHOT[36] = "D18"; OUT_REM[36] = 0;
+OUT_SHOT[37] = "S5"; OUT_REM[37] = 32;
+OUT_SHOT[38] = "D19"; OUT_REM[38] = 0;
+OUT_SHOT[39] = "S7"; OUT_REM[39] = 32;
+OUT_SHOT[40] = "D20"; OUT_REM[40] = 0;
+OUT_SHOT[41] = "S9"; OUT_REM[41] = 32;
+OUT_SHOT[42] = "S10"; OUT_REM[42] = 32;
+OUT_SHOT[43] = "S11"; OUT_REM[43] = 32;
+OUT_SHOT[44] = "S12"; OUT_REM[44] = 32;
+OUT_SHOT[45] = "S13"; OUT_REM[45] = 32;
+OUT_SHOT[46] = "S6"; OUT_REM[46] = 40;
+OUT_SHOT[47] = "S7"; OUT_REM[47] = 40;
+OUT_SHOT[48] = "S8"; OUT_REM[48] = 40;
+OUT_SHOT[49] = "S9"; OUT_REM[49] = 40;
+OUT_SHOT[50] = "S10"; OUT_REM[50] = 40;
+OUT_SHOT[51] = "S11"; OUT_REM[51] = 40;
+OUT_SHOT[52] = "S12"; OUT_REM[52] = 40;
+OUT_SHOT[53] = "S13"; OUT_REM[53] = 40;
+OUT_SHOT[54] = "S14"; OUT_REM[54] = 40;
+OUT_SHOT[55] = "S15"; OUT_REM[55] = 40;
+OUT_SHOT[56] = "S16"; OUT_REM[56] = 40;
+OUT_SHOT[57] = "S17"; OUT_REM[57] = 40;
+OUT_SHOT[58] = "S18"; OUT_REM[58] = 40;
+OUT_SHOT[59] = "S19"; OUT_REM[59] = 40;
+OUT_SHOT[60] = "S20"; OUT_REM[60] = 40;
+OUT_SHOT[61] = "SB"; OUT_REM[61] = 36;
+OUT_SHOT[62] = "T10"; OUT_REM[62] = 32;
+OUT_SHOT[63] = "T13"; OUT_REM[63] = 24;
+OUT_SHOT[64] = "T16"; OUT_REM[64] = 16;
+OUT_SHOT[65] = "SB"; OUT_REM[65] = 40;
+OUT_SHOT[66] = "T14"; OUT_REM[66] = 24;
+OUT_SHOT[67] = "T17"; OUT_REM[67] = 16;
+OUT_SHOT[68] = "T16"; OUT_REM[68] = 20;
+OUT_SHOT[69] = "T15"; OUT_REM[69] = 24;
+OUT_SHOT[70] = "T10"; OUT_REM[70] = 40;
+OUT_SHOT[71] = "T13"; OUT_REM[71] = 32;
+OUT_SHOT[72] = "T16"; OUT_REM[72] = 24;
+OUT_SHOT[73] = "T19"; OUT_REM[73] = 16;
+OUT_SHOT[74] = "T14"; OUT_REM[74] = 32;
+OUT_SHOT[75] = "T17"; OUT_REM[75] = 24;
+OUT_SHOT[76] = "T16"; OUT_REM[76] = 28;
+OUT_SHOT[77] = "T19"; OUT_REM[77] = 20;
+OUT_SHOT[78] = "T18"; OUT_REM[78] = 24;
+OUT_SHOT[79] = "T19"; OUT_REM[79] = 22;
+OUT_SHOT[80] = "D20"; OUT_REM[80] = 40;
+OUT_SHOT[81] = "T19"; OUT_REM[81] = 24;
+OUT_SHOT[82] = "DB"; OUT_REM[82] = 32;
+OUT_SHOT[83] = "T17"; OUT_REM[83] = 32;
+OUT_SHOT[84] = "T20"; OUT_REM[84] = 24;
+OUT_SHOT[85] = "T15"; OUT_REM[85] = 40;
+OUT_SHOT[86] = "T18"; OUT_REM[86] = 32;
+OUT_SHOT[87] = "T17"; OUT_REM[87] = 36;
+OUT_SHOT[88] = "T20"; OUT_REM[88] = 28;
+OUT_SHOT[89] = "T19"; OUT_REM[89] = 32;
+OUT_SHOT[90] = "T18"; OUT_REM[90] = 36;
+OUT_SHOT[91] = "T17"; OUT_REM[91] = 40;
+OUT_SHOT[92] = "T20"; OUT_REM[92] = 32;
+OUT_SHOT[93] = "T19"; OUT_REM[93] = 36;
+OUT_SHOT[94] = "T18"; OUT_REM[94] = 40;
+OUT_SHOT[95] = "T19"; OUT_REM[95] = 38;
+OUT_SHOT[96] = "T20"; OUT_REM[96] = 36;
+OUT_SHOT[97] = "T19"; OUT_REM[97] = 40;
+OUT_SHOT[98] = "T20"; OUT_REM[98] = 38;
+OUT_SHOT[99] = "T19"; OUT_REM[99] = 42;
+OUT_SHOT[100] = "T20"; OUT_REM[100] = 40;
+OUT_SHOT[101] = "T19"; OUT_REM[101] = 44;
+OUT_SHOT[102] = "T20"; OUT_REM[102] = 42;
+OUT_SHOT[103] = "T19"; OUT_REM[103] = 46;
+OUT_SHOT[104] = "T16"; OUT_REM[104] = 56;
+OUT_SHOT[105] = "DB"; OUT_REM[105] = 55;
+OUT_SHOT[106] = "T20"; OUT_REM[106] = 46;
+OUT_SHOT[107] = "T19"; OUT_REM[107] = 50;
+OUT_SHOT[108] = "T19"; OUT_REM[108] = 51;
+OUT_SHOT[109] = "T20"; OUT_REM[109] = 49;
+OUT_SHOT[110] = "T19"; OUT_REM[110] = 53;
+OUT_SHOT[111] = "T19"; OUT_REM[111] = 54;
+OUT_SHOT[112] = "T20"; OUT_REM[112] = 52;
+OUT_SHOT[113] = "T19"; OUT_REM[113] = 56;
+OUT_SHOT[114] = "T18"; OUT_REM[114] = 60;
+OUT_SHOT[115] = "T19"; OUT_REM[115] = 58;
+OUT_SHOT[116] = "T20"; OUT_REM[116] = 56;
+OUT_SHOT[117] = "T20"; OUT_REM[117] = 57;
+OUT_SHOT[118] = "T20"; OUT_REM[118] = 58;
+OUT_SHOT[119] = "T19"; OUT_REM[119] = 62;
+OUT_SHOT[120] = "T20"; OUT_REM[120] = 60;
+OUT_SHOT[121] = "T20"; OUT_REM[121] = 61;
+OUT_SHOT[122] = "T18"; OUT_REM[122] = 68;
+OUT_SHOT[123] = "T19"; OUT_REM[123] = 66;
+OUT_SHOT[124] = "T20"; OUT_REM[124] = 64;
+OUT_SHOT[125] = "DB"; OUT_REM[125] = 75;
+OUT_SHOT[126] = "T19"; OUT_REM[126] = 69;
+OUT_SHOT[127] = "T20"; OUT_REM[127] = 67;
+OUT_SHOT[128] = "T18"; OUT_REM[128] = 74;
+OUT_SHOT[129] = "T19"; OUT_REM[129] = 72;
+OUT_SHOT[130] = "T20"; OUT_REM[130] = 70;
+OUT_SHOT[131] = "T17"; OUT_REM[131] = 80;
+OUT_SHOT[132] = "DB"; OUT_REM[132] = 82;
+OUT_SHOT[133] = "T20"; OUT_REM[133] = 73;
+OUT_SHOT[134] = "T18"; OUT_REM[134] = 80;
+OUT_SHOT[135] = "DB"; OUT_REM[135] = 85;
+OUT_SHOT[136] = "T20"; OUT_REM[136] = 76;
+OUT_SHOT[137] = "T20"; OUT_REM[137] = 77;
+OUT_SHOT[138] = "T19"; OUT_REM[138] = 81;
+OUT_SHOT[139] = "T19"; OUT_REM[139] = 82;
+OUT_SHOT[140] = "T20"; OUT_REM[140] = 80;
+OUT_SHOT[141] = "T20"; OUT_REM[141] = 81;
+OUT_SHOT[142] = "T20"; OUT_REM[142] = 82;
+OUT_SHOT[143] = "T20"; OUT_REM[143] = 83;
+OUT_SHOT[144] = "T20"; OUT_REM[144] = 84;
+OUT_SHOT[145] = "T20"; OUT_REM[145] = 85;
+OUT_SHOT[146] = "T20"; OUT_REM[146] = 86;
+OUT_SHOT[147] = "T20"; OUT_REM[147] = 87;
+OUT_SHOT[148] = "T20"; OUT_REM[148] = 88;
+OUT_SHOT[149] = "T20"; OUT_REM[149] = 89;
+OUT_SHOT[150] = "T19"; OUT_REM[150] = 93;
+OUT_SHOT[151] = "T20"; OUT_REM[151] = 91;
+OUT_SHOT[152] = "T20"; OUT_REM[152] = 92;
+OUT_SHOT[153] = "T20"; OUT_REM[153] = 93;
+OUT_SHOT[154] = "T19"; OUT_REM[154] = 97;
+OUT_SHOT[155] = "T20"; OUT_REM[155] = 95;
+OUT_SHOT[156] = "T20"; OUT_REM[156] = 96;
+OUT_SHOT[157] = "T20"; OUT_REM[157] = 97;
+OUT_SHOT[158] = "T20"; OUT_REM[158] = 98;
+OUT_SHOT[159] = "T20"; OUT_REM[159] = 99;
+OUT_SHOT[160] = "T20"; OUT_REM[160] = 100;
+OUT_SHOT[161] = "T20"; OUT_REM[161] = 101;
+OUT_SHOT[162] = "T20"; OUT_REM[162] = 102;
+OUT_SHOT[163] = "T20"; OUT_REM[163] = 103;
+OUT_SHOT[164] = "T19"; OUT_REM[164] = 107;
+OUT_SHOT[165] = "T20"; OUT_REM[165] = 105;
+OUT_SHOT[166] = "T20"; OUT_REM[166] = 106;
+OUT_SHOT[167] = "T20"; OUT_REM[167] = 107;
+OUT_SHOT[168] = "T20"; OUT_REM[168] = 108;
+OUT_SHOT[169] = "T20"; OUT_REM[169] = 109;
+OUT_SHOT[170] = "T20"; OUT_REM[170] = 110;
+OUT_SHOT[171] = "T20"; OUT_REM[171] = 111;
+OUT_SHOT[172] = "T20"; OUT_REM[172] = 112;
+OUT_SHOT[173] = "T20"; OUT_REM[173] = 113;
+OUT_SHOT[174] = "T20"; OUT_REM[174] = 114;
+OUT_SHOT[175] = "T20"; OUT_REM[175] = 115;
+OUT_SHOT[176] = "T20"; OUT_REM[176] = 116;
+OUT_SHOT[177] = "T20"; OUT_REM[177] = 117;
+OUT_SHOT[178] = "T20"; OUT_REM[178] = 118;
+OUT_SHOT[179] = "T19"; OUT_REM[179] = 122;
+OUT_SHOT[180] = "T20"; OUT_REM[180] = 120;
+OUT_SHOT[181] = "T20"; OUT_REM[181] = 121;
+OUT_SHOT[182] = "T20"; OUT_REM[182] = 122;
+OUT_SHOT[183] = "T20"; OUT_REM[183] = 123;
+OUT_SHOT[184] = "T20"; OUT_REM[184] = 124;
+OUT_SHOT[185] = "T20"; OUT_REM[185] = 125;
+OUT_SHOT[186] = "T20"; OUT_REM[186] = 126;
+OUT_SHOT[187] = "T20"; OUT_REM[187] = 127;
+OUT_SHOT[188] = "T20"; OUT_REM[188] = 128;
+OUT_SHOT[189] = "T20"; OUT_REM[189] = 129;
+OUT_SHOT[190] = "T20"; OUT_REM[190] = 130;
+OUT_SHOT[191] = "T20"; OUT_REM[191] = 131;
+OUT_SHOT[192] = "T20"; OUT_REM[192] = 132;
+OUT_SHOT[193] = "T20"; OUT_REM[193] = 133;
+OUT_SHOT[194] = "T20"; OUT_REM[194] = 134;
+OUT_SHOT[195] = "T20"; OUT_REM[195] = 135;
+OUT_SHOT[196] = "T20"; OUT_REM[196] = 136;
+OUT_SHOT[197] = "T20"; OUT_REM[197] = 137;
+OUT_SHOT[198] = "T20"; OUT_REM[198] = 138;
+OUT_SHOT[199] = "T20"; OUT_REM[199] = 139;
+OUT_SHOT[200] = "T20"; OUT_REM[200] = 140;
+OUT_SHOT[201] = "T20"; OUT_REM[201] = 141;
+OUT_SHOT[202] = "T20"; OUT_REM[202] = 142;
+OUT_SHOT[203] = "T20"; OUT_REM[203] = 143;
+OUT_SHOT[204] = "T20"; OUT_REM[204] = 144;
+OUT_SHOT[205] = "T20"; OUT_REM[205] = 145;
+OUT_SHOT[206] = "T20"; OUT_REM[206] = 146;
+OUT_SHOT[207] = "T20"; OUT_REM[207] = 147;
+OUT_SHOT[208] = "T20"; OUT_REM[208] = 148;
+OUT_SHOT[209] = "T20"; OUT_REM[209] = 149;
+OUT_SHOT[210] = "T20"; OUT_REM[210] = 150;
+OUT_SHOT[211] = "T20"; OUT_REM[211] = 151;
+OUT_SHOT[212] = "T20"; OUT_REM[212] = 152;
+OUT_SHOT[213] = "T20"; OUT_REM[213] = 153;
+OUT_SHOT[214] = "T20"; OUT_REM[214] = 154;
+OUT_SHOT[215] = "T20"; OUT_REM[215] = 155;
+OUT_SHOT[216] = "T20"; OUT_REM[216] = 156;
+OUT_SHOT[217] = "T20"; OUT_REM[217] = 157;
+OUT_SHOT[218] = "T20"; OUT_REM[218] = 158;
+OUT_SHOT[219] = "T20"; OUT_REM[219] = 159;
+OUT_SHOT[220] = "T20"; OUT_REM[220] = 160;
+OUT_SHOT[221] = "T20"; OUT_REM[221] = 161;
+OUT_SHOT[222] = "T20"; OUT_REM[222] = 162;
+OUT_SHOT[223] = "T20"; OUT_REM[223] = 163;
+OUT_SHOT[224] = "T20"; OUT_REM[224] = 164;
+OUT_SHOT[225] = "T20"; OUT_REM[225] = 165;
+OUT_SHOT[226] = "T20"; OUT_REM[226] = 166;
+OUT_SHOT[227] = "T20"; OUT_REM[227] = 167;
+OUT_SHOT[228] = "T20"; OUT_REM[228] = 168;
+OUT_SHOT[229] = "T20"; OUT_REM[229] = 169;
+OUT_SHOT[230] = "T20"; OUT_REM[230] = 170;
+OUT_SHOT[231] = "T20"; OUT_REM[231] = 171;
+OUT_SHOT[232] = "T20"; OUT_REM[232] = 172;
+OUT_SHOT[233] = "T20"; OUT_REM[233] = 173;
+OUT_SHOT[234] = "T20"; OUT_REM[234] = 174;
+OUT_SHOT[235] = "T20"; OUT_REM[235] = 175;
+OUT_SHOT[236] = "T20"; OUT_REM[236] = 176;
+OUT_SHOT[237] = "T20"; OUT_REM[237] = 177;
+OUT_SHOT[238] = "T20"; OUT_REM[238] = 178;
+OUT_SHOT[239] = "T19"; OUT_REM[239] = 182;
+OUT_SHOT[240] = "T20"; OUT_REM[240] = 180;
+OUT_SHOT[241] = "T20"; OUT_REM[241] = 181;
+OUT_SHOT[242] = "T20"; OUT_REM[242] = 182;
+OUT_SHOT[243] = "T20"; OUT_REM[243] = 183;
+OUT_SHOT[244] = "T20"; OUT_REM[244] = 184;
+OUT_SHOT[245] = "T20"; OUT_REM[245] = 185;
+OUT_SHOT[246] = "T20"; OUT_REM[246] = 186;
+OUT_SHOT[247] = "T20"; OUT_REM[247] = 187;
+OUT_SHOT[248] = "T20"; OUT_REM[248] = 188;
+OUT_SHOT[249] = "T20"; OUT_REM[249] = 189;
+OUT_SHOT[250] = "T20"; OUT_REM[250] = 190;
+OUT_SHOT[251] = "T20"; OUT_REM[251] = 191;
+OUT_SHOT[252] = "T20"; OUT_REM[252] = 192;
+OUT_SHOT[253] = "T20"; OUT_REM[253] = 193;
+OUT_SHOT[254] = "T20"; OUT_REM[254] = 194;
+OUT_SHOT[255] = "T20"; OUT_REM[255] = 195;
+OUT_SHOT[256] = "T20"; OUT_REM[256] = 196;
+OUT_SHOT[257] = "T20"; OUT_REM[257] = 197;
+OUT_SHOT[258] = "T20"; OUT_REM[258] = 198;
+OUT_SHOT[259] = "T20"; OUT_REM[259] = 202;
+OUT_SHOT[260] = "T20"; OUT_REM[260] = 200;
+OUT_SHOT[261] = "T20"; OUT_REM[261] = 201;
+OUT_SHOT[262] = "T20"; OUT_REM[262] = 202;
+OUT_SHOT[263] = "T20"; OUT_REM[263] = 203;
+OUT_SHOT[264] = "T20"; OUT_REM[264] = 204;
+OUT_SHOT[265] = "T20"; OUT_REM[265] = 208;
+OUT_SHOT[266] = "T20"; OUT_REM[266] = 206;
+OUT_SHOT[267] = "T20"; OUT_REM[267] = 207;
+OUT_SHOT[268] = "T20"; OUT_REM[268] = 211;
+OUT_SHOT[269] = "T20"; OUT_REM[269] = 209;
+OUT_SHOT[270] = "T20"; OUT_REM[270] = 210;
+OUT_SHOT[271] = "T20"; OUT_REM[271] = 214;
+OUT_SHOT[272] = "T20"; OUT_REM[272] = 212;
+OUT_SHOT[273] = "T20"; OUT_REM[273] = 219;
+OUT_SHOT[274] = "T20"; OUT_REM[274] = 217;
+OUT_SHOT[275] = "T20"; OUT_REM[275] = 215;
+OUT_SHOT[276] = "T20"; OUT_REM[276] = 216;
+OUT_SHOT[277] = "T20"; OUT_REM[277] = 217;
+OUT_SHOT[278] = "T20"; OUT_REM[278] = 218;
+OUT_SHOT[279] = "T20"; OUT_REM[279] = 219;
+OUT_SHOT[280] = "T20"; OUT_REM[280] = 220;
+OUT_SHOT[281] = "T20"; OUT_REM[281] = 221;
+OUT_SHOT[282] = "T20"; OUT_REM[282] = 222;
+OUT_SHOT[283] = "T20"; OUT_REM[283] = 223;
+OUT_SHOT[284] = "T20"; OUT_REM[284] = 224;
+OUT_SHOT[285] = "T20"; OUT_REM[285] = 225;
+OUT_SHOT[286] = "T20"; OUT_REM[286] = 226;
+OUT_SHOT[287] = "T20"; OUT_REM[287] = 227;
+OUT_SHOT[288] = "T20"; OUT_REM[288] = 228;
+OUT_SHOT[289] = "T20"; OUT_REM[289] = 229;
+OUT_SHOT[290] = "T20"; OUT_REM[290] = 230;
+OUT_SHOT[291] = "T20"; OUT_REM[291] = 231;
+OUT_SHOT[292] = "T20"; OUT_REM[292] = 232;
+OUT_SHOT[293] = "T20"; OUT_REM[293] = 233;
+OUT_SHOT[294] = "T20"; OUT_REM[294] = 234;
+OUT_SHOT[295] = "T20"; OUT_REM[295] = 235;
+OUT_SHOT[296] = "T20"; OUT_REM[296] = 236;
+OUT_SHOT[297] = "T20"; OUT_REM[297] = 237;
+OUT_SHOT[298] = "T20"; OUT_REM[298] = 238;
+OUT_SHOT[299] = "T20"; OUT_REM[299] = 242;
+OUT_SHOT[300] = "T20"; OUT_REM[300] = 240;
+OUT_SHOT[301] = "T19"; OUT_REM[301] = 241;
+OUT_SHOT[302] = "T20"; OUT_REM[302] = 248;
+OUT_SHOT[303] = "T20"; OUT_REM[303] = 246;
+OUT_SHOT[304] = "T20"; OUT_REM[304] = 244;
+OUT_SHOT[305] = "T20"; OUT_REM[305] = 245;
+OUT_SHOT[306] = "T20"; OUT_REM[306] = 249;
+OUT_SHOT[307] = "T20"; OUT_REM[307] = 247;
+OUT_SHOT[308] = "T20"; OUT_REM[308] = 248;
+OUT_SHOT[309] = "T20"; OUT_REM[309] = 252;
+OUT_SHOT[310] = "T20"; OUT_REM[310] = 250;
+OUT_SHOT[311] = "T20"; OUT_REM[311] = 251;
+OUT_SHOT[312] = "T20"; OUT_REM[312] = 252;
+OUT_SHOT[313] = "T20"; OUT_REM[313] = 253;
+OUT_SHOT[314] = "T20"; OUT_REM[314] = 254;
+OUT_SHOT[315] = "T20"; OUT_REM[315] = 255;
+OUT_SHOT[316] = "T20"; OUT_REM[316] = 256;
+OUT_SHOT[317] = "T20"; OUT_REM[317] = 257;
+OUT_SHOT[318] = "T20"; OUT_REM[318] = 258;
+OUT_SHOT[319] = "T20"; OUT_REM[319] = 259;
+OUT_SHOT[320] = "T20"; OUT_REM[320] = 260;
+OUT_SHOT[321] = "T20"; OUT_REM[321] = 261;
+OUT_SHOT[322] = "T20"; OUT_REM[322] = 262;
+OUT_SHOT[323] = "T20"; OUT_REM[323] = 263;
+OUT_SHOT[324] = "T20"; OUT_REM[324] = 264;
+OUT_SHOT[325] = "T20"; OUT_REM[325] = 265;
+OUT_SHOT[326] = "T20"; OUT_REM[326] = 266;
+OUT_SHOT[327] = "T20"; OUT_REM[327] = 267;
+OUT_SHOT[328] = "T20"; OUT_REM[328] = 268;
+OUT_SHOT[329] = "T20"; OUT_REM[329] = 269;
+OUT_SHOT[330] = "T20"; OUT_REM[330] = 270;
+OUT_SHOT[331] = "T20"; OUT_REM[331] = 271;
+OUT_SHOT[332] = "T20"; OUT_REM[332] = 272;
+OUT_SHOT[333] = "T20"; OUT_REM[333] = 273;
+OUT_SHOT[334] = "T20"; OUT_REM[334] = 274;
+OUT_SHOT[335] = "T20"; OUT_REM[335] = 275;
+OUT_SHOT[336] = "T20"; OUT_REM[336] = 276;
+OUT_SHOT[337] = "T20"; OUT_REM[337] = 277;
+OUT_SHOT[338] = "T20"; OUT_REM[338] = 278;
+OUT_SHOT[339] = "T20"; OUT_REM[339] = 279;
+OUT_SHOT[340] = "T20"; OUT_REM[340] = 280;
+OUT_SHOT[341] = "T20"; OUT_REM[341] = 281;
+OUT_SHOT[342] = "T20"; OUT_REM[342] = 282;
+OUT_SHOT[343] = "T20"; OUT_REM[343] = 283;
+OUT_SHOT[344] = "T20"; OUT_REM[344] = 284;
+OUT_SHOT[345] = "T20"; OUT_REM[345] = 285;
+OUT_SHOT[346] = "T20"; OUT_REM[346] = 286;
+OUT_SHOT[347] = "T20"; OUT_REM[347] = 287;
+OUT_SHOT[348] = "T20"; OUT_REM[348] = 288;
+OUT_SHOT[349] = "T20"; OUT_REM[349] = 289;
+OUT_SHOT[350] = "T20"; OUT_REM[350] = 290;
+OUT_SHOT[351] = "T20"; OUT_REM[351] = 291;
+OUT_SHOT[352] = "T20"; OUT_REM[352] = 292;
+OUT_SHOT[353] = "T20"; OUT_REM[353] = 293;
+OUT_SHOT[354] = "T20"; OUT_REM[354] = 294;
+OUT_SHOT[355] = "T20"; OUT_REM[355] = 295;
+OUT_SHOT[356] = "T20"; OUT_REM[356] = 296;
+OUT_SHOT[357] = "T20"; OUT_REM[357] = 297;
+OUT_SHOT[358] = "T20"; OUT_REM[358] = 298;
+OUT_SHOT[359] = "T20"; OUT_REM[359] = 299;
+OUT_SHOT[360] = "T20"; OUT_REM[360] = 300;
+OUT_SHOT[361] = "T20"; OUT_REM[361] = 301;
+OUT_SHOT[362] = "T20"; OUT_REM[362] = 302;
+OUT_SHOT[363] = "T20"; OUT_REM[363] = 303;
+OUT_SHOT[364] = "T20"; OUT_REM[364] = 304;
+OUT_SHOT[365] = "T20"; OUT_REM[365] = 305;
+OUT_SHOT[366] = "T20"; OUT_REM[366] = 306;
+OUT_SHOT[367] = "T20"; OUT_REM[367] = 307;
+OUT_SHOT[368] = "T20"; OUT_REM[368] = 308;
+OUT_SHOT[369] = "T20"; OUT_REM[369] = 309;
+OUT_SHOT[370] = "T20"; OUT_REM[370] = 310;
+OUT_SHOT[371] = "T20"; OUT_REM[371] = 311;
+OUT_SHOT[372] = "T20"; OUT_REM[372] = 312;
+OUT_SHOT[373] = "T20"; OUT_REM[373] = 313;
+OUT_SHOT[374] = "T20"; OUT_REM[374] = 314;
+OUT_SHOT[375] = "T20"; OUT_REM[375] = 315;
+OUT_SHOT[376] = "T20"; OUT_REM[376] = 316;
+OUT_SHOT[377] = "T20"; OUT_REM[377] = 317;
+OUT_SHOT[378] = "T20"; OUT_REM[378] = 318;
+OUT_SHOT[379] = "T20"; OUT_REM[379] = 319;
+OUT_SHOT[380] = "T20"; OUT_REM[380] = 320;
+OUT_SHOT[381] = "T20"; OUT_REM[381] = 321;
+OUT_SHOT[382] = "T20"; OUT_REM[382] = 322;
+OUT_SHOT[383] = "T20"; OUT_REM[383] = 323;
+OUT_SHOT[384] = "T20"; OUT_REM[384] = 324;
+OUT_SHOT[385] = "T20"; OUT_REM[385] = 325;
+OUT_SHOT[386] = "T20"; OUT_REM[386] = 326;
+OUT_SHOT[387] = "T20"; OUT_REM[387] = 327;
+OUT_SHOT[388] = "T20"; OUT_REM[388] = 328;
+OUT_SHOT[389] = "T20"; OUT_REM[389] = 329;
+OUT_SHOT[390] = "T20"; OUT_REM[390] = 330;
+OUT_SHOT[391] = "T20"; OUT_REM[391] = 331;
+OUT_SHOT[392] = "T20"; OUT_REM[392] = 332;
+OUT_SHOT[393] = "T20"; OUT_REM[393] = 333;
+OUT_SHOT[394] = "T20"; OUT_REM[394] = 334;
+OUT_SHOT[395] = "T20"; OUT_REM[395] = 335;
+OUT_SHOT[396] = "T20"; OUT_REM[396] = 336;
+OUT_SHOT[397] = "T20"; OUT_REM[397] = 337;
+OUT_SHOT[398] = "T20"; OUT_REM[398] = 338;
+OUT_SHOT[399] = "T20"; OUT_REM[399] = 339;
+OUT_SHOT[400] = "T20"; OUT_REM[400] = 340;
+OUT_SHOT[401] = "T20"; OUT_REM[401] = 341;
+OUT_SHOT[402] = "T20"; OUT_REM[402] = 342;
+OUT_SHOT[403] = "T20"; OUT_REM[403] = 343;
+OUT_SHOT[404] = "T20"; OUT_REM[404] = 344;
+OUT_SHOT[405] = "T20"; OUT_REM[405] = 345;
+OUT_SHOT[406] = "T20"; OUT_REM[406] = 346;
+OUT_SHOT[407] = "T20"; OUT_REM[407] = 347;
+OUT_SHOT[408] = "T20"; OUT_REM[408] = 348;
+OUT_SHOT[409] = "T20"; OUT_REM[409] = 349;
+OUT_SHOT[410] = "T20"; OUT_REM[410] = 350;
+OUT_SHOT[411] = "T20"; OUT_REM[411] = 351;
+OUT_SHOT[412] = "T20"; OUT_REM[412] = 352;
+OUT_SHOT[413] = "T20"; OUT_REM[413] = 353;
+OUT_SHOT[414] = "T20"; OUT_REM[414] = 354;
+OUT_SHOT[415] = "T20"; OUT_REM[415] = 355;
+OUT_SHOT[416] = "T20"; OUT_REM[416] = 356;
+OUT_SHOT[417] = "T20"; OUT_REM[417] = 357;
+OUT_SHOT[418] = "T20"; OUT_REM[418] = 358;
+OUT_SHOT[419] = "T20"; OUT_REM[419] = 359;
+OUT_SHOT[420] = "T20"; OUT_REM[420] = 360;
+OUT_SHOT[421] = "T20"; OUT_REM[421] = 361;
+OUT_SHOT[422] = "T20"; OUT_REM[422] = 362;
+OUT_SHOT[423] = "T20"; OUT_REM[423] = 363;
+OUT_SHOT[424] = "T20"; OUT_REM[424] = 364;
+OUT_SHOT[425] = "T20"; OUT_REM[425] = 365;
+OUT_SHOT[426] = "T20"; OUT_REM[426] = 366;
+OUT_SHOT[427] = "T20"; OUT_REM[427] = 367;
+OUT_SHOT[428] = "T20"; OUT_REM[428] = 368;
+OUT_SHOT[429] = "T20"; OUT_REM[429] = 369;
+OUT_SHOT[430] = "T20"; OUT_REM[430] = 370;
+OUT_SHOT[431] = "T20"; OUT_REM[431] = 371;
+OUT_SHOT[432] = "T20"; OUT_REM[432] = 372;
+OUT_SHOT[433] = "T20"; OUT_REM[433] = 373;
+OUT_SHOT[434] = "T20"; OUT_REM[434] = 374;
+OUT_SHOT[435] = "T20"; OUT_REM[435] = 375;
+OUT_SHOT[436] = "T20"; OUT_REM[436] = 376;
+OUT_SHOT[437] = "T20"; OUT_REM[437] = 377;
+OUT_SHOT[438] = "T20"; OUT_REM[438] = 378;
+OUT_SHOT[439] = "T20"; OUT_REM[439] = 379;
+OUT_SHOT[440] = "T20"; OUT_REM[440] = 380;
+OUT_SHOT[441] = "T20"; OUT_REM[441] = 381;
+OUT_SHOT[442] = "T20"; OUT_REM[442] = 382;
+OUT_SHOT[443] = "T20"; OUT_REM[443] = 383;
+OUT_SHOT[444] = "T20"; OUT_REM[444] = 384;
+OUT_SHOT[445] = "T20"; OUT_REM[445] = 385;
+OUT_SHOT[446] = "T20"; OUT_REM[446] = 386;
+OUT_SHOT[447] = "T20"; OUT_REM[447] = 387;
+OUT_SHOT[448] = "T20"; OUT_REM[448] = 388;
+OUT_SHOT[449] = "T20"; OUT_REM[449] = 389;
+OUT_SHOT[450] = "T20"; OUT_REM[450] = 390;
+OUT_SHOT[451] = "T20"; OUT_REM[451] = 391;
+OUT_SHOT[452] = "T20"; OUT_REM[452] = 392;
+OUT_SHOT[453] = "T20"; OUT_REM[453] = 393;
+OUT_SHOT[454] = "T20"; OUT_REM[454] = 394;
+OUT_SHOT[455] = "T20"; OUT_REM[455] = 395;
+OUT_SHOT[456] = "T20"; OUT_REM[456] = 396;
+OUT_SHOT[457] = "T20"; OUT_REM[457] = 397;
+OUT_SHOT[458] = "T20"; OUT_REM[458] = 398;
+OUT_SHOT[459] = "T20"; OUT_REM[459] = 399;
+OUT_SHOT[460] = "T20"; OUT_REM[460] = 400;
+OUT_SHOT[461] = "T20"; OUT_REM[461] = 401;
+OUT_SHOT[462] = "T20"; OUT_REM[462] = 402;
+OUT_SHOT[463] = "T20"; OUT_REM[463] = 403;
+OUT_SHOT[464] = "T20"; OUT_REM[464] = 404;
+OUT_SHOT[465] = "T20"; OUT_REM[465] = 405;
+OUT_SHOT[466] = "T20"; OUT_REM[466] = 406;
+OUT_SHOT[467] = "T20"; OUT_REM[467] = 407;
+OUT_SHOT[468] = "T20"; OUT_REM[468] = 408;
+OUT_SHOT[469] = "T20"; OUT_REM[469] = 409;
+OUT_SHOT[470] = "T20"; OUT_REM[470] = 410;
+OUT_SHOT[471] = "T20"; OUT_REM[471] = 411;
+OUT_SHOT[472] = "T20"; OUT_REM[472] = 412;
+OUT_SHOT[473] = "T20"; OUT_REM[473] = 413;
+OUT_SHOT[474] = "T20"; OUT_REM[474] = 414;
+OUT_SHOT[475] = "T20"; OUT_REM[475] = 415;
+OUT_SHOT[476] = "T20"; OUT_REM[476] = 416;
+OUT_SHOT[477] = "T20"; OUT_REM[477] = 417;
+OUT_SHOT[478] = "T20"; OUT_REM[478] = 418;
+OUT_SHOT[479] = "T20"; OUT_REM[479] = 419;
+OUT_SHOT[480] = "T20"; OUT_REM[480] = 420;
+OUT_SHOT[481] = "T20"; OUT_REM[481] = 421;
+OUT_SHOT[482] = "T20"; OUT_REM[482] = 422;
+OUT_SHOT[483] = "T20"; OUT_REM[483] = 423;
+OUT_SHOT[484] = "T20"; OUT_REM[484] = 424;
+OUT_SHOT[485] = "T20"; OUT_REM[485] = 425;
+OUT_SHOT[486] = "T20"; OUT_REM[486] = 426;
+OUT_SHOT[487] = "T20"; OUT_REM[487] = 427;
+OUT_SHOT[488] = "T20"; OUT_REM[488] = 428;
+OUT_SHOT[489] = "T20"; OUT_REM[489] = 429;
+OUT_SHOT[490] = "T20"; OUT_REM[490] = 430;
+OUT_SHOT[491] = "T20"; OUT_REM[491] = 431;
+OUT_SHOT[492] = "T20"; OUT_REM[492] = 432;
+OUT_SHOT[493] = "T20"; OUT_REM[493] = 433;
+OUT_SHOT[494] = "T20"; OUT_REM[494] = 434;
+OUT_SHOT[495] = "T20"; OUT_REM[495] = 435;
+OUT_SHOT[496] = "T20"; OUT_REM[496] = 436;
+OUT_SHOT[497] = "T20"; OUT_REM[497] = 437;
+OUT_SHOT[498] = "T20"; OUT_REM[498] = 438;
+OUT_SHOT[499] = "T20"; OUT_REM[499] = 439;
+OUT_SHOT[500] = "T20"; OUT_REM[500] = 440;
+OUT_SHOT[501] = "T20"; OUT_REM[501] = 441;
 
-  function fit(){
-    const stage = document.getElementById("stage");
-    const bg = document.getElementById("bg");
+function fmtShot(s) {
+  if (!s) return "-";
+  s = String(s).trim().toUpperCase();
+  if (s === "SB" || s === "S25" || s === "BULL") return "B";
+  if (s === "DB" || s === "D25") return "DB";
+  return s;
+}
 
-    const vw = stage.clientWidth;
-    const vh = stage.clientHeight;
+/* ============================================================================
+   3) APP LOGIC
+   ========================================================================== */
+const APP = {
+  s: 501,  // remaining score
+  i: "",   // typed input
 
-    const iw = IMG.naturalWidth || 708;
-    const ih = IMG.naturalHeight || 1536;
-    const ar = iw / ih;
+  draw() {
+    document.getElementById('score').innerText = String(this.s);
+    document.getElementById('input').innerText = this.i || "---";
+  },
 
-    let imgW, imgH, offX, offY;
-    if ((vw / vh) > ar) {
-      imgH = vh;
-      imgW = imgH * ar;
-      offX = (vw - imgW) / 2;
-      offY = 0;
-    } else {
-      imgW = vw;
-      imgH = imgW / ar;
-      offX = 0;
-      offY = (vh - imgH) / 2;
+  set(n) {
+    this.s = n;
+    this.i = "";
+    this.draw();
+    this.updateOut();
+  },
+
+  key(n) {
+    if (n === "DEL") {
+      this.i = this.i.slice(0, -1);
+      this.draw();
+      return;
     }
+    if (this.i.length >= 3) return;
+    this.i += String(n);
+    this.draw();
+  },
 
-    bg.style.backgroundImage = "url('" + BG_SRC + "')";
-    bg.style.backgroundSize = imgW + "px " + imgH + "px";
-    bg.style.backgroundPosition = offX + "px " + offY + "px";
-
-    // Place overlays
-    place("version", LAYOUT.version, imgW, imgH, offX, offY);
-    place("brand",   LAYOUT.brand,   imgW, imgH, offX, offY);
-    place("score",   LAYOUT.score,   imgW, imgH, offX, offY);
-    place("d1",      LAYOUT.d1,      imgW, imgH, offX, offY);
-    place("d2",      LAYOUT.d2,      imgW, imgH, offX, offY);
-    place("d3",      LAYOUT.d3,      imgW, imgH, offX, offY);
-    place("input",   LAYOUT.input,   imgW, imgH, offX, offY);
-
-    // Tap zones
-    place("m301", LAYOUT.m301, imgW, imgH, offX, offY);
-    place("m501", LAYOUT.m501, imgW, imgH, offX, offY);
-    place("m701", LAYOUT.m701, imgW, imgH, offX, offY);
-    place("apply",LAYOUT.apply,imgW, imgH, offX, offY);
-
-    // Keypad container
-    const pad = document.getElementById("pad");
-    const pr = LAYOUT.pad;
-    const pw = pr.w * imgW;
-    const ph = pr.h * imgH;
-    const px = offX + (pr.x * imgW) - (pw/2);
-    const py = offY + (pr.y * imgH) - (ph/2);
-    pad.style.left = px + "px";
-    pad.style.top = py + "px";
-    pad.style.width = pw + "px";
-    pad.style.height = ph + "px";
-
-    // ====== FONT SIZES (KNOBS) ======
-    document.getElementById("version").style.fontSize = Math.max(10, imgH*0.018) + "px";
-    document.getElementById("brand").style.fontSize   = Math.max(8,  imgH*0.010) + "px";
-
-    document.getElementById("score").style.fontSize   = Math.max(36, imgH*0.110) + "px";
-
-    // Dart suggestions slightly smaller
-    ["d1","d2","d3"].forEach(id => {
-      document.getElementById(id).style.fontSize = Math.max(16, imgH*0.045) + "px";
-    });
-
-    // Typed input slightly smaller
-    document.getElementById("input").style.fontSize   = Math.max(18, imgH*0.055) + "px";
-  }
-
-  window.addEventListener("resize", fit);
-  IMG.onload = fit;
-  IMG.onerror = fit;
-  setTimeout(fit, 250);
-
-  /* ====== APP LOGIC ====== */
-  const APP = {
-    s: 501,
-    i: "",
-
-    draw(){
-      document.getElementById("score").textContent = this.s;
-      document.getElementById("input").textContent = this.i || "---";
-    },
-
-    set(n){
-      this.s = n;
+  apply() {
+    const v = parseInt(this.i, 10);
+    if (isNaN(v)) {
       this.i = "";
       this.draw();
-      this.updateOut();
-    },
-
-    key(k){
-      if (k === "DEL") { this.i=""; this.draw(); return; }
-      if (k === "DONATE") { window.open("https://venmo.com/u/Steve-Moody-8","_blank"); return; }
-      if (this.i.length < 3) { this.i += String(k); this.draw(); }
-    },
-
-    updateOut(){
-      const darts = ["-","-","-"];
-
-      if (this.s > 170) {
-        darts[0] = "T20";
-        darts[1] = "T20";
-        darts[2] = "T20";
-      } else {
-        let cur = this.s;
-        for (let k=0; k<3; k++) {
-          if (!cur || cur < 2) break;
-
-          const shot = OUT_SHOT[cur];
-          const rem  = OUT_REM[cur];
-
-          if (!shot || rem === null || rem === undefined) break;
-
-          darts[k] = fmtShot(shot);
-
-          if (rem === 0) break;
-          cur = rem;
-        }
-      }
-
-      document.getElementById("d1").textContent = darts[0];
-      document.getElementById("d2").textContent = darts[1];
-      document.getElementById("d3").textContent = darts[2];
-    },
-
-    apply(){
-      const v = parseInt(this.i,10);
-      if (!isNaN(v)) {
-        const next = this.s - v;
-        if (next < 0 || next === 1) { this.i=""; this.draw(); return; }
-        this.s = next;
-        this.i = "";
-        this.draw();
-        this.updateOut();
-      } else {
-        this.i = "";
-        this.draw();
-      }
+      return;
     }
-  };
 
-  /* ====== WIRING ====== */
-  document.getElementById("m301").addEventListener("click", () => APP.set(301));
-  document.getElementById("m501").addEventListener("click", () => APP.set(501));
-  document.getElementById("m701").addEventListener("click", () => APP.set(701));
-  document.getElementById("apply").addEventListener("click", () => APP.apply());
-  document.querySelectorAll("#pad button").forEach(btn => {
-    btn.addEventListener("click", () => APP.key(btn.dataset.k));
+    const next = this.s - v;
+
+    // bust rules for 01: can't go below 0 and can't leave 1
+    if (next < 0 || next === 1) {
+      this.i = "";
+      this.draw();
+      return;
+    }
+
+    this.s = next;
+    this.i = "";
+    this.draw();
+    this.updateOut();
+  },
+
+  donate() {
+    window.open("https://venmo.com/u/Steve-Moody-8", "_blank");
+  },
+
+  updateOut() {
+    let cur = this.s;
+
+    const darts = ["-","-","-"];
+
+    for (let k = 0; k < 3; k++) {
+      if (!cur || cur < 2) break;
+
+      let shot = null;
+      let rem = null;
+
+      if (cur > 170) {
+        // default high-score setup
+        shot = "T20";
+        rem = cur - 60;
+        if (rem < 0) break;
+      } else {
+        shot = OUT_SHOT[cur];
+        rem  = OUT_REM[cur];
+      }
+
+      if (!shot || rem === null || rem === undefined) break;
+
+      darts[k] = fmtShot(shot);
+      cur = rem;
+
+      if (cur === 0) break;
+    }
+
+    document.getElementById('d1').innerText = darts[0];
+    document.getElementById('d2').innerText = darts[1];
+    document.getElementById('d3').innerText = darts[2];
+  }
+};
+
+APP.draw();
+APP.updateOut();
+
+/* ============================================================================
+   4) WIRING (touchpads)
+   ========================================================================== */
+document.getElementById('m301').addEventListener('click', () => APP.set(301));
+document.getElementById('m501').addEventListener('click', () => APP.set(501));
+document.getElementById('m701').addEventListener('click', () => APP.set(701));
+document.getElementById('apply').addEventListener('click', () => APP.apply());
+document.getElementById('donateBtn').addEventListener('click', () => APP.donate());
+
+document.querySelectorAll('#pad button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const k = btn.getAttribute('data-k');
+    if (k === "DONATE") return APP.donate();
+    return APP.key(k);
   });
-
-  APP.draw();
-  APP.updateOut();
+});
 </script>
 </body>
 </html>
