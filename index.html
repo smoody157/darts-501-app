@@ -45,7 +45,7 @@
     <div id="wrap">
       <img id="bg" alt="background"/>
       <div id="overlay">
-        <div id="version" class="txt">v1.2.4</div>
+        <div id="version" class="txt">v1.2.6</div>
         <div id="brand" class="txt">DESIGNED BY STEVE'S GRAPHIC DESIGNS</div>
 
         <div id="score" class="txt">501</div>
@@ -77,8 +77,36 @@
 /* =========================
    0) CONFIG
    ========================= */
-const BG_SRC = "https://github.com/smoody157/darts-501-app/blob/main/IMG_7603.jpeg";
+const BG_SRC = "https://raw.githubusercontent.com/smoody157/darts-501-app/main/IMG_7603.jpeg";
 const DONATE_URL = "https://venmo.com/u/Steve-Moody-8"; // replace with your link
+
+/* =========================
+   0.1) URL NORMALIZER + LOAD STATUS
+   ========================= */
+function normalizeBgUrl(u){
+  if(!u) return u;
+  // If user accidentally uses GitHub "blob" URL, convert to raw.
+  // Example: https://github.com/<user>/<repo>/blob/<branch>/<path>
+  const m = u.match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/);
+  if(m){
+    return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
+  }
+  return u;
+}
+
+const statusEl = document.createElement("div");
+statusEl.style.position = "fixed";
+statusEl.style.left = "0";
+statusEl.style.top = "0";
+statusEl.style.right = "0";
+statusEl.style.padding = "6px 8px";
+statusEl.style.font = "12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+statusEl.style.color = "rgba(255,255,255,0.85)";
+statusEl.style.background = "rgba(0,0,0,0.35)";
+statusEl.style.pointerEvents = "none";
+statusEl.style.zIndex = "9999";
+statusEl.textContent = "Loading background…";
+document.body.appendChild(statusEl);
 
 /* =========================
    1) LAYOUT KNOBS (X/Y/W/H)
@@ -797,16 +825,23 @@ document.querySelectorAll("#pad button").forEach(btn => {
 /* =========================
    8) BOOT
    ========================= */
+bg.onerror = () => {
+  statusEl.textContent = `BG FAILED: ${bg.src}`;
+  statusEl.style.background = 'rgba(180,0,0,0.55)';
+};
+
 bg.onload = () => {
   layoutAll();
   updateUI();
+  setTimeout(()=>{ statusEl.remove(); }, 900);
 };
 window.addEventListener("resize", () => {
   layoutAll();
   updateUI();
 });
 
-bg.src = BG_SRC;
+bg.src = normalizeBgUrl(BG_SRC);
+statusEl.textContent = `BG: ${bg.src}`;
 
 </script>
 </body>
